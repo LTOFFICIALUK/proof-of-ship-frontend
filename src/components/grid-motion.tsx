@@ -78,8 +78,8 @@ export const GridMotion = () => {
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <div className="absolute inset-0 [perspective:900px]">
         <div
-          className="absolute left-1/2 top-[40%] w-[1680px]"
-          style={{ transform: "translate(-50%, -46%) rotateX(16deg) rotateZ(-8deg)" }}
+          className="absolute left-1/2 top-[18%] w-[1680px]"
+          style={{ transform: "translate(-50%, -20%) rotateX(18deg) rotateZ(-8deg)" }}
         >
           {Array.from({ length: ROWS }, (_, rowIndex) => (
             <div
@@ -107,8 +107,8 @@ export const GridMotion = () => {
           ))}
         </div>
       </div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_32%,rgba(245,245,247,0.78)_0%,rgba(245,245,247,0.42)_36%,rgba(245,245,247,0.05)_68%)]" />
-      <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-[#f5f5f7]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_42%,rgba(245,245,247,0.96)_0%,rgba(245,245,247,0.82)_18%,rgba(245,245,247,0.2)_46%,transparent_68%)]" />
+      <div className="absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-b from-transparent via-[#f5f5f7]/80 to-[#f5f5f7]" />
     </div>
   );
 };

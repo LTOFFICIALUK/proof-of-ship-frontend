@@ -5,7 +5,7 @@ import { btnPrimary, focusRing } from "@/components/surface";
 
 export const SiteHeader = () => {
   return (
-    <header className="sticky top-0 z-30 min-w-0 border-b border-black/[0.06] bg-[#f5f5f7]/80 px-5 backdrop-blur-2xl md:px-8">
+    <header className="sticky top-0 z-30 min-w-0 border-b border-black/[0.06] bg-[#f5f5f7]/95 px-5 backdrop-blur-2xl md:px-8">
       <div className="mx-auto flex min-h-12 max-w-[980px] flex-wrap items-center justify-between gap-x-4 gap-y-2 py-2">
         <Link
           href="/"
