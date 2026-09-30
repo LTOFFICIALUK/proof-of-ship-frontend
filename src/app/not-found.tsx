@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { btnGhost, panel } from "@/components/surface";
+import { btnPrimary, pageTitle } from "@/components/surface";
 
 export default function NotFound() {
   return (
-    <div className={`${panel} mx-auto max-w-xl p-8`}>
-      <h1 className="font-serif text-5xl tracking-tight">Page missing</h1>
-      <p className="mt-3 text-[var(--muted)]">That route is not here.</p>
-      <Link href="/" className={`${btnGhost} mt-6`}>
+    <div className="mx-auto max-w-[560px] pt-10 text-center">
+      <h1 className={pageTitle}>Page missing</h1>
+      <p className="mt-3 text-[17px] text-[var(--muted)]">That route is not here.</p>
+      <Link href="/" className={`${btnPrimary} mt-6`}>
         Back home
       </Link>
     </div>

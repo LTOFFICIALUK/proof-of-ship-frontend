@@ -1,4 +1,4 @@
-import { eyebrow, panel } from "@/components/surface";
+import { pageTitle } from "@/components/surface";
 
 const steps = [
   {
@@ -25,15 +25,14 @@ const steps = [
 
 export default function HowPage() {
   return (
-    <div className="mx-auto max-w-2xl">
-      <p className={eyebrow}>Rules</p>
-      <h1 className="mt-3 font-serif text-5xl tracking-tight">How it works</h1>
-      <ol className="mt-8 space-y-3">
+    <div className="mx-auto max-w-[720px] pt-4">
+      <h1 className={pageTitle}>How it works</h1>
+      <ol className="mt-8 divide-y divide-black/[0.06] border-y border-black/[0.06]">
         {steps.map((step, index) => (
-          <li key={step.title} className={`${panel} flex gap-4 p-5`}>
-            <span className="font-serif text-2xl text-[var(--stamp)]">0{index + 1}</span>
-            <p className="leading-relaxed text-[var(--muted)]">
-              <strong className="text-[var(--ink)]">{step.title}</strong> {step.body}
+          <li key={step.title} className="grid gap-2 py-7 sm:grid-cols-[56px_1fr] sm:gap-6">
+            <span className="text-[17px] font-semibold text-[var(--muted)]">0{index + 1}</span>
+            <p className="text-[17px] leading-relaxed text-[var(--muted)]">
+              <strong className="font-semibold text-[var(--ink)]">{step.title}</strong> {step.body}
             </p>
           </li>
         ))}

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api, type ProjectView } from "@/lib/api";
-import { btnPay, eyebrow, field, labelClass, panel } from "@/components/surface";
+import { btnPrimary, field, labelClass, pageTitle, panel } from "@/components/surface";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -42,15 +42,14 @@ export default function LaunchPage() {
   };
 
   return (
-    <div className="mx-auto max-w-xl">
-      <p className={eyebrow}>New coin</p>
-      <h1 className="mt-3 font-serif text-5xl tracking-tight">Launch</h1>
-      <p className="mt-3 leading-relaxed text-[var(--muted)]">
+    <div className="mx-auto max-w-[560px] pt-4">
+      <h1 className={pageTitle}>Launch</h1>
+      <p className="mt-3 text-[17px] leading-relaxed text-[var(--muted)]">
         One promise is enough. You can add more after. Deadline must be within
         14 days.
       </p>
       <form
-        className={`${panel} mt-8 space-y-4 p-5 md:p-6`}
+        className={`${panel} mt-8 space-y-5 p-6 md:p-8`}
         onSubmit={(event) => {
           event.preventDefault();
           void handleSubmit();
@@ -122,7 +121,7 @@ export default function LaunchPage() {
           />
         </label>
         {error ? <p className="text-sm text-[var(--burn)]">{error}</p> : null}
-        <button type="submit" disabled={busy} className={btnPay}>
+        <button type="submit" disabled={busy} className={`${btnPrimary} mt-2 px-6 py-3 text-[17px]`}>
           {busy ? "Launching" : "Launch"}
         </button>
       </form>

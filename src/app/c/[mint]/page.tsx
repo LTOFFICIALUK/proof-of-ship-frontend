@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api, type ProjectView } from "@/lib/api";
 import { formatSol, formatWhen, promiseLabel } from "@/lib/format";
-import { btnBurn, btnGhost, btnPay, eyebrow, field, labelClass, panel } from "@/components/surface";
+import { btnBurn, btnGhost, btnPay, field, labelClass, pageTitle, panel } from "@/components/surface";
 
 const promiseTone = (status: string) => {
   if (status === "paid" || status === "vote_open") {
@@ -15,7 +15,7 @@ const promiseTone = (status: string) => {
     return "text-[var(--burn)]";
   }
   if (status === "pending") {
-    return "text-[var(--stamp)]";
+    return "text-[var(--ink)]";
   }
   return "text-[var(--muted)]";
 };
@@ -93,43 +93,43 @@ export default function ShipPage() {
   const payShare = weightTotal === 0 ? 50 : (payWeight / weightTotal) * 100;
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <p className={eyebrow}>${project.symbol}</p>
-      <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
-        <h1 className="font-serif text-5xl tracking-tight">{project.name}</h1>
-        <span className="rounded-full border border-[var(--line)] bg-white/[0.03] px-3 py-1 text-xs uppercase tracking-[0.16em] text-[var(--stamp)]">
+    <div className="mx-auto max-w-[720px] pt-4">
+      <p className="text-[15px] font-medium text-[var(--muted)]">${project.symbol}</p>
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+        <h1 className={pageTitle}>{project.name}</h1>
+        <span className="rounded-full bg-black/[0.05] px-3 py-1 text-[13px] font-medium text-[var(--ink)]">
           {project.status}
         </span>
       </div>
-      <p className="mt-3 text-[var(--muted)]">
+      <p className="mt-3 text-[17px] text-[var(--muted)]">
         Builder{" "}
-        <Link className="text-[var(--ink)] underline decoration-[var(--line)] underline-offset-4 transition hover:decoration-[var(--stamp)]" href={`/b/${project.xHandle}`}>
+        <Link className="text-[var(--link)]" href={`/b/${project.xHandle}`}>
           @{project.xHandle}
         </Link>
       </p>
-      <p className="mt-2 break-all font-mono text-xs text-[var(--muted)]">{project.mint}</p>
+      <p className="mt-2 break-all font-mono text-[12px] text-[var(--muted)]">{project.mint}</p>
 
       <section className="mt-8 grid gap-3 sm:grid-cols-3">
         <div className={`${panel} p-4`}>
           <p className="text-sm text-[var(--muted)]">Vault</p>
-          <p className="mt-2 font-serif text-3xl">{formatSol(project.vault.balanceSol)} SOL</p>
+          <p className="mt-2 text-[28px] font-semibold tracking-[-0.03em]">{formatSol(project.vault.balanceSol)} SOL</p>
         </div>
         <div className={`${panel} p-4`}>
           <p className="text-sm text-[var(--muted)]">Paid to builder</p>
-          <p className="mt-2 font-serif text-3xl text-[var(--pay)]">
+          <p className="mt-2 text-[28px] font-semibold tracking-[-0.03em] text-[var(--pay)]">
             {formatSol(project.vault.releasedSol)} SOL
           </p>
         </div>
         <div className={`${panel} p-4`}>
           <p className="text-sm text-[var(--muted)]">Burned</p>
-          <p className="mt-2 font-serif text-3xl text-[var(--burn)]">
+          <p className="mt-2 text-[28px] font-semibold tracking-[-0.03em] text-[var(--burn)]">
             {formatSol(project.vault.burnedSol)} SOL
           </p>
         </div>
       </section>
 
       <section className="mt-10">
-        <h2 className="font-serif text-2xl">Promises</h2>
+        <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Promises</h2>
         <ul className="mt-4 space-y-3">
           {project.promises.map((item) => (
             <li key={item.idx} className={`${panel} p-4`}>
@@ -144,13 +144,13 @@ export default function ShipPage() {
       </section>
 
       {project.vote ? (
-        <section className={`${panel} mt-10 border-[var(--pay)]/30 p-5 md:p-6`}>
-          <h2 className="font-serif text-2xl">Vote open</h2>
+        <section className={`${panel} mt-10 p-6 md:p-8`}>
+          <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Vote open</h2>
           <p className="mt-2 text-[var(--muted)]">
             Pay {project.vote.payWeight} · Burn {project.vote.burnWeight} · Closes{" "}
             {formatWhen(project.vote.endMs)}
           </p>
-          <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[var(--burn)]/80">
+          <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[var(--burn)]">
             <div className="h-full bg-[var(--pay)]" style={{ width: `${payShare}%` }} />
           </div>
           <label className={`${labelClass} mt-5`}>
@@ -193,7 +193,7 @@ export default function ShipPage() {
       ) : null}
 
       <section className={`${panel} mt-10 p-5 md:p-6`}>
-        <h2 className="font-serif text-2xl">Add the next promise</h2>
+        <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Add the next promise</h2>
         <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
           Builder wallet required. If the last vote is done, you have 7 days.
         </p>

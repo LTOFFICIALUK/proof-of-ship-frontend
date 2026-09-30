@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api, type BuilderView } from "@/lib/api";
 import { formatSol } from "@/lib/format";
-import { eyebrow, panel } from "@/components/surface";
+import { pageTitle, panel } from "@/components/surface";
 
 export default function BuilderPage() {
   const params = useParams<{ handle: string }>();
@@ -38,14 +38,13 @@ export default function BuilderPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <p className={eyebrow}>Builder</p>
-      <h1 className="mt-3 font-serif text-5xl tracking-tight">@{builder.handle}</h1>
+    <div className="mx-auto max-w-[720px] pt-4">
+      <h1 className={pageTitle}>@{builder.handle}</h1>
       <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {stats.map((stat) => (
           <div key={stat.label} className={`${panel} p-4`}>
             <p className="text-sm text-[var(--muted)]">{stat.label}</p>
-            <p className="mt-2 font-serif text-2xl">{stat.value}</p>
+            <p className="mt-2 text-[24px] font-semibold tracking-[-0.03em]">{stat.value}</p>
           </div>
         ))}
       </section>
@@ -54,13 +53,13 @@ export default function BuilderPage() {
           <li key={project.mint}>
             <Link
               href={`/c/${project.mint}`}
-              className={`${panel} flex items-center justify-between gap-4 p-4 transition hover:border-[var(--stamp)]/40`}
+              className={`${panel} flex items-center justify-between gap-4 p-5 transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]`}
             >
               <span>
                 {project.name}{" "}
                 <span className="text-[var(--muted)]">(${project.symbol})</span>
               </span>
-              <span className="text-xs uppercase tracking-[0.16em] text-[var(--stamp)]">
+              <span className="rounded-full bg-black/[0.05] px-3 py-1 text-[13px] font-medium text-[var(--ink)]">
                 {project.status}
               </span>
             </Link>

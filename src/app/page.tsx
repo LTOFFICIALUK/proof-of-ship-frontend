@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { btnGhost, btnPay, eyebrow, panel } from "@/components/surface";
+import { btnGhost, btnPrimary, display, panel } from "@/components/surface";
 
 const steps = [
   {
@@ -16,50 +16,53 @@ const steps = [
   },
 ];
 
+const split = [
+  { value: "75%", label: "Vault" },
+  { value: "15%", label: "Runway" },
+  { value: "10%", label: "Platform" },
+];
+
 export default function HomePage() {
   return (
-    <div className="mx-auto max-w-5xl">
-      <section className={`${panel} relative overflow-hidden px-6 py-10 md:px-10 md:py-14`}>
+    <div className="mx-auto max-w-[980px]">
+      <section className="relative mx-auto max-w-[760px] pt-6 text-center md:pt-16">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[var(--pay)]/10 blur-3xl"
+          className="pointer-events-none absolute inset-x-0 top-8 -z-10 h-[78%] rounded-[40px] bg-[#f5f5f7]/75 blur-2xl"
         />
-        <p className={`mb-5 ${eyebrow}`}>Ship or burn</p>
-        <h1 className="max-w-3xl font-serif text-5xl leading-[1.05] tracking-tight md:text-7xl">
-          The dev cannot take the fees and leave.
-        </h1>
-        <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--muted)]">
+        <p className="text-[17px] font-medium text-[var(--muted)]">Ship or burn</p>
+        <h1 className={`mt-3 ${display}`}>The dev cannot take the fees and leave.</h1>
+        <p className="mx-auto mt-5 max-w-[540px] text-[19px] leading-[1.45] text-[var(--muted)]">
           Launch a pump.fun coin. Most creator fees lock in a vault. Holders vote
           pay or burn. No computer grades the work. The crowd with coins decides.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link href="/launch" className={btnPay}>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link href="/launch" className={`${btnPrimary} px-6 py-3 text-[17px]`}>
             Launch a coin
           </Link>
-          <Link href="/feed" className={btnGhost}>
+          <Link href="/feed" className={`${btnGhost} px-6 py-3 text-[17px]`}>
             Watch the feed
           </Link>
         </div>
-        <div className="mt-10 max-w-md">
-          <div className="flex h-2 overflow-hidden rounded-full bg-white/5">
-            <div className="w-[75%] bg-[var(--pay)]" />
-            <div className="w-[15%] bg-[var(--stamp)]" />
-            <div className="w-[10%] bg-white/25" />
-          </div>
-          <div className="mt-3 flex justify-between gap-2 text-[10px] uppercase tracking-[0.12em] text-[var(--muted)] sm:text-[11px]">
-            <span>75 vault</span>
-            <span>15 runway</span>
-            <span>10 platform</span>
-          </div>
-        </div>
       </section>
 
-      <section className="mt-6 grid gap-4 md:grid-cols-3">
-        {steps.map((card, index) => (
-          <div key={card.title} className={`${panel} p-6`}>
-            <p className={eyebrow}>0{index + 1}</p>
-            <h2 className="mt-3 font-serif text-2xl">{card.title}</h2>
-            <p className="mt-3 leading-relaxed text-[var(--muted)]">{card.body}</p>
+      <section className={`${panel} mx-auto mt-16 grid max-w-[720px] grid-cols-3 overflow-hidden`}>
+        {split.map((item, index) => (
+          <div
+            key={item.label}
+            className={`px-4 py-6 text-center ${index > 0 ? "border-l border-black/[0.06]" : ""}`}
+          >
+            <p className="text-[28px] font-semibold tracking-[-0.03em] sm:text-[34px]">{item.value}</p>
+            <p className="mt-1 text-[13px] text-[var(--muted)]">{item.label}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="mx-auto mt-8 max-w-[720px] divide-y divide-black/[0.06] border-y border-black/[0.06]">
+        {steps.map((step) => (
+          <div key={step.title} className="grid gap-3 py-8 sm:grid-cols-[140px_1fr] sm:items-baseline sm:gap-8">
+            <h2 className="text-[22px] font-semibold tracking-[-0.03em]">{step.title}</h2>
+            <p className="text-[17px] leading-relaxed text-[var(--muted)]">{step.body}</p>
           </div>
         ))}
       </section>
