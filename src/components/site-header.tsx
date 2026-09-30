@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ConnectWallet } from "@/components/connect-wallet";
 import { btnPrimary, focusRing } from "@/components/surface";
 
 export const SiteHeader = () => {
@@ -15,6 +16,9 @@ export const SiteHeader = () => {
           Proof of Ship
         </Link>
         <nav className="flex items-center gap-4 text-[14px] text-[var(--ink)] sm:gap-6">
+          <Link className={`text-[var(--muted)] transition hover:text-[var(--ink)] ${focusRing}`} href="/coins">
+            Coins
+          </Link>
           <Link className={`text-[var(--muted)] transition hover:text-[var(--ink)] ${focusRing}`} href="/feed">
             Feed
           </Link>
@@ -24,6 +28,7 @@ export const SiteHeader = () => {
           <Link href="/launch" className={`${btnPrimary} px-4 py-1.5 text-[13px]`}>
             Launch
           </Link>
+          <ConnectWallet />
         </nav>
       </div>
     </header>

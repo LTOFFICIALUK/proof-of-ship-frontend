@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api, type ProjectView } from "@/lib/api";
 import { formatSol, formatWhen, promiseLabel } from "@/lib/format";
+import { PumpMark } from "@/components/pump-mark";
+import { HolderChat } from "@/components/holder-chat";
 import { btnBurn, btnGhost, btnPay, field, labelClass, pageTitle, panel, textLink } from "@/components/surface";
 
 const promiseTone = (status: string) => {
@@ -94,7 +96,10 @@ export default function ShipPage() {
 
   return (
     <div className="mx-auto max-w-[720px] pt-4">
-      <p className="text-[15px] font-medium text-[var(--muted)]">${project.symbol}</p>
+      <div className="flex flex-wrap items-center gap-3">
+        <p className="text-[15px] font-medium text-[var(--muted)]">${project.symbol}</p>
+        <PumpMark />
+      </div>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
         <h1 className={pageTitle}>{project.name}</h1>
         <span className="rounded-full bg-black/[0.05] px-3 py-1 text-[13px] font-medium text-[var(--ink)]">
@@ -237,6 +242,10 @@ export default function ShipPage() {
           </button>
         </div>
       </section>
+
+      <div className="mt-10">
+        <HolderChat mint={project.mint} />
+      </div>
 
       {error ? <p className="mt-4 text-[var(--burn)]">{error}</p> : null}
     </div>

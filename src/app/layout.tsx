@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { GridMotion } from "@/components/grid-motion";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { WalletProvider } from "@/lib/wallet";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,10 +35,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col font-sans antialiased`}
       >
-        <GridMotion />
-        <SiteHeader />
-        <main className="relative z-10 min-w-0 flex-1 px-5 py-10 md:px-8 md:py-14">{children}</main>
-        <SiteFooter />
+        <WalletProvider>
+          <GridMotion />
+          <SiteHeader />
+          <main className="relative z-10 min-w-0 flex-1 px-5 py-10 md:px-8 md:py-14">{children}</main>
+          <SiteFooter />
+        </WalletProvider>
       </body>
     </html>
   );

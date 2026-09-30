@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api, type ProjectView } from "@/lib/api";
+import { PumpMark } from "@/components/pump-mark";
 import { btnPrimary, field, labelClass, pageTitle, panel } from "@/components/surface";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -33,7 +34,7 @@ export default function LaunchPage() {
           promises: [{ text: promise.trim(), deadlineMs }],
         }),
       });
-      router.push(`/c/${project.mint}`);
+      router.push(`/coins/${project.slug}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Launch failed");
     } finally {
@@ -48,6 +49,9 @@ export default function LaunchPage() {
         One promise is enough. You can add more after. Deadline must be within
         14 days.
       </p>
+      <div className="mt-4">
+        <PumpMark label="Launches on pump.fun" />
+      </div>
       <form
         className={`${panel} mt-8 space-y-5 p-6 md:p-8`}
         onSubmit={(event) => {

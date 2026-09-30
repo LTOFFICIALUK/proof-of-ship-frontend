@@ -8,6 +8,7 @@ export type PromiseView = {
 
 export type ProjectView = {
   mint: string;
+  slug: string;
   name: string;
   symbol: string;
   builderWallet: string;

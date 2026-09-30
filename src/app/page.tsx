@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PumpMark } from "@/components/pump-mark";
 import { btnGhost, btnPrimary, display, panel } from "@/components/surface";
 
 const steps = [
@@ -33,9 +34,15 @@ export default function HomePage() {
           Launch a pump.fun coin. Most creator fees lock in a vault. Holders vote
           pay or burn. No computer grades the work. The crowd with coins decides.
         </p>
+        <div className="mt-6 flex justify-center">
+          <PumpMark label="Launched on pump.fun" />
+        </div>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link href="/launch" className={`${btnPrimary} px-6 py-3 text-[17px]`}>
             Launch a coin
+          </Link>
+          <Link href="/coins" className={`${btnGhost} px-6 py-3 text-[17px]`}>
+            See the coins
           </Link>
           <Link href="/feed" className={`${btnGhost} px-6 py-3 text-[17px]`}>
             Watch the feed

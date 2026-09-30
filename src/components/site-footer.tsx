@@ -7,6 +7,9 @@ export const SiteFooter = () => {
       <div className="mx-auto flex max-w-[980px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p>Ship or burn. Creator fees stay locked until holders vote.</p>
         <nav className="flex gap-5">
+          <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/coins">
+            Coins
+          </Link>
           <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/how">
             How it works
           </Link>
