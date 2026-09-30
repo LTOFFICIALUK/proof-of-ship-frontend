@@ -49,17 +49,19 @@ export const GridMotion = () => {
 
     let frame = 0;
     const tick = (time: number) => {
-      rowRefs.current.forEach((row, index) => {
-        if (!row) {
-          return;
-        }
-        const direction = index % 2 === 0 ? 1 : -1;
-        const drift = Math.sin(time / 6500 + index * 0.6) * 22;
-        const target = ((mouseX.current - 0.5) * 260 + drift) * direction;
-        const ease = 0.035 + (index % 4) * 0.018;
-        offsets[index] += (target - offsets[index]) * ease;
-        row.style.transform = `translate3d(${offsets[index]}px, 0, 0)`;
-      });
+      if (document.visibilityState === "visible") {
+        rowRefs.current.forEach((row, index) => {
+          if (!row) {
+            return;
+          }
+          const direction = index % 2 === 0 ? 1 : -1;
+          const drift = Math.sin(time / 6500 + index * 0.6) * 22;
+          const target = ((mouseX.current - 0.5) * 260 + drift) * direction;
+          const ease = 0.035 + (index % 4) * 0.018;
+          offsets[index] += (target - offsets[index]) * ease;
+          row.style.transform = `translate3d(${offsets[index]}px, 0, 0)`;
+        });
+      }
       frame = window.requestAnimationFrame(tick);
     };
 

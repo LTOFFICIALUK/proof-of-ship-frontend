@@ -111,7 +111,7 @@ export default function LaunchPage() {
         <label className={labelClass}>
           Days until vote
           <input
-            className={field}
+            className={`${field} max-w-[8rem]`}
             type="number"
             min={1}
             max={14}

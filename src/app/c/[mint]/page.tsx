@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api, type ProjectView } from "@/lib/api";
 import { formatSol, formatWhen, promiseLabel } from "@/lib/format";
-import { btnBurn, btnGhost, btnPay, field, labelClass, pageTitle, panel } from "@/components/surface";
+import { btnBurn, btnGhost, btnPay, field, labelClass, pageTitle, panel, textLink } from "@/components/surface";
 
 const promiseTone = (status: string) => {
   if (status === "paid" || status === "vote_open") {
@@ -103,7 +103,7 @@ export default function ShipPage() {
       </div>
       <p className="mt-3 text-[17px] text-[var(--muted)]">
         Builder{" "}
-        <Link className="text-[var(--link)]" href={`/b/${project.xHandle}`}>
+        <Link className={textLink} href={`/b/${project.xHandle}`}>
           @{project.xHandle}
         </Link>
       </p>
@@ -150,9 +150,13 @@ export default function ShipPage() {
             Pay {project.vote.payWeight} · Burn {project.vote.burnWeight} · Closes{" "}
             {formatWhen(project.vote.endMs)}
           </p>
-          <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[var(--burn)]">
-            <div className="h-full bg-[var(--pay)]" style={{ width: `${payShare}%` }} />
-          </div>
+          {weightTotal === 0 ? (
+            <div className="mt-4 h-1.5 rounded-full bg-black/[0.06]" />
+          ) : (
+            <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[var(--burn)]">
+              <div className="h-full bg-[var(--pay)]" style={{ width: `${payShare}%` }} />
+            </div>
+          )}
           <label className={`${labelClass} mt-5`}>
             Your wallet
             <input

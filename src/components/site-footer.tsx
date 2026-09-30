@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { focusRing } from "@/components/surface";
 
 export const SiteFooter = () => {
   return (
@@ -6,13 +7,13 @@ export const SiteFooter = () => {
       <div className="mx-auto flex max-w-[980px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p>Ship or burn. Creator fees stay locked until holders vote.</p>
         <nav className="flex gap-5">
-          <Link className="transition hover:text-[var(--ink)]" href="/how">
+          <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/how">
             How it works
           </Link>
-          <Link className="transition hover:text-[var(--ink)]" href="/feed">
+          <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/feed">
             Feed
           </Link>
-          <Link className="transition hover:text-[var(--ink)]" href="/launch">
+          <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/launch">
             Launch
           </Link>
         </nav>
