@@ -26,8 +26,8 @@ const split = [
 export default function HomePage() {
   return (
     <div className="mx-auto max-w-[980px]">
-      <section className="relative mx-auto max-w-[820px] px-4 pt-8 text-center md:pt-14">
-        <div aria-hidden="true" className="absolute inset-x-0 -top-4 bottom-0 -z-10 rounded-[36px] bg-[#f5f5f7]" />
+      <section className="relative mx-auto max-w-[860px] px-6 pb-14 pt-12 text-center md:px-10 md:pb-20 md:pt-16">
+        <div aria-hidden="true" className="absolute inset-0 -z-10 rounded-[36px] bg-[#f5f5f7]" />
         <p className="text-[17px] font-medium text-[var(--muted)]">Ship or burn</p>
         <h1 className={`mt-3 ${display}`}>The dev cannot take the fees and leave.</h1>
         <p className="mx-auto mt-5 max-w-[540px] text-[19px] leading-[1.45] text-[var(--muted)]">
