@@ -1,3 +1,20 @@
+export const formatNet = (value: number | null | undefined) => {
+  if (value == null || !Number.isFinite(value)) {
+    return "Pending";
+  }
+  const abs = Math.abs(value).toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  if (value > 0) {
+    return `+${abs}%`;
+  }
+  if (value < 0) {
+    return `−${abs}%`;
+  }
+  return "0%";
+};
+
 export const formatSol = (value: number) => {
   if (!Number.isFinite(value)) {
     return "0";

@@ -4,6 +4,10 @@ export type PromiseView = {
   deadlineMs: number;
   status: string;
   quorumFails: number;
+  upPct?: number;
+  downPct?: number;
+  netPct?: number | null;
+  yourSide?: "up" | "down" | null;
 };
 
 export type ProjectView = {
