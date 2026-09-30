@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api";
 import { formatWhen } from "@/lib/format";
 import { useWallet, shortWallet } from "@/lib/wallet";
-import { btnPrimary, field, panel } from "@/components/surface";
+import { btnPrimary, panel } from "@/components/surface";
 
 type ChatMessage = {
   id: string;
@@ -25,6 +25,8 @@ export const HolderChat = ({ mint }: { mint: string }) => {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const threadRef = useRef<HTMLDivElement>(null);
+  const stickRef = useRef(true);
 
   useEffect(() => {
     let stop = false;
@@ -52,6 +54,14 @@ export const HolderChat = ({ mint }: { mint: string }) => {
     };
   }, [mint, wallet]);
 
+  useEffect(() => {
+    const thread = threadRef.current;
+    if (!thread || !stickRef.current) {
+      return;
+    }
+    thread.scrollTop = thread.scrollHeight;
+  }, [messages]);
+
   const canSend = Boolean(wallet) && holds === true;
 
   const handleSend = async () => {
@@ -60,6 +70,7 @@ export const HolderChat = ({ mint }: { mint: string }) => {
     }
     setBusy(true);
     setError("");
+    stickRef.current = true;
     try {
       await api(`/v1/projects/${mint}/messages`, {
         method: "POST",
@@ -84,6 +95,14 @@ export const HolderChat = ({ mint }: { mint: string }) => {
     }
   };
 
+  const handleScroll = () => {
+    const thread = threadRef.current;
+    if (!thread) {
+      return;
+    }
+    stickRef.current = thread.scrollHeight - thread.scrollTop - thread.clientHeight < 48;
+  };
+
   const gateLabel = !wallet
     ? connecting
       ? "Connecting"
@@ -93,25 +112,57 @@ export const HolderChat = ({ mint }: { mint: string }) => {
       : "Hold some supply to send";
 
   return (
-    <section className={`${panel} p-5 md:p-6`}>
-      <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Holder chat</h2>
-      <p className="mt-2 text-[15px] text-[var(--muted)]">
-        Anyone can read this thread. Hold some supply to send.
-      </p>
-      <ul className="mt-5 max-h-80 space-y-3 overflow-y-auto">
-        {messages.map((message) => (
-          <li key={message.id} className="rounded-2xl bg-[#f5f5f7] px-4 py-3">
-            <div className="flex items-center justify-between gap-3 text-[12px] text-[var(--muted)]">
-              <span className="font-mono">{shortWallet(message.wallet)}</span>
-              <span>{formatWhen(message.atMs)}</span>
-            </div>
-            <p className="mt-1 text-[15px] leading-relaxed">{message.text}</p>
-          </li>
-        ))}
-      </ul>
-      {messages.length === 0 ? <p className="mt-4 text-[15px] text-[var(--muted)]">No messages yet.</p> : null}
+    <section className={`${panel} flex h-[min(72vh,760px)] min-h-[520px] flex-col overflow-hidden lg:h-full`}>
+      <header className="flex items-center justify-between gap-3 border-b border-black/[0.06] px-5 py-4">
+        <div>
+          <h2 className="text-[18px] font-semibold tracking-[-0.03em]">Holder chat</h2>
+          <p className="mt-1 text-[13px] text-[var(--muted)]">Anyone can read. Holders can send.</p>
+        </div>
+        <span className="inline-flex items-center gap-2 rounded-full bg-[#f5f5f7] px-3 py-1 text-[12px] font-medium">
+          <span className="relative flex h-2 w-2" aria-hidden="true">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--pay)] opacity-60 motion-reduce:animate-none" />
+            <span className="relative h-2 w-2 rounded-full bg-[var(--pay)]" />
+          </span>
+          Live
+        </span>
+      </header>
+      <div
+        ref={threadRef}
+        onScroll={handleScroll}
+        className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 py-4"
+        aria-live="polite"
+        aria-label="Holder messages"
+      >
+        {messages.length === 0 ? (
+          <p className="m-auto text-center text-[15px] text-[var(--muted)]">No messages yet.</p>
+        ) : (
+          messages.map((message) => {
+            const mine = Boolean(wallet) && message.wallet === wallet;
+            return (
+              <div key={message.id} className={mine ? "flex justify-end" : "flex justify-start"}>
+                <div className={mine ? "max-w-[85%] text-right" : "max-w-[85%]"}>
+                  <p className="mb-1 px-1 text-[11px] text-[var(--muted)]">
+                    {mine ? "You" : shortWallet(message.wallet)}
+                    <span className="px-1">·</span>
+                    {formatWhen(message.atMs)}
+                  </p>
+                  <p
+                    className={
+                      mine
+                        ? "rounded-[20px] rounded-br-md bg-[var(--ink)] px-4 py-2.5 text-left text-[15px] leading-relaxed text-white"
+                        : "rounded-[20px] rounded-bl-md bg-[#f5f5f7] px-4 py-2.5 text-[15px] leading-relaxed"
+                    }
+                  >
+                    {message.text}
+                  </p>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
       <form
-        className="mt-4 flex flex-col gap-3"
+        className="border-t border-black/[0.06] p-4"
         onSubmit={(event) => {
           event.preventDefault();
           void handleSend();
@@ -120,33 +171,36 @@ export const HolderChat = ({ mint }: { mint: string }) => {
         <label className="sr-only" htmlFor="holder-chat">
           Message
         </label>
-        <input
-          id="holder-chat"
-          className={`${field} mt-0 disabled:cursor-not-allowed disabled:opacity-50`}
-          value={text}
-          maxLength={280}
-          disabled={!canSend}
-          onChange={(event) => setText(event.target.value)}
-          aria-label="Message"
-          placeholder="Write to holders"
-        />
-        {canSend ? (
-          <button type="submit" disabled={busy || !text.trim()} className={btnPrimary}>
-            {busy ? "Sending" : "Send"}
-          </button>
-        ) : (
+        <div className="flex items-center gap-2">
+          <input
+            id="holder-chat"
+            className="min-w-0 flex-1 rounded-full bg-[#f5f5f7] px-4 py-3 text-[15px] text-[var(--ink)] outline-none ring-1 ring-transparent placeholder:text-[var(--muted)] focus:bg-white focus:ring-2 focus:ring-[var(--ink)]/20 disabled:cursor-not-allowed disabled:opacity-50"
+            value={text}
+            maxLength={280}
+            disabled={!canSend}
+            onChange={(event) => setText(event.target.value)}
+            aria-label="Message"
+            placeholder="Write to holders"
+          />
+          {canSend ? (
+            <button type="submit" disabled={busy || !text.trim()} className={`${btnPrimary} shrink-0 px-4`}>
+              {busy ? "Sending" : "Send"}
+            </button>
+          ) : null}
+        </div>
+        {canSend ? null : (
           <button
             type="button"
             disabled={Boolean(wallet) || connecting}
             onClick={handleGate}
-            className={btnPrimary}
+            className={`${btnPrimary} mt-3 w-full`}
           >
             {gateLabel}
           </button>
         )}
+        {walletError ? <p className="mt-3 text-[14px] text-[var(--burn)]">{walletError}</p> : null}
+        {error ? <p className="mt-3 text-[14px] text-[var(--burn)]">{error}</p> : null}
       </form>
-      {walletError ? <p className="mt-3 text-[14px] text-[var(--burn)]">{walletError}</p> : null}
-      {error ? <p className="mt-3 text-[14px] text-[var(--burn)]">{error}</p> : null}
     </section>
   );
 };

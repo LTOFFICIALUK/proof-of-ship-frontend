@@ -15,6 +15,29 @@ export const formatNet = (value: number | null | undefined) => {
   return "0%";
 };
 
+export const formatUsd = (value: number | null | undefined) => {
+  if (value == null || !Number.isFinite(value)) {
+    return "Pending";
+  }
+  if (value >= 1_000_000_000) {
+    return `$${(value / 1_000_000_000).toLocaleString(undefined, { maximumFractionDigits: 2 })}B`;
+  }
+  if (value >= 1_000_000) {
+    return `$${(value / 1_000_000).toLocaleString(undefined, { maximumFractionDigits: 2 })}M`;
+  }
+  if (value >= 1_000) {
+    return `$${(value / 1_000).toLocaleString(undefined, { maximumFractionDigits: 1 })}K`;
+  }
+  return `$${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+};
+
+export const formatCount = (value: number | null | undefined) => {
+  if (value == null || !Number.isFinite(value)) {
+    return "Pending";
+  }
+  return Math.round(value).toLocaleString();
+};
+
 export const formatSol = (value: number) => {
   if (!Number.isFinite(value)) {
     return "0";

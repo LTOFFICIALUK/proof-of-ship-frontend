@@ -31,6 +31,15 @@ export type ProjectView = {
     balance: string;
   };
   nextDueAtMs: number | null;
+  market?: {
+    image: string | null;
+    website: string | null;
+    x: string | null;
+    marketCapUsd: number | null;
+    athUsd: number | null;
+    volumeUsd: number | null;
+    holders: number | null;
+  };
   promises: PromiseView[];
   vote: {
     promiseIdx: number;
