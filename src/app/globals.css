@@ -19,13 +19,17 @@
   --font-mono: var(--font-geist-mono);
 }
 
-html,
+html {
+  background: var(--bg);
+  color-scheme: light;
+  overscroll-behavior: none;
+}
+
 body {
   min-height: 100%;
   background: var(--bg);
   color: var(--ink);
-  color-scheme: light;
-  overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 ::selection {
