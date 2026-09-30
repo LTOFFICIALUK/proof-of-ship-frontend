@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api, type ProjectView } from "@/lib/api";
+import { btnPay, eyebrow, field, labelClass, panel } from "@/components/surface";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -42,62 +43,65 @@ export default function LaunchPage() {
 
   return (
     <div className="mx-auto max-w-xl">
-      <h1 className="font-serif text-4xl">Launch</h1>
-      <p className="mt-3 text-[var(--muted)]">
+      <p className={eyebrow}>New coin</p>
+      <h1 className="mt-3 font-serif text-5xl tracking-tight">Launch</h1>
+      <p className="mt-3 leading-relaxed text-[var(--muted)]">
         One promise is enough. You can add more after. Deadline must be within
         14 days.
       </p>
       <form
-        className="mt-8 space-y-4"
+        className={`${panel} mt-8 space-y-4 p-5 md:p-6`}
         onSubmit={(event) => {
           event.preventDefault();
           void handleSubmit();
         }}
       >
-        <label className="block text-sm">
+        <label className={labelClass}>
           Wallet
           <input
-            className="mt-1 w-full rounded-xl border border-[var(--line)] bg-black/40 px-3 py-2"
+            className={field}
             value={wallet}
             onChange={(event) => setWallet(event.target.value)}
             required
             aria-label="Wallet"
           />
         </label>
-        <label className="block text-sm">
+        <label className={labelClass}>
           X handle
           <input
-            className="mt-1 w-full rounded-xl border border-[var(--line)] bg-black/40 px-3 py-2"
+            className={field}
             value={xHandle}
             onChange={(event) => setXHandle(event.target.value)}
             required
             aria-label="X handle"
           />
         </label>
-        <label className="block text-sm">
-          Coin name
-          <input
-            className="mt-1 w-full rounded-xl border border-[var(--line)] bg-black/40 px-3 py-2"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            required
-            aria-label="Coin name"
-          />
-        </label>
-        <label className="block text-sm">
-          Ticker
-          <input
-            className="mt-1 w-full rounded-xl border border-[var(--line)] bg-black/40 px-3 py-2"
-            value={symbol}
-            onChange={(event) => setSymbol(event.target.value)}
-            required
-            aria-label="Ticker"
-          />
-        </label>
-        <label className="block text-sm">
+        <div className="grid gap-4 sm:grid-cols-[1fr_8rem]">
+          <label className={labelClass}>
+            Coin name
+            <input
+              className={field}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              required
+              aria-label="Coin name"
+            />
+          </label>
+          <label className={labelClass}>
+            Ticker
+            <input
+              className={field}
+              value={symbol}
+              onChange={(event) => setSymbol(event.target.value)}
+              required
+              aria-label="Ticker"
+            />
+          </label>
+        </div>
+        <label className={labelClass}>
           First promise
           <textarea
-            className="mt-1 w-full rounded-xl border border-[var(--line)] bg-black/40 px-3 py-2"
+            className={field}
             value={promise}
             onChange={(event) => setPromise(event.target.value)}
             required
@@ -105,10 +109,10 @@ export default function LaunchPage() {
             aria-label="First promise"
           />
         </label>
-        <label className="block text-sm">
+        <label className={labelClass}>
           Days until vote
           <input
-            className="mt-1 w-full rounded-xl border border-[var(--line)] bg-black/40 px-3 py-2"
+            className={field}
             type="number"
             min={1}
             max={14}
@@ -117,12 +121,8 @@ export default function LaunchPage() {
             aria-label="Days until vote"
           />
         </label>
-        {error ? <p className="text-[var(--burn)]">{error}</p> : null}
-        <button
-          type="submit"
-          disabled={busy}
-          className="rounded-full bg-[var(--pay)] px-6 py-3 font-medium text-black disabled:opacity-50"
-        >
+        {error ? <p className="text-sm text-[var(--burn)]">{error}</p> : null}
+        <button type="submit" disabled={busy} className={btnPay}>
           {busy ? "Launching" : "Launch"}
         </button>
       </form>

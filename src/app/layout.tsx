@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { GridMotion } from "@/components/grid-motion";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
@@ -38,10 +39,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${instrument.variable} flex min-h-screen flex-col antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${instrument.variable} flex min-h-screen flex-col font-sans antialiased`}
       >
+        <GridMotion />
         <SiteHeader />
-        <main className="flex-1 px-5 py-10">{children}</main>
+        <main className="relative z-10 min-w-0 flex-1 px-5 py-12 md:px-8 md:py-16">{children}</main>
         <SiteFooter />
       </body>
     </html>

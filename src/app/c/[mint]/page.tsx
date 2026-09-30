@@ -5,6 +5,20 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api, type ProjectView } from "@/lib/api";
 import { formatSol, formatWhen, promiseLabel } from "@/lib/format";
+import { btnBurn, btnGhost, btnPay, eyebrow, field, labelClass, panel } from "@/components/surface";
+
+const promiseTone = (status: string) => {
+  if (status === "paid" || status === "vote_open") {
+    return "text-[var(--pay)]";
+  }
+  if (status === "burned") {
+    return "text-[var(--burn)]";
+  }
+  if (status === "pending") {
+    return "text-[var(--stamp)]";
+  }
+  return "text-[var(--muted)]";
+};
 
 export default function ShipPage() {
   const params = useParams<{ mint: string }>();
@@ -73,34 +87,42 @@ export default function ShipPage() {
     return <p className="mx-auto max-w-3xl text-[var(--burn)]">{error}</p>;
   }
 
+  const payWeight = Number(project.vote?.payWeight ?? 0);
+  const burnWeight = Number(project.vote?.burnWeight ?? 0);
+  const weightTotal = payWeight + burnWeight;
+  const payShare = weightTotal === 0 ? 50 : (payWeight / weightTotal) * 100;
+
   return (
     <div className="mx-auto max-w-3xl">
-      <p className="text-sm uppercase tracking-[0.2em] text-[var(--stamp)]">
-        ${project.symbol} · {project.status}
-      </p>
-      <h1 className="mt-2 font-serif text-4xl">{project.name}</h1>
-      <p className="mt-2 text-[var(--muted)]">
+      <p className={eyebrow}>${project.symbol}</p>
+      <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
+        <h1 className="font-serif text-5xl tracking-tight">{project.name}</h1>
+        <span className="rounded-full border border-[var(--line)] bg-white/[0.03] px-3 py-1 text-xs uppercase tracking-[0.16em] text-[var(--stamp)]">
+          {project.status}
+        </span>
+      </div>
+      <p className="mt-3 text-[var(--muted)]">
         Builder{" "}
-        <Link className="text-[var(--ink)] underline" href={`/b/${project.xHandle}`}>
+        <Link className="text-[var(--ink)] underline decoration-[var(--line)] underline-offset-4 transition hover:decoration-[var(--stamp)]" href={`/b/${project.xHandle}`}>
           @{project.xHandle}
         </Link>
       </p>
-      <p className="mt-1 break-all font-mono text-xs text-[var(--muted)]">{project.mint}</p>
+      <p className="mt-2 break-all font-mono text-xs text-[var(--muted)]">{project.mint}</p>
 
       <section className="mt-8 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-4">
+        <div className={`${panel} p-4`}>
           <p className="text-sm text-[var(--muted)]">Vault</p>
-          <p className="font-serif text-3xl">{formatSol(project.vault.balanceSol)} SOL</p>
+          <p className="mt-2 font-serif text-3xl">{formatSol(project.vault.balanceSol)} SOL</p>
         </div>
-        <div className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-4">
+        <div className={`${panel} p-4`}>
           <p className="text-sm text-[var(--muted)]">Paid to builder</p>
-          <p className="font-serif text-3xl text-[var(--pay)]">
+          <p className="mt-2 font-serif text-3xl text-[var(--pay)]">
             {formatSol(project.vault.releasedSol)} SOL
           </p>
         </div>
-        <div className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-4">
+        <div className={`${panel} p-4`}>
           <p className="text-sm text-[var(--muted)]">Burned</p>
-          <p className="font-serif text-3xl text-[var(--burn)]">
+          <p className="mt-2 font-serif text-3xl text-[var(--burn)]">
             {formatSol(project.vault.burnedSol)} SOL
           </p>
         </div>
@@ -110,51 +132,51 @@ export default function ShipPage() {
         <h2 className="font-serif text-2xl">Promises</h2>
         <ul className="mt-4 space-y-3">
           {project.promises.map((item) => (
-            <li
-              key={item.idx}
-              className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-4"
-            >
-              <div className="flex justify-between gap-3 text-sm text-[var(--muted)]">
-                <span>{promiseLabel(item.status)}</span>
-                <span>{formatWhen(item.deadlineMs)}</span>
+            <li key={item.idx} className={`${panel} p-4`}>
+              <div className="flex justify-between gap-3 text-sm">
+                <span className={promiseTone(item.status)}>{promiseLabel(item.status)}</span>
+                <span className="text-[var(--muted)]">{formatWhen(item.deadlineMs)}</span>
               </div>
-              <p className="mt-2">{item.text}</p>
+              <p className="mt-2 leading-relaxed">{item.text}</p>
             </li>
           ))}
         </ul>
       </section>
 
       {project.vote ? (
-        <section className="mt-10 rounded-2xl border border-[var(--pay)]/40 bg-[var(--paper)] p-5">
+        <section className={`${panel} mt-10 border-[var(--pay)]/30 p-5 md:p-6`}>
           <h2 className="font-serif text-2xl">Vote open</h2>
           <p className="mt-2 text-[var(--muted)]">
             Pay {project.vote.payWeight} · Burn {project.vote.burnWeight} · Closes{" "}
             {formatWhen(project.vote.endMs)}
           </p>
-          <label className="mt-4 block text-sm">
+          <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[var(--burn)]/80">
+            <div className="h-full bg-[var(--pay)]" style={{ width: `${payShare}%` }} />
+          </div>
+          <label className={`${labelClass} mt-5`}>
             Your wallet
             <input
-              className="mt-1 w-full rounded-xl border border-[var(--line)] bg-black/40 px-3 py-2"
+              className={field}
               value={wallet}
               onChange={(event) => setWallet(event.target.value)}
               aria-label="Voter wallet"
             />
           </label>
-          <label className="mt-3 block text-sm">
+          <label className={`${labelClass} mt-3`}>
             Coins to lock
             <input
-              className="mt-1 w-full rounded-xl border border-[var(--line)] bg-black/40 px-3 py-2"
+              className={field}
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
               aria-label="Vote amount"
             />
           </label>
-          <div className="mt-4 flex gap-3">
+          <div className="mt-5 flex flex-wrap gap-3">
             <button
               type="button"
               disabled={busy}
               onClick={() => void handleVote("pay")}
-              className="rounded-full bg-[var(--pay)] px-5 py-2 font-medium text-black"
+              className={`${btnPay} px-5 py-2.5`}
             >
               Vote pay
             </button>
@@ -162,7 +184,7 @@ export default function ShipPage() {
               type="button"
               disabled={busy}
               onClick={() => void handleVote("burn")}
-              className="rounded-full bg-[var(--burn)] px-5 py-2 font-medium text-black"
+              className={btnBurn}
             >
               Vote burn
             </button>
@@ -170,44 +192,46 @@ export default function ShipPage() {
         </section>
       ) : null}
 
-      <section className="mt-10">
+      <section className={`${panel} mt-10 p-5 md:p-6`}>
         <h2 className="font-serif text-2xl">Add the next promise</h2>
-        <p className="mt-2 text-sm text-[var(--muted)]">
+        <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
           Builder wallet required. If the last vote is done, you have 7 days.
         </p>
-        <label className="mt-3 block text-sm">
+        <label className={`${labelClass} mt-4`}>
           Builder wallet
           <input
-            className="mt-1 w-full rounded-xl border border-[var(--line)] bg-black/40 px-3 py-2"
+            className={field}
             value={wallet}
             onChange={(event) => setWallet(event.target.value)}
             aria-label="Builder wallet"
           />
         </label>
         <textarea
-          className="mt-3 w-full rounded-xl border border-[var(--line)] bg-black/40 px-3 py-2"
+          className={`${field} mt-3`}
           value={nextPromise}
           onChange={(event) => setNextPromise(event.target.value)}
           aria-label="Next promise"
           rows={3}
         />
-        <input
-          className="mt-3 w-24 rounded-xl border border-[var(--line)] bg-black/40 px-3 py-2"
-          type="number"
-          min={1}
-          max={14}
-          value={nextDays}
-          onChange={(event) => setNextDays(event.target.value)}
-          aria-label="Days until next vote"
-        />
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => void handleAppend()}
-          className="ml-3 rounded-full border border-[var(--line)] px-5 py-2"
-        >
-          Post promise
-        </button>
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <input
+            className={`${field} mt-0 w-24`}
+            type="number"
+            min={1}
+            max={14}
+            value={nextDays}
+            onChange={(event) => setNextDays(event.target.value)}
+            aria-label="Days until next vote"
+          />
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void handleAppend()}
+            className={btnGhost}
+          >
+            Post promise
+          </button>
+        </div>
       </section>
 
       {error ? <p className="mt-4 text-[var(--burn)]">{error}</p> : null}

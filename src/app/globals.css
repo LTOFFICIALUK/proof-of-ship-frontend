@@ -25,6 +25,13 @@ body {
   background: var(--bg);
   color: var(--ink);
   color-scheme: dark;
+  overflow-x: hidden;
+}
+
+body {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(200, 240, 74, 0.05), transparent),
+    linear-gradient(180deg, #100e0b 0%, var(--bg) 28%);
 }
 
 ::selection {

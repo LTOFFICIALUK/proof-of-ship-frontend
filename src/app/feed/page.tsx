@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, type FeedEvent } from "@/lib/api";
 import { feedLabel, formatWhen } from "@/lib/format";
+import { eyebrow, panel } from "@/components/surface";
 
 export default function FeedPage() {
   const [events, setEvents] = useState<FeedEvent[]>([]);
@@ -23,24 +24,31 @@ export default function FeedPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="font-serif text-4xl">Ship feed</h1>
+      <p className={eyebrow}>Live</p>
+      <h1 className="mt-3 font-serif text-5xl tracking-tight">Ship feed</h1>
       {error ? <p className="mt-6 text-[var(--burn)]">{error}</p> : null}
       <ul className="mt-8 space-y-3">
         {events.map((event) => (
-          <li
-            key={event.id}
-            className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-4"
-          >
-            <p className="text-sm text-[var(--stamp)]">{feedLabel(event.kind)}</p>
-            <Link className="mt-1 block font-mono text-sm" href={`/c/${event.mint}`}>
-              {event.mint.slice(0, 8)}…{event.mint.slice(-4)}
+          <li key={event.id}>
+            <Link
+              href={`/c/${event.mint}`}
+              className={`${panel} block p-4 transition hover:border-[var(--stamp)]/40`}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-sm text-[var(--stamp)]">{feedLabel(event.kind)}</p>
+                  <p className="mt-1 font-mono text-sm text-[var(--ink)]">
+                    {event.mint.slice(0, 8)}…{event.mint.slice(-4)}
+                  </p>
+                </div>
+                <p className="shrink-0 text-sm text-[var(--muted)]">{formatWhen(event.atMs)}</p>
+              </div>
             </Link>
-            <p className="mt-2 text-sm text-[var(--muted)]">{formatWhen(event.atMs)}</p>
           </li>
         ))}
       </ul>
       {!error && events.length === 0 ? (
-        <p className="mt-8 text-[var(--muted)]">No events yet.</p>
+        <p className={`${panel} mt-8 p-6 text-[var(--muted)]`}>No events yet.</p>
       ) : null}
     </div>
   );
