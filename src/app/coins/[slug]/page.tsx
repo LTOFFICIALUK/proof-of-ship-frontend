@@ -155,7 +155,7 @@ export default function CoinPage() {
   const image = imageReady || null;
 
   return (
-    <div className="mx-auto grid max-w-[1180px] items-start gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
+    <div className="mx-auto grid max-w-[1180px] items-stretch gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
       <div className="space-y-5">
         <section className={`${panel} overflow-hidden`}>
           <div className="flex items-start gap-5 p-6 md:p-7">
@@ -294,7 +294,7 @@ export default function CoinPage() {
         </section>
         {error ? <p className="text-[var(--burn)]">{error}</p> : null}
       </div>
-      <aside className="lg:sticky lg:top-24 lg:h-[calc(100vh-7.5rem)]">
+      <aside className="min-h-0 lg:h-full">
         <HolderChat mint={project.mint} />
       </aside>
     </div>
