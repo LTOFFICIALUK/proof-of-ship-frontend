@@ -6,30 +6,32 @@ import { btnPrimary, focusRing } from "@/components/surface";
 
 export const SiteHeader = () => {
   return (
-    <header className="sticky top-0 z-30 min-w-0 border-b border-black/[0.06] bg-[#f5f5f7]/95 px-5 backdrop-blur-2xl md:px-8">
-      <div className="mx-auto flex min-h-12 max-w-[980px] flex-wrap items-center justify-between gap-x-4 gap-y-2 py-2">
+    <header className="sticky top-4 z-30 mx-auto mt-4 w-[min(1080px,calc(100%-1.5rem))] overflow-hidden rounded-[28px] bg-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.06)] ring-1 ring-black/[0.06] backdrop-blur-2xl sm:rounded-full md:w-[min(1080px,calc(100%-2.5rem))]">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2 sm:flex-nowrap sm:px-4">
         <Link
           href="/"
-          className="shrink-0 text-[15px] font-semibold tracking-[-0.02em] text-[var(--ink)]"
+          className="mr-auto shrink-0 text-[15px] font-semibold tracking-[-0.02em] text-[var(--ink)]"
           aria-label="Proof of Ship home"
         >
           Proof of Ship
         </Link>
-        <nav className="flex items-center gap-4 text-[14px] text-[var(--ink)] sm:gap-6">
-          <Link className={`text-[var(--muted)] transition hover:text-[var(--ink)] ${focusRing}`} href="/coins">
+        <nav className="order-3 flex w-full items-center justify-end gap-4 text-[14px] text-[var(--ink)] sm:order-none sm:w-auto sm:gap-5">
+          <Link className={`whitespace-nowrap text-[var(--muted)] transition hover:text-[var(--ink)] ${focusRing}`} href="/coins">
             Coins
           </Link>
-          <Link className={`text-[var(--muted)] transition hover:text-[var(--ink)] ${focusRing}`} href="/feed">
+          <Link className={`whitespace-nowrap text-[var(--muted)] transition hover:text-[var(--ink)] ${focusRing}`} href="/feed">
             Feed
           </Link>
-          <Link className={`text-[var(--muted)] transition hover:text-[var(--ink)] ${focusRing}`} href="/how">
+          <Link className={`whitespace-nowrap text-[var(--muted)] transition hover:text-[var(--ink)] ${focusRing}`} href="/how">
             How it works
           </Link>
-          <Link href="/launch" className={`${btnPrimary} px-4 py-1.5 text-[13px]`}>
+        </nav>
+        <div className="flex items-center gap-2">
+          <Link href="/launch" className={`${btnPrimary} whitespace-nowrap px-4 py-1.5 text-[13px]`}>
             Launch
           </Link>
           <ConnectWallet />
-        </nav>
+        </div>
       </div>
     </header>
   );

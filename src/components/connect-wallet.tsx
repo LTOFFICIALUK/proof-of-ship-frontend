@@ -17,7 +17,7 @@ export const ConnectWallet = () => {
   return (
     <span className="inline-flex flex-col items-end">
       <button type="button" onClick={() => void connect()} disabled={busy} className={`${btnPrimary} px-3 py-1.5 text-[13px]`}>
-        {busy ? "Connecting" : "Connect wallet"}
+        <span className="whitespace-nowrap">{busy ? "Connecting" : "Connect wallet"}</span>
       </button>
       {error ? <span className="mt-1 max-w-40 text-right text-[11px] text-[var(--burn)]">{error}</span> : null}
     </span>
