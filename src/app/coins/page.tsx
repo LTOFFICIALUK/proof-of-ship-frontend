@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { PumpMark } from "@/components/pump-mark";
 import { api } from "@/lib/api";
 import { formatSol } from "@/lib/format";
+import { shortWallet } from "@/lib/wallet";
 import { pageTitle, panel } from "@/components/surface";
 
 type CoinCard = {
@@ -13,9 +13,32 @@ type CoinCard = {
   name: string;
   symbol: string;
   status: string;
-  xHandle: string;
+  builderWallet: string;
+  promise: string;
   balanceSol: number;
+  releasedSol: number;
+  burnedSol: number;
 };
+
+const statusLabel = (status: string) => {
+  if (status === "active") {
+    return "Active";
+  }
+  if (status === "lapsed") {
+    return "Lapsed";
+  }
+  if (status === "abandoned") {
+    return "Abandoned";
+  }
+  return status;
+};
+
+const Mini = ({ label, value, tone = "" }: { label: string; value: string; tone?: string }) => (
+  <div className="min-w-0">
+    <p className="text-[12px] text-[var(--muted)]">{label}</p>
+    <p className={`mt-0.5 truncate text-[15px] font-semibold tracking-[-0.02em] ${tone}`}>{value}</p>
+  </div>
+);
 
 export default function CoinsPage() {
   const [coins, setCoins] = useState<CoinCard[]>([]);
@@ -34,33 +57,47 @@ export default function CoinsPage() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-[980px] pt-4">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className={pageTitle}>Coins</h1>
-          <p className="mt-3 max-w-xl text-[17px] text-[var(--muted)]">
-            Every coin launched here is a pump.fun coin. Open one to read the promise and join the holder chat.
-          </p>
-        </div>
-        <PumpMark label="Launched on pump.fun" />
-      </div>
+    <div className="mx-auto max-w-[980px] pt-2">
+      <h1 className={pageTitle}>Coins</h1>
+      <p className="mt-3 max-w-xl text-[17px] leading-relaxed text-[var(--muted)]">
+        Open a coin to read the promise and join the holder chat.
+      </p>
       {error ? <p className="mt-6 text-[var(--burn)]">{error}</p> : null}
-      <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+      <ul className="mt-8 grid gap-4 sm:grid-cols-2">
         {coins.map((coin) => (
           <li key={coin.mint}>
-            <Link href={`/coins/${coin.slug}`} className={`${panel} block p-5 transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]`}>
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-[20px] font-semibold tracking-[-0.03em]">{coin.name}</p>
-                  <p className="mt-1 text-[14px] text-[var(--muted)]">
-                    ${coin.symbol} · @{coin.xHandle}
+            <Link
+              href={`/coins/${coin.slug}`}
+              className={`${panel} flex h-full flex-col p-4 transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] sm:p-5`}
+            >
+              <div className="flex items-start gap-3">
+                <div
+                  aria-hidden="true"
+                  className="grid h-12 w-12 shrink-0 place-items-center rounded-[16px] bg-[#f5f5f7] text-[18px] font-semibold text-[var(--muted)]"
+                >
+                  {coin.symbol.slice(0, 1)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="truncate text-[18px] font-semibold tracking-[-0.03em]">{coin.name}</p>
+                    <span className="shrink-0 rounded-full bg-[#f5f5f7] px-2.5 py-1 text-[12px] font-medium">
+                      {statusLabel(coin.status)}
+                    </span>
+                  </div>
+                  <p className="mt-1 truncate text-[14px] text-[var(--muted)]">
+                    ${coin.symbol}
+                    <span className="px-1.5">·</span>
+                    <span className="font-mono">{shortWallet(coin.builderWallet)}</span>
                   </p>
                 </div>
-                <PumpMark label="" />
               </div>
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-[13px]">
-                <span className="rounded-full bg-black/[0.05] px-3 py-1 font-medium">{coin.status}</span>
-                <span className="text-[var(--muted)]">{formatSol(coin.balanceSol)} SOL in the vault</span>
+              {coin.promise ? (
+                <p className="mt-4 line-clamp-2 text-[15px] leading-relaxed">{coin.promise}</p>
+              ) : null}
+              <div className="mt-4 grid grid-cols-3 gap-3 border-t border-black/[0.06] pt-4">
+                <Mini label="Vault" value={`${formatSol(coin.balanceSol)} SOL`} />
+                <Mini label="Paid" value={`${formatSol(coin.releasedSol)} SOL`} tone="text-[var(--pay)]" />
+                <Mini label="Burned" value={`${formatSol(coin.burnedSol)} SOL`} tone="text-[var(--burn)]" />
               </div>
             </Link>
           </li>
