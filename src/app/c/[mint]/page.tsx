@@ -149,9 +149,9 @@ export default function ShipPage() {
       </section>
 
       {project.vote ? (
-        <section className={`${panel} mt-10 p-6 md:p-8`}>
+        <section className={`${panel} mt-10 p-4 sm:p-6 md:p-8`}>
           <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Vote open</h2>
-          <p className="mt-2 text-[var(--muted)]">
+          <p className="mt-2 break-all text-[var(--muted)]">
             Pay {project.vote.payWeight} · Burn {project.vote.burnWeight} · Closes{" "}
             {formatWhen(project.vote.endMs)}
           </p>

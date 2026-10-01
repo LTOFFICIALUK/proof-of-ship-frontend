@@ -53,7 +53,7 @@ export default function BuilderPage() {
           <li key={project.mint}>
             <Link
               href={`/c/${project.mint}`}
-              className={`${panel} flex items-center justify-between gap-4 p-5 transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]`}
+              className={`${panel} flex flex-wrap items-center justify-between gap-3 p-4 transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] sm:p-5`}
             >
               <span>
                 {project.name}{" "}

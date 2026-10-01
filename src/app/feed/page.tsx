@@ -33,7 +33,7 @@ export default function FeedPage() {
               href={`/c/${event.mint}`}
               className={`${panel} block p-5 transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]`}
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="text-[13px] font-medium text-[var(--link)]">{feedLabel(event.kind)}</p>
                   <p className="mt-1 font-mono text-[13px] text-[var(--ink)]">

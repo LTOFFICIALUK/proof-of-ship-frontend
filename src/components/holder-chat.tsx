@@ -112,7 +112,7 @@ export const HolderChat = ({ mint }: { mint: string }) => {
       : "Hold some supply to send";
 
   return (
-    <section className={`${panel} flex h-full min-h-0 flex-col overflow-hidden`}>
+    <section className={`${panel} flex h-auto min-h-[24rem] flex-col overflow-hidden lg:h-full lg:min-h-0`}>
       <header className="flex items-center justify-between gap-3 border-b border-black/[0.06] px-5 py-4">
         <div>
           <h2 className="text-[18px] font-semibold tracking-[-0.03em]">Holder chat</h2>

@@ -15,7 +15,7 @@ export const SiteHeader = () => {
         >
           Proof of Ship
         </Link>
-        <nav className="order-3 flex w-full items-center justify-end gap-4 text-[14px] text-[var(--ink)] sm:order-none sm:w-auto sm:gap-5">
+        <nav className="order-3 flex w-full min-w-0 items-center justify-between gap-3 text-[14px] text-[var(--ink)] sm:order-none sm:w-auto sm:justify-end sm:gap-5">
           <Link className={`whitespace-nowrap text-[var(--muted)] transition hover:text-[var(--ink)] ${focusRing}`} href="/coins">
             Coins
           </Link>

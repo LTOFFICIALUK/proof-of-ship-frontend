@@ -58,7 +58,7 @@ export default function CoinsPage() {
                 </div>
                 <PumpMark label="" />
               </div>
-              <div className="mt-4 flex items-center justify-between text-[13px]">
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-[13px]">
                 <span className="rounded-full bg-black/[0.05] px-3 py-1 font-medium">{coin.status}</span>
                 <span className="text-[var(--muted)]">{formatSol(coin.balanceSol)} SOL in the vault</span>
               </div>

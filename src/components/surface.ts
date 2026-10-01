@@ -27,7 +27,7 @@ export const textLink =
 export const eyebrow = "text-[15px] font-medium text-[var(--muted)]";
 
 export const display =
-  "text-[40px] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--ink)] sm:text-[64px]";
+  "text-[36px] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--ink)] sm:text-[64px]";
 
 export const pageTitle =
-  "break-words text-[40px] font-semibold leading-[1.05] tracking-[-0.035em] text-[var(--ink)] sm:text-[48px]";
+  "break-words text-[32px] font-semibold leading-[1.05] tracking-[-0.035em] text-[var(--ink)] sm:text-[48px]";

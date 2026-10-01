@@ -53,7 +53,7 @@ export default function LaunchPage() {
         <PumpMark label="Launches on pump.fun" />
       </div>
       <form
-        className={`${panel} mt-8 space-y-5 p-6 md:p-8`}
+        className={`${panel} mt-8 space-y-5 p-4 sm:p-6 md:p-8`}
         onSubmit={(event) => {
           event.preventDefault();
           void handleSubmit();

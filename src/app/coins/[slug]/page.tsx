@@ -34,9 +34,9 @@ const statusLabel = (status: string) => {
 };
 
 const Stat = ({ label, value, tone = "" }: { label: string; value: string; tone?: string }) => (
-  <div className="min-w-0 px-5 py-4">
+  <div className="min-w-0 px-4 py-3 sm:px-5 sm:py-4">
     <p className="text-[12px] text-[var(--muted)]">{label}</p>
-    <p className={`mt-1 truncate text-[20px] font-semibold tracking-[-0.03em] ${tone}`}>{value}</p>
+    <p className={`mt-1 truncate text-[18px] font-semibold tracking-[-0.03em] sm:text-[20px] ${tone}`}>{value}</p>
   </div>
 );
 
@@ -156,20 +156,20 @@ export default function CoinPage() {
 
   return (
     <div className="mx-auto grid max-w-[1180px] items-stretch gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
-      <div className="space-y-5">
+      <div className="min-w-0 space-y-5">
         <section className={`${panel} overflow-hidden`}>
-          <div className="flex items-start gap-5 p-6 md:p-7">
+          <div className="flex items-start gap-4 p-4 sm:gap-5 sm:p-6 md:p-7">
             <div
               role="img"
               aria-label={`${project.name} logo`}
-              className="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-[22px] bg-[#f5f5f7] bg-cover bg-center text-[26px] font-semibold text-[var(--muted)]"
+              className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-[18px] bg-[#f5f5f7] bg-cover bg-center text-[22px] font-semibold text-[var(--muted)] sm:h-20 sm:w-20 sm:rounded-[22px] sm:text-[26px]"
               style={image ? { backgroundImage: `url(${image})` } : undefined}
             >
               {image ? null : project.symbol.slice(0, 1)}
             </div>
             <div className="min-w-0 flex-1 pt-0.5">
               <div className="flex items-start justify-between gap-3">
-                <h1 className="break-words text-[32px] font-semibold leading-none tracking-[-0.04em] md:text-[40px]">
+                <h1 className="min-w-0 break-words text-[28px] font-semibold leading-none tracking-[-0.04em] sm:text-[32px] md:text-[40px]">
                   {project.name}
                 </h1>
                 <span className="mt-1 shrink-0 rounded-full bg-[#f5f5f7] px-3 py-1 text-[13px] font-medium">
@@ -225,20 +225,20 @@ export default function CoinPage() {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 border-t border-black/[0.06] sm:grid-cols-4 sm:[&>*+*]:border-l sm:[&>*+*]:border-black/[0.06]">
+          <div className="grid grid-cols-2 border-t border-black/[0.06] sm:grid-cols-4 sm:[&>*+*]:border-l sm:[&>*+*]:border-black/[0.06] [&>*:nth-child(n+3)]:border-t [&>*:nth-child(n+3)]:border-black/[0.06] sm:[&>*:nth-child(n+3)]:border-t-0 [&>*:nth-child(even)]:border-l [&>*:nth-child(even)]:border-black/[0.06]">
             <Stat label="Market cap" value={formatUsd(market?.marketCapUsd)} />
             <Stat label="ATH" value={formatUsd(market?.athUsd)} />
             <Stat label="Volume" value={formatUsd(market?.volumeUsd)} />
             <Stat label="Holders" value={formatCount(market?.holders)} />
           </div>
-          <div className="grid grid-cols-3 border-t border-black/[0.06] [&>*+*]:border-l [&>*+*]:border-black/[0.06]">
+          <div className="grid grid-cols-1 border-t border-black/[0.06] sm:grid-cols-3 sm:[&>*+*]:border-l sm:[&>*+*]:border-black/[0.06] [&>*+*]:border-t [&>*+*]:border-black/[0.06] sm:[&>*+*]:border-t-0">
             <Stat label="Vault" value={`${formatSol(project.vault.balanceSol)} SOL`} />
             <Stat label="Paid to builder" value={`${formatSol(project.vault.releasedSol)} SOL`} tone="text-[var(--pay)]" />
             <Stat label="Burned" value={`${formatSol(project.vault.burnedSol)} SOL`} tone="text-[var(--burn)]" />
           </div>
         </section>
 
-        <section className={`${panel} p-6 md:p-7`}>
+        <section className={`${panel} p-4 sm:p-6 md:p-7`}>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Promises</h2>
@@ -251,7 +251,7 @@ export default function CoinPage() {
           <ul className="mt-5 divide-y divide-black/[0.06] border-t border-black/[0.06]">
             {project.promises.map((item) => (
               <li key={item.idx} className="py-5">
-                <div className="flex items-start justify-between gap-6">
+                <div className="flex items-start justify-between gap-3 sm:gap-6">
                   <div className="min-w-0">
                     <div className="flex flex-wrap gap-3 text-[13px]">
                       <span className="font-medium">{promiseLabel(item.status)}</span>
@@ -260,7 +260,7 @@ export default function CoinPage() {
                     <p className="mt-2 text-[17px] leading-relaxed">{item.text}</p>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className={`text-[28px] font-semibold tracking-[-0.03em] ${netTone(item.netPct)}`}>
+                    <p className={`text-[22px] font-semibold tracking-[-0.03em] sm:text-[28px] ${netTone(item.netPct)}`}>
                       {formatNet(item.netPct)}
                     </p>
                     <p className="text-[12px] text-[var(--muted)]">of supply</p>

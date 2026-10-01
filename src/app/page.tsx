@@ -26,10 +26,10 @@ const split = [
 export default function HomePage() {
   return (
     <div className="mx-auto max-w-[980px]">
-      <section className="relative mx-auto max-w-[860px] px-6 pb-14 pt-12 text-center md:px-10 md:pb-20 md:pt-16">
+      <section className="relative mx-auto max-w-[860px] px-1 pb-10 pt-6 text-center md:px-10 md:pb-20 md:pt-16">
         <div
           aria-hidden="true"
-          className="absolute -inset-x-6 -inset-y-8 -z-10 bg-[#f5f5f7]/45 backdrop-blur-2xl [mask-image:radial-gradient(ellipse_at_center,black_42%,transparent_78%)]"
+          className="absolute inset-x-0 -inset-y-6 -z-10 bg-[#f5f5f7]/45 backdrop-blur-2xl [mask-image:radial-gradient(ellipse_at_center,black_42%,transparent_78%)] md:-inset-x-6 md:-inset-y-8"
         />
         <p className="text-[17px] font-medium text-[var(--muted)]">Ship or burn</p>
         <h1 className={`mt-3 ${display}`}>The dev cannot take the fees and leave.</h1>
@@ -58,14 +58,14 @@ export default function HomePage() {
           {split.map((item, index) => (
             <div
               key={item.label}
-              className={`px-4 py-7 text-center ${index > 0 ? "border-l border-black/[0.06]" : ""}`}
+              className={`px-2 py-5 text-center sm:px-4 sm:py-7 ${index > 0 ? "border-l border-black/[0.06]" : ""}`}
             >
-              <p className="text-[28px] font-semibold tracking-[-0.03em] sm:text-[40px]">{item.value}</p>
+              <p className="text-[22px] font-semibold tracking-[-0.03em] sm:text-[40px]">{item.value}</p>
               <p className="mt-1 text-[13px] text-[var(--muted)]">{item.label}</p>
             </div>
           ))}
         </div>
-        <div className="divide-y divide-black/[0.06] border-t border-black/[0.06] px-6 sm:px-8">
+        <div className="divide-y divide-black/[0.06] border-t border-black/[0.06] px-4 sm:px-8">
           {steps.map((step) => (
             <div key={step.title} className="grid gap-2 py-7 sm:grid-cols-[140px_1fr] sm:items-baseline sm:gap-8">
               <h2 className="text-[22px] font-semibold tracking-[-0.03em]">{step.title}</h2>
