@@ -465,13 +465,13 @@ export default function LaunchPage() {
                 />
               </label>
               <label className={labelClass}>
-                Dev buy, 0 to 3 percent
+                Dev buy, 0 to 5 percent
                 <div className="mt-2 flex items-center gap-3 rounded-xl bg-[#f5f5f7] px-4 py-3 ring-1 ring-transparent focus-within:bg-white focus-within:ring-2 focus-within:ring-[var(--ink)]/25">
                   <input
                     className="w-full accent-[var(--ink)]"
                     type="range"
                     min={0}
-                    max={3}
+                    max={5}
                     step={0.1}
                     value={devBuy}
                     onChange={(event) => setDevBuy(event.target.value)}
