@@ -1,18 +1,19 @@
 import Link from "next/link";
-import { btnGhost, btnPrimary, display, panel } from "@/components/surface";
+import { HomeRows, LiveStrip } from "@/components/home-live";
+import { btnGhost, btnPrimary, display, num, panel } from "@/components/surface";
 
 const steps = [
   {
-    title: "Lock",
-    body: "75 percent of creator fees sit in a vault. 15 percent is runway. 10 percent is the platform.",
-  },
-  {
     title: "Promise",
-    body: "Start with one promise. Add more anytime. Miss the next one and leftover fees burn.",
+    body: "Post one promise with a deadline 3 to 14 days out, and say what done looks like.",
   },
   {
-    title: "Vote",
-    body: "Holders vote with the coins they hold. More pay than burn: the vault pays the builder. More burn: that SOL buys and burns the coin.",
+    title: "Proof",
+    body: "Ship it and post the proof link. That opens a 48 hour holder vote. No proof by the deadline is a miss.",
+  },
+  {
+    title: "Holders decide",
+    body: "Pay sends 60 percent of the vault to the builder. Burn spends it to buy the coin and burn it. The rest waits for the next promise.",
   },
 ];
 
@@ -50,6 +51,8 @@ export default function HomePage() {
         </div>
       </section>
 
+      <LiveStrip />
+
       <section className={`${panel} mx-auto mt-16 max-w-[760px] overflow-hidden`}>
         <div className="grid grid-cols-3">
           {split.map((item, index) => (
@@ -57,20 +60,22 @@ export default function HomePage() {
               key={item.label}
               className={`px-2 py-5 text-center sm:px-4 sm:py-7 ${index > 0 ? "border-l border-black/[0.06]" : ""}`}
             >
-              <p className="text-[22px] font-semibold tracking-[-0.03em] sm:text-[40px]">{item.value}</p>
+              <p className={`text-[22px] font-semibold tracking-[-0.03em] sm:text-[40px] ${num}`}>{item.value}</p>
               <p className="mt-1 text-[13px] text-[var(--muted)]">{item.label}</p>
             </div>
           ))}
         </div>
         <div className="divide-y divide-black/[0.06] border-t border-black/[0.06] px-4 sm:px-8">
           {steps.map((step) => (
-            <div key={step.title} className="grid gap-2 py-7 sm:grid-cols-[140px_1fr] sm:items-baseline sm:gap-8">
+            <div key={step.title} className="grid gap-2 py-7 sm:grid-cols-[180px_1fr] sm:items-baseline sm:gap-8">
               <h2 className="text-[22px] font-semibold tracking-[-0.03em]">{step.title}</h2>
               <p className="text-[17px] leading-relaxed text-[var(--muted)]">{step.body}</p>
             </div>
           ))}
         </div>
       </section>
+
+      <HomeRows />
     </div>
   );
 }

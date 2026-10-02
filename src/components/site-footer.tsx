@@ -23,6 +23,9 @@ export const SiteFooter = () => {
           <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/launch">
             Launch
           </Link>
+          <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/recommit">
+            Recommit
+          </Link>
         </nav>
       </div>
     </footer>

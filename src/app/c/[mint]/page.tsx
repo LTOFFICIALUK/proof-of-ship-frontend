@@ -5,17 +5,10 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { HolderChat } from "@/components/holder-chat";
 import { api, type ProjectView, type PromiseView } from "@/lib/api";
-import { formatCount, formatDue, formatNet, formatSol, formatUsd, promiseLabel } from "@/lib/format";
+import { formatCount, formatDue, formatNet, formatSol, formatTokens, formatUsd, promiseLabel } from "@/lib/format";
 import { shortWallet, useWallet } from "@/lib/wallet";
-import { btnBurn, btnGhost, btnPay, field, panel, textLink } from "@/components/surface";
+import { btnBurn, btnGhost, btnPay, field, labelClass, panel, textLink } from "@/components/surface";
 import { ConnectWallet } from "@/components/connect-wallet";
-
-const netTone = (value: number | null | undefined) => {
-  if (value == null || value === 0) {
-    return "text-[var(--ink)]";
-  }
-  return value > 0 ? "text-[var(--pay)]" : "text-[var(--burn)]";
-};
 
 const canVote = (status: string) => status === "vote_open";
 
@@ -77,16 +70,53 @@ const IconLink = ({
   );
 };
 
+const ProofForm = ({
+  idx,
+  busy,
+  onShip,
+}: {
+  idx: number;
+  busy: boolean;
+  onShip: (idx: number, url: string, note: string) => Promise<void>;
+}) => {
+  const [url, setUrl] = useState("");
+  const [note, setNote] = useState("");
+  return (
+    <form
+      className="mt-4 space-y-3"
+      onSubmit={(event) => {
+        event.preventDefault();
+        void onShip(idx, url, note);
+      }}
+    >
+      <label className={labelClass}>
+        Proof link
+        <input className={field} value={url} onChange={(event) => setUrl(event.target.value)} required aria-label="Proof link" />
+      </label>
+      <label className={labelClass}>
+        What shipped
+        <textarea className={field} value={note} onChange={(event) => setNote(event.target.value)} rows={2} aria-label="What shipped" />
+      </label>
+      <button type="submit" className={btnPay} disabled={busy}>
+        Mark as shipped
+      </button>
+    </form>
+  );
+};
+
 export default function CoinPage() {
   const params = useParams<{ mint: string }>();
-  const { wallet } = useWallet();
+  const { wallet, signBytes } = useWallet();
   const [project, setProject] = useState<ProjectView | null>(null);
   const [error, setError] = useState("");
   const [busyIdx, setBusyIdx] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
-  const [proofUrl, setProofUrl] = useState("");
-  const [proofNote, setProofNote] = useState("");
   const [imageReady, setImageReady] = useState("");
+  const [reason, setReason] = useState("");
+  const [nextTitle, setNextTitle] = useState("");
+  const [nextDone, setNextDone] = useState("");
+  const [nextDays, setNextDays] = useState("7");
+  const [abandonStep, setAbandonStep] = useState(false);
 
   const load = useCallback(async () => {
     setProject(await api<ProjectView>(`/v1/projects/${params.mint}`));
@@ -114,7 +144,7 @@ export default function CoinPage() {
   }, [load]);
 
   useEffect(() => {
-    const src = project?.market?.image;
+    const src = project?.profile?.image || project?.market?.image;
     if (!src) {
       setImageReady("");
       return;
@@ -123,18 +153,27 @@ export default function CoinPage() {
     probe.onload = () => setImageReady(src);
     probe.onerror = () => setImageReady("");
     probe.src = src;
-  }, [project?.market?.image]);
+  }, [project?.market?.image, project?.profile?.image]);
 
-  const handleVote = async (item: PromiseView, side: "up" | "down") => {
+  const handleVote = async (item: PromiseView, side: "pay" | "burn") => {
     if (!project || !wallet) {
       return;
     }
     setBusyIdx(item.idx);
     setError("");
     try {
-      const next = await api<ProjectView>(`/v1/projects/${project.mint}/promises/${item.idx}/vote`, {
+      const prompt = await api<{ nonce: string; message: string }>(
+        `/v1/coins/${project.mint}/promises/${item.idx}/vote-message?side=${side}`,
+      );
+      const signature = await signBytes(prompt.message);
+      const next = await api<ProjectView>(`/v1/coins/${project.mint}/promises/${item.idx}/vote`, {
         method: "POST",
-        body: JSON.stringify({ side }),
+        body: JSON.stringify({
+          side,
+          reason: side === "burn" ? reason.trim() : undefined,
+          nonce: prompt.nonce,
+          signature,
+        }),
       });
       setProject(next);
     } catch (err) {
@@ -144,19 +183,63 @@ export default function CoinPage() {
     }
   };
 
-  const handleShip = async (idx: number) => {
+  const handleShip = async (idx: number, url: string, note: string) => {
     setBusyIdx(idx);
     setError("");
     try {
-      const next = await api<ProjectView>(`/v1/projects/${project?.mint}/promises/${idx}/proof`, {
+      const next = await api<ProjectView>(`/v1/coins/${project?.mint}/promises/${idx}/proof`, {
         method: "POST",
-        body: JSON.stringify({ url: proofUrl.trim(), note: proofNote.trim() }),
+        body: JSON.stringify({ url: url.trim(), note: note.trim() }),
       });
       setProject(next);
-      setProofUrl("");
-      setProofNote("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not mark this as shipped");
+    } finally {
+      setBusyIdx(null);
+    }
+  };
+
+  const handleNextPromise = async () => {
+    if (!project) {
+      return;
+    }
+    setBusyIdx(-1);
+    setError("");
+    try {
+      const next = await api<ProjectView>(`/v1/coins/${project.mint}/promises`, {
+        method: "POST",
+        body: JSON.stringify({
+          title: nextTitle.trim(),
+          doneLooksLike: nextDone.trim(),
+          proofType: "link",
+          deadlineMs: Date.now() + Number(nextDays) * 24 * 60 * 60 * 1000,
+        }),
+      });
+      setProject(next);
+      setNextTitle("");
+      setNextDone("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not post the next promise");
+    } finally {
+      setBusyIdx(null);
+    }
+  };
+
+  const handleAbandon = async () => {
+    if (!project) {
+      return;
+    }
+    setBusyIdx(-2);
+    setError("");
+    try {
+      const next = await api<ProjectView>(`/v1/projects/${project.mint}/abandon`, {
+        method: "POST",
+        body: "{}",
+      });
+      setProject(next);
+      setAbandonStep(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not abandon this coin");
     } finally {
       setBusyIdx(null);
     }
@@ -184,10 +267,22 @@ export default function CoinPage() {
 
   const market = project.market;
   const image = imageReady || null;
+  const viewer = project.viewer;
+  const isBuilder = Boolean(viewer?.isBuilder);
+  const website = project.profile.website || market?.website || null;
+  const xUrl = market?.x || (project.xHandle ? `https://x.com/${project.xHandle}` : null);
+  const openVote = project.promises.find((item) => item.status === "vote_open");
+  const waitingProof = project.promises.find((item) => item.status === "pending");
+  const canPostNext = isBuilder && !waitingProof && !openVote && project.status !== "abandoned";
 
   return (
     <div className="mx-auto grid max-w-[1180px] items-stretch gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
       <div className="min-w-0 space-y-5">
+        {project.status === "lapsed" ? (
+          <p className={`${panel} px-5 py-4 text-[15px] text-[var(--burn)]`}>
+            No new promise in 7 days. Fees are burning until the builder posts one.
+          </p>
+        ) : null}
         <section className={`${panel} overflow-hidden`}>
           <div className="flex items-start gap-4 p-4 sm:gap-5 sm:p-6 md:p-7">
             <div
@@ -233,13 +328,13 @@ export default function CoinPage() {
                   @{project.xHandle}
                 </Link>
                 <span className="inline-flex items-center">
-                  <IconLink href={market?.website ?? null} label={market?.website ? "Website" : "Website pending"}>
+                  <IconLink href={website} label={website ? "Website" : "Website pending"}>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                       <circle cx="8" cy="8" r="6.2" stroke="currentColor" strokeWidth="1.4" />
                       <path d="M2 8h12M8 1.8c1.6 1.7 2.4 3.8 2.4 6.2S9.6 12.5 8 14.2C6.4 12.5 5.6 10.4 5.6 8S6.4 3.5 8 1.8Z" stroke="currentColor" strokeWidth="1.4" />
                     </svg>
                   </IconLink>
-                  <IconLink href={market?.x ?? null} label={market?.x ? "X" : "X pending"}>
+                  <IconLink href={xUrl} label={xUrl ? "X" : "X pending"}>
                     <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                       <path d="M9.5 6.8 14.7 1h-1.2L9 6 5.4 1H1.2l5.5 7.3L1.2 15h1.2L7.2 9.7 11 15h4.2L9.5 6.8Zm-1.3 1.5-.6-.8L2.9 1.9h1.9l3.6 4.7.6.8 4.3 5.7h-1.9L8.2 8.3Z" />
                     </svg>
@@ -252,6 +347,14 @@ export default function CoinPage() {
                   >
                     on pump.fun
                   </a>
+                  <a
+                    href={`https://dexscreener.com/solana/${project.mint}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-2 text-[13px] text-[var(--muted)] hover:text-[var(--ink)]"
+                  >
+                    DexScreener
+                  </a>
                 </span>
               </div>
             </div>
@@ -262,12 +365,106 @@ export default function CoinPage() {
             <Stat label="Volume" value={formatUsd(market?.volumeUsd)} />
             <Stat label="Holders" value={formatCount(market?.holders)} />
           </div>
-          <div className="grid grid-cols-1 border-t border-black/[0.06] sm:grid-cols-3 sm:[&>*+*]:border-l sm:[&>*+*]:border-black/[0.06] [&>*+*]:border-t [&>*+*]:border-black/[0.06] sm:[&>*+*]:border-t-0">
-            <Stat label="Vault" value={`${formatSol(project.vault.balanceSol)} SOL`} />
+          <div className="grid grid-cols-2 border-t border-black/[0.06] sm:grid-cols-4 sm:[&>*+*]:border-l sm:[&>*+*]:border-black/[0.06] [&>*:nth-child(n+3)]:border-t [&>*:nth-child(n+3)]:border-black/[0.06] sm:[&>*:nth-child(n+3)]:border-t-0 [&>*:nth-child(even)]:border-l [&>*:nth-child(even)]:border-black/[0.06]">
+            <Stat
+              label="Vault"
+              value={project.vault.balanceSol === 0 ? "Fees land here as the coin trades." : `${formatSol(project.vault.balanceSol)} SOL`}
+            />
             <Stat label="Paid to builder" value={`${formatSol(project.vault.releasedSol)} SOL`} tone="text-[var(--pay)]" />
             <Stat label="Burned" value={`${formatSol(project.vault.burnedSol)} SOL`} tone="text-[var(--burn)]" />
+            <Stat label="Runway paid" value={`${formatSol(project.vault.runwaySol)} SOL`} />
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 border-t border-black/[0.06] px-5 py-3 text-[13px] text-[var(--muted)]">
+            <span>
+              Vault address:{" "}
+              {project.chain.vault ? (
+                <a className={textLink} href={`https://solscan.io/account/${project.chain.vault}`} target="_blank" rel="noreferrer">
+                  {shortWallet(project.chain.vault)}
+                </a>
+              ) : (
+                "Pending"
+              )}
+            </span>
+            <span>
+              Fee config:{" "}
+              {project.chain.feeConfig ? (
+                <a className={textLink} href={`https://solscan.io/account/${project.chain.feeConfig}`} target="_blank" rel="noreferrer">
+                  {shortWallet(project.chain.feeConfig)}
+                </a>
+              ) : (
+                "Pending"
+              )}
+            </span>
+            <span>
+              Revoke:{" "}
+              {project.chain.revokeSig ? (
+                <a className={textLink} href={`https://solscan.io/tx/${project.chain.revokeSig}`} target="_blank" rel="noreferrer">
+                  {shortWallet(project.chain.revokeSig)}
+                </a>
+              ) : (
+                "Pending"
+              )}
+            </span>
+            <a className={textLink} href={`/api/v1/coins/${project.mint}/card.svg`} target="_blank" rel="noreferrer">
+              Share card
+            </a>
           </div>
         </section>
+
+        {isBuilder ? (
+          <section className={`${panel} space-y-5 p-4 sm:p-6`}>
+            <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Builder</h2>
+            {canPostNext ? (
+              <form
+                className="space-y-3"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void handleNextPromise();
+                }}
+              >
+                <p className="text-[15px] text-[var(--muted)]">Post the next promise. The timer is 7 days from the last close.</p>
+                <label className={labelClass}>
+                  Promise title
+                  <input className={field} value={nextTitle} onChange={(event) => setNextTitle(event.target.value)} required aria-label="Next promise title" />
+                </label>
+                <label className={labelClass}>
+                  What done looks like
+                  <textarea className={field} value={nextDone} onChange={(event) => setNextDone(event.target.value)} rows={2} aria-label="What done looks like" />
+                </label>
+                <label className={labelClass}>
+                  Days until the deadline
+                  <input className={`${field} max-w-[8rem]`} type="number" min={3} max={14} value={nextDays} onChange={(event) => setNextDays(event.target.value)} aria-label="Days until the deadline" />
+                </label>
+                <button type="submit" className={btnPay} disabled={busyIdx === -1}>
+                  Post next promise
+                </button>
+              </form>
+            ) : (
+              <p className="text-[15px] text-[var(--muted)]">
+                {project.status === "abandoned" ? "This coin is abandoned." : "Close the open promise before you post another."}
+              </p>
+            )}
+            {project.status !== "abandoned" ? (
+              abandonStep ? (
+                <div className="space-y-3">
+                  <p className="text-[15px] text-[var(--burn)]">This burns the whole vault and cannot be undone.</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button type="button" className={btnBurn} disabled={busyIdx === -2} onClick={() => void handleAbandon()}>
+                      Confirm abandon
+                    </button>
+                    <button type="button" className={btnGhost} onClick={() => setAbandonStep(false)}>
+                      Keep shipping
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button type="button" className={btnGhost} onClick={() => setAbandonStep(true)}>
+                  Abandon
+                </button>
+              )
+            ) : null}
+          </section>
+        ) : null}
 
         <section className={`${panel} p-4 sm:p-6 md:p-7`}>
           <div className="flex flex-wrap items-end justify-between gap-4">
@@ -279,6 +476,13 @@ export default function CoinPage() {
             </div>
             {!wallet ? <ConnectWallet /> : null}
           </div>
+          {openVote && viewer && !isBuilder ? (
+            <p className="mt-4 text-[14px] text-[var(--muted)]">
+              {viewer.excluded
+                ? "Not eligible. Builders and excluded wallets cannot vote."
+                : `Your eligible weight is the lowest of your 3 balances: ${formatTokens(viewer.weight)}.`}
+            </p>
+          ) : null}
           <ul className="mt-5 divide-y divide-black/[0.06] border-t border-black/[0.06]">
             {project.promises.map((item) => (
               <li key={item.idx} className="py-5">
@@ -290,68 +494,54 @@ export default function CoinPage() {
                       <span className="font-mono text-[var(--muted)]">{formatDue(item.deadlineMs, project.nowMs)}</span>
                     </div>
                     <p className="mt-2 text-[17px] leading-relaxed">{item.text}</p>
+                    {item.doneLooksLike ? <p className="mt-1 text-[14px] text-[var(--muted)]">Done looks like: {item.doneLooksLike}</p> : null}
                     {item.proofUrl ? (
                       <a className={`${textLink} mt-2 inline-block text-[14px]`} href={item.proofUrl} target="_blank" rel="noreferrer">
                         Proof
                       </a>
                     ) : null}
+                    {item.status !== "pending" && item.status !== "vote_open" ? (
+                      <p className="mt-2 text-[13px] text-[var(--muted)]">
+                        <a className={textLink} href={`/api/v1/coins/${project.mint}/promises/${item.idx}/tally?download=1`}>
+                          Download tally.json
+                        </a>
+                      </p>
+                    ) : null}
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className={`font-mono text-[22px] font-semibold tracking-[-0.03em] sm:text-[28px] ${netTone(item.netPct)}`}>
+                    <p className={`font-mono text-[22px] font-semibold tracking-[-0.03em] sm:text-[28px] ${item.netPct && item.netPct > 0 ? "text-[var(--pay)]" : item.netPct && item.netPct < 0 ? "text-[var(--burn)]" : "text-[var(--ink)]"}`}>
                       {item.status === "vote_open" ? `${(item.turnoutPct ?? 0).toFixed(2)}%` : formatNet(item.netPct)}
                     </p>
                     <p className="text-[12px] text-[var(--muted)]">{item.status === "vote_open" ? "turnout" : "of supply"}</p>
                   </div>
                 </div>
-                {item.status === "pending" && wallet === project.builderWallet ? (
-                  <form
-                    className="mt-4 space-y-3"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      void handleShip(item.idx);
-                    }}
-                  >
-                    <input
-                      className={field}
-                      value={proofUrl}
-                      onChange={(event) => setProofUrl(event.target.value)}
-                      placeholder="Proof link"
-                      aria-label="Proof link"
-                      required
-                    />
-                    <textarea
-                      className={field}
-                      value={proofNote}
-                      onChange={(event) => setProofNote(event.target.value)}
-                      placeholder="What shipped"
-                      aria-label="What shipped"
-                      rows={2}
-                    />
-                    <button type="submit" className={btnPay} disabled={busyIdx === item.idx}>
-                      Mark as shipped
-                    </button>
-                  </form>
-                ) : null}
-                {canVote(item.status) && wallet && wallet !== project.builderWallet ? (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      aria-pressed={item.yourSide === "up"}
-                      disabled={busyIdx === item.idx}
-                      onClick={() => void handleVote(item, "up")}
-                      className={item.yourSide === "up" ? btnPay : btnGhost}
-                    >
-                      Pay the builder
-                    </button>
-                    <button
-                      type="button"
-                      aria-pressed={item.yourSide === "down"}
-                      disabled={busyIdx === item.idx}
-                      onClick={() => void handleVote(item, "down")}
-                      className={item.yourSide === "down" ? btnBurn : btnGhost}
-                    >
-                      Burn it
-                    </button>
+                {item.status === "pending" && isBuilder ? <ProofForm idx={item.idx} busy={busyIdx === item.idx} onShip={handleShip} /> : null}
+                {canVote(item.status) && wallet && !isBuilder && !viewer?.excluded ? (
+                  <div className="mt-4 space-y-3">
+                    <label className={labelClass}>
+                      Optional reason
+                      <input className={field} value={reason} onChange={(event) => setReason(event.target.value)} maxLength={140} aria-label="Optional reason" />
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        aria-pressed={item.yourSide === "pay"}
+                        disabled={busyIdx === item.idx}
+                        onClick={() => void handleVote(item, "pay")}
+                        className={item.yourSide === "pay" ? btnPay : btnGhost}
+                      >
+                        Pay the builder
+                      </button>
+                      <button
+                        type="button"
+                        aria-pressed={item.yourSide === "burn"}
+                        disabled={busyIdx === item.idx}
+                        onClick={() => void handleVote(item, "burn")}
+                        className={item.yourSide === "burn" ? btnBurn : btnGhost}
+                      >
+                        Burn it
+                      </button>
+                    </div>
                   </div>
                 ) : null}
               </li>

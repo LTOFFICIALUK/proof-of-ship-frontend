@@ -94,15 +94,45 @@ export const formatDue = (ms: number, now = Date.now()) => {
   return `${Math.floor(hours / 24)} days left`;
 };
 
+export const formatPct = (value: number | null | undefined) => {
+  if (value == null || !Number.isFinite(value)) {
+    return "Pending";
+  }
+  return `${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}%`;
+};
+
+const TOKEN_DECIMALS = 1_000_000;
+
+export const formatTokens = (raw: string | null | undefined) => {
+  if (!raw || !/^[0-9]+$/.test(raw)) {
+    return "Pending";
+  }
+  const value = Number(BigInt(raw) / BigInt(TOKEN_DECIMALS));
+  return value.toLocaleString(undefined, { notation: "compact", maximumFractionDigits: 2 });
+};
+
+export const formatIn = (ms: number, now = Date.now()) => {
+  const delta = ms - now;
+  if (delta <= 0) {
+    return formatStamp(ms, now).label;
+  }
+  const hours = Math.floor(delta / 3_600_000);
+  const minutes = Math.floor((delta % 3_600_000) / 60_000);
+  if (hours < 48) {
+    return `in ${hours}h ${minutes}m`;
+  }
+  return `in ${Math.floor(hours / 24)} days`;
+};
+
 export const promiseLabel = (status: string) => {
   if (status === "vote_open") {
-    return "Vote open";
+    return "Voting";
   }
   if (status === "no_quorum") {
     return "No quorum";
   }
   if (status === "paid") {
-    return "Paid";
+    return "Shipped";
   }
   if (status === "burned") {
     return "Burned";
@@ -157,4 +187,50 @@ export const feedLabel = (kind: string) => {
     return "Buyback burn";
   }
   return kind;
+};
+
+const solText = (amount: number | null) =>
+  amount === null ? "" : `${formatSol(amount)} SOL`;
+
+export const describeEvent = (event: {
+  kind: string;
+  amountSol: number | null;
+  promise: string;
+}) => {
+  const sol = solText(event.amountSol);
+  const promise = event.promise ? ` "${event.promise}"` : "";
+  if (event.kind === "launch") {
+    return "Launched with its first promise.";
+  }
+  if (event.kind === "promise") {
+    return `Posted a new promise${promise}.`;
+  }
+  if (event.kind === "vote_open") {
+    return `Marked${promise} as shipped. Holders are voting.`;
+  }
+  if (event.kind === "vote_pay") {
+    return sol ? `Holders voted pay. ${sol} paid to the builder.` : "Holders voted pay.";
+  }
+  if (event.kind === "vote_burn") {
+    return sol ? `Holders voted burn. ${sol} set to buy and burn.` : "Holders voted burn.";
+  }
+  if (event.kind === "vote_roll") {
+    return event.amountSol ? `Rolled over twice. ${sol} set to burn.` : "The vote rolled over to the next promise.";
+  }
+  if (event.kind === "miss") {
+    return sol ? `Missed the deadline. ${sol} set to burn.` : "Missed the deadline.";
+  }
+  if (event.kind === "burn") {
+    return sol ? `${sol} bought the coin and burned it.` : "Bought the coin and burned it.";
+  }
+  if (event.kind === "lapse") {
+    return "No new promise in 7 days. Fees are burning.";
+  }
+  if (event.kind === "abandon") {
+    return "The builder abandoned the coin. The vault burns.";
+  }
+  if (event.kind === "no_quorum") {
+    return "Turnout was under 2 percent. The vote got 24 more hours.";
+  }
+  return feedLabel(event.kind);
 };

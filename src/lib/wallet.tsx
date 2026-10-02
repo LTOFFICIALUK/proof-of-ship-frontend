@@ -24,6 +24,7 @@ type WalletContextValue = {
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
   refresh: () => Promise<void>;
+  signBytes: (text: string) => Promise<string>;
 };
 
 const signInMessage = (wallet: string, nonce: string, issued: string) =>
@@ -93,6 +94,16 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const signBytes = async (text: string) => {
+    const current = provider();
+    if (!current?.signMessage) {
+      throw new Error("No wallet found. Install Phantom, then try again.");
+    }
+    const signed = await current.signMessage(new TextEncoder().encode(text));
+    const bytes = signed instanceof Uint8Array ? signed : signed.signature;
+    return toBase64(bytes);
+  };
+
   const disconnect = async () => {
     setError("");
     await api("/v1/auth/logout", { method: "POST", body: "{}" }).catch(() => undefined);
@@ -105,7 +116,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <WalletContext.Provider value={{ wallet, xHandle, busy, error, connect, disconnect, refresh }}>
+    <WalletContext.Provider value={{ wallet, xHandle, busy, error, connect, disconnect, refresh, signBytes }}>
       {children}
     </WalletContext.Provider>
   );

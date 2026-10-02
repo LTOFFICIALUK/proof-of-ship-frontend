@@ -7,6 +7,8 @@ export const panel =
 export const field =
   "mt-2 w-full rounded-xl bg-[#f5f5f7] px-4 py-3 text-[16px] text-[var(--ink)] outline-none ring-1 ring-transparent transition duration-200 placeholder:text-[var(--muted)] focus:bg-white focus:ring-2 focus:ring-[var(--ink)]/25";
 
+export const num = "font-mono tabular-nums";
+
 export const labelClass = "block text-[13px] font-medium text-[var(--muted)]";
 
 export const btnPrimary =
