@@ -182,13 +182,13 @@ export const RecommitVisual = () => {
             <div className="rounded-[18px] bg-[#eef8f1] px-4 py-4">
               <p className="text-[13px] font-medium text-[var(--pay)]">Pay wins</p>
               <p className="mt-1 text-[15px] leading-snug text-[var(--ink)]">
-                60% of the vault buys $POS for the builder. The rest waits for the next promise.
+                60% of the vault is paid to the builder in SOL. The rest waits for the next promise.
               </p>
             </div>
             <div className="rounded-[18px] bg-[#fdf1f0] px-4 py-4">
               <p className="text-[13px] font-medium text-[var(--burn)]">Burn wins</p>
               <p className="mt-1 text-[15px] leading-snug text-[var(--ink)]">
-                60% of the vault buys the coin and burns it. The rest waits for the next promise.
+                60% of the vault buys $POS. The rest waits for the next promise.
               </p>
             </div>
           </div>

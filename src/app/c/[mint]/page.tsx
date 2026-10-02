@@ -380,14 +380,8 @@ export default function CoinPage() {
               value={project.vault.balanceSol === 0 ? "Fees land here as the coin trades." : `${formatSol(project.vault.balanceSol)} SOL`}
             />
             <Stat
-              label="$POS for the builder"
-              value={
-                project.vault.posBought !== "0"
-                  ? formatTokens(project.vault.posBought)
-                  : project.vault.posBucketSol > 0
-                    ? `${formatSol(project.vault.posBucketSol)} SOL queued`
-                    : "0"
-              }
+              label="Paid to builder"
+              value={`${formatSol(project.vault.releasedSol)} SOL`}
               tone="text-[var(--pay)]"
             />
             <Stat label="Burned" value={`${formatSol(project.vault.burnedSol)} SOL`} tone="text-[var(--burn)]" />
@@ -402,6 +396,11 @@ export default function CoinPage() {
               <a className={textLink} href={`https://solscan.io/token/${project.vault.posMint}`} target="_blank" rel="noreferrer">
                 {shortWallet(project.vault.posMint)}
               </a>
+              {project.vault.posBought !== "0"
+                ? `. ${formatTokens(project.vault.posBought)} bought`
+                : project.vault.posBucketSol > 0
+                  ? `. ${formatSol(project.vault.posBucketSol)} SOL queued`
+                  : ""}
             </span>
             <span>
               Vault address:{" "}
@@ -499,7 +498,7 @@ export default function CoinPage() {
             <div>
               <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Promises</h2>
               <p className="mt-1 max-w-[36rem] text-[15px] leading-relaxed text-[var(--muted)]">
-                Holders vote after proof is posted. The split stays hidden until the vote ends. Pay buys $POS with 60 percent of the vault and unlocks 20 percent of the remaining dev bag. Burn spends that same slice on the coin.
+                Holders vote after proof is posted. The split stays hidden until the vote ends. Pay pays the builder 60 percent of the vault in SOL and unlocks 20 percent of the remaining dev bag. Burn spends that same slice on $POS.
               </p>
             </div>
             {!wallet ? <ConnectWallet /> : null}

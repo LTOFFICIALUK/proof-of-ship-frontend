@@ -494,7 +494,7 @@ export default function LaunchPage() {
           <section className="space-y-4">
             <h2 className="text-[18px] font-semibold tracking-[-0.03em]">Launch</h2>
             <p className="text-[15px] leading-relaxed text-[var(--muted)]">
-              Your coin goes live on pump.fun. Most creator fees lock in the vault. Holders vote pay or burn. Pay buys $POS. Burn buys the coin and burns it.
+              Your coin goes live on pump.fun. Most creator fees lock in the vault. Holders vote pay or burn. Pay pays you in SOL. Burn buys $POS.
               {body.devBuyBps ? ` You buy ${body.devBuyBps / 100}% at launch.` : ""}
             </p>
             <label className="flex items-start gap-3 text-[15px] leading-relaxed">

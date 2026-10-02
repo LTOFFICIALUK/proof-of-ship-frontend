@@ -213,14 +213,14 @@ export const describeEvent = (event: {
   }
   if (event.kind === "vote_pay") {
     return sol
-      ? `Holders voted pay. ${sol} is set to buy $POS. 20 percent of the remaining dev bag unlocks.`
-      : "Holders voted pay. The vault slice is set to buy $POS.";
+      ? `Holders voted pay. ${sol} is paid to the builder. 20 percent of the remaining dev bag unlocks.`
+      : "Holders voted pay. The vault slice is paid to the builder in SOL.";
   }
   if (event.kind === "pos") {
-    return sol ? `${sol} bought $POS for the builder.` : "Bought $POS for the builder.";
+    return sol ? `${sol} bought $POS.` : "Bought $POS.";
   }
   if (event.kind === "vote_burn") {
-    return sol ? `Holders voted burn. ${sol} set to buy and burn.` : "Holders voted burn.";
+    return sol ? `Holders voted not to pay. ${sol} set to buy $POS.` : "Holders voted not to pay.";
   }
   if (event.kind === "vote_roll") {
     return event.amountSol ? `Rolled over twice. ${sol} set to burn.` : "The vote rolled over to the next promise.";

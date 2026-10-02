@@ -14,7 +14,7 @@ const steps = [
   },
   {
     title: "Holders decide",
-    body: "Pay spends 60 percent of the vault to buy $POS for the builder, and unlocks 20 percent of the remaining dev bag. Burn spends that same slice to buy the coin and burn it. The rest waits for the next promise.",
+    body: "Pay pays 60 percent of the vault to the builder in SOL, and unlocks 20 percent of the remaining dev bag. Burn spends that same slice to buy $POS. The rest waits for the next promise.",
   },
 ];
 

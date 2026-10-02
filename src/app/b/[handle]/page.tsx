@@ -49,7 +49,7 @@ export default function BuilderPage() {
     { label: "Burned", value: String(builder.stats.burned) },
     { label: "Rolled over", value: String(builder.stats.rolled) },
     { label: "On time", value: builder.stats.onTimePct === null ? "Pending" : `${builder.stats.onTimePct}%` },
-    { label: "SOL spent on $POS", value: `${formatSol(builder.stats.earnedSol)} SOL` },
+    { label: "SOL paid", value: `${formatSol(builder.stats.earnedSol)} SOL` },
     { label: "$POS bought", value: formatTokens(builder.stats.posBought) },
     { label: "SOL burned", value: `${formatSol(builder.stats.burnedSol)} SOL` },
     { label: "Coins", value: `${builder.stats.launches} launched, ${builder.stats.abandoned} abandoned` },
