@@ -6,6 +6,7 @@ import { api, type ProjectView } from "@/lib/api";
 import { formatDue } from "@/lib/format";
 import { shortWallet, useWallet } from "@/lib/wallet";
 import { ConnectWallet } from "@/components/connect-wallet";
+import { DeadlinePicker } from "@/components/deadline-picker";
 import { ImageDrop } from "@/components/image-drop";
 import { Logo } from "@/components/logo";
 import { btnGhost, btnPrimary, field, focusRing, labelClass, num, pageTitle, panel } from "@/components/surface";
@@ -160,9 +161,6 @@ export default function LaunchPage() {
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [confirming, setConfirming] = useState(false);
-
-  const minDeadline = localInput(Date.now() + 30 * MINUTE);
-  const maxDeadline = localInput(Date.now() + 30 * DAY);
 
   const body: LaunchBody = useMemo(
     () => ({
@@ -459,19 +457,15 @@ export default function LaunchPage() {
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className={labelClass}>
-                Deadline, 30 minutes to 30 days
-                <input
-                  className={field}
-                  type="datetime-local"
-                  min={minDeadline}
-                  max={maxDeadline}
-                  step={60}
-                  value={deadline}
-                  onChange={(event) => setDeadline(event.target.value)}
-                  aria-label="Deadline"
+              <div>
+                <p className={labelClass}>Deadline, 30 minutes to 30 days</p>
+                <DeadlinePicker
+                  valueMs={new Date(deadline).getTime()}
+                  minMs={Date.now() + 30 * MINUTE}
+                  maxMs={Date.now() + 30 * DAY}
+                  onChange={(ms) => setDeadline(localInput(ms))}
                 />
-              </label>
+              </div>
               <label className={labelClass}>
                 Dev buy, 0 to 5 percent
                 <div className="mt-2 flex items-center gap-3 rounded-xl bg-[#f5f5f7] px-4 py-3 ring-1 ring-transparent focus-within:bg-white focus-within:ring-2 focus-within:ring-[var(--ink)]/25">
