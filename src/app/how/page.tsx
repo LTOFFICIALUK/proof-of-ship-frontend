@@ -15,7 +15,7 @@ const steps = [
   },
   {
     title: "Fees lock.",
-    body: "Creator fees split at launch: 75% to the vault wallet, 15% to you as runway, 10% to the platform wallet. The split can't be changed by you or by us. You can't withdraw the vault. Every contract address ends in PoS.",
+    body: "pump.fun pays 100% of creator fees to the vault wallet we control. We then send you 15% as runway, keep 10% as platform, and hold 75% for holder votes. You can't withdraw the vault. Every contract address ends in PoS.",
   },
   {
     title: "Show your proof.",

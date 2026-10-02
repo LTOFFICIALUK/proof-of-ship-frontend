@@ -35,8 +35,8 @@ export default function TermsPage() {
       </LegalBlock>
       <LegalBlock title="The fee split">
         <p>
-          Creator fees split 75% to the vault, 15% to the builder as runway, and 10% to the platform. You cannot change
-          that split. You cannot withdraw the vault.
+          pump.fun pays 100% of creator fees to the vault wallet we control. We then send 15% to the builder as runway,
+          keep 10% as platform, and hold 75% in the vault. You cannot change that split. You cannot withdraw the vault.
         </p>
         <p>
           A pay vote pays 60% of the vault to the builder in SOL and unlocks 20% of the remaining dev bag. A burn vote

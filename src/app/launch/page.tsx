@@ -488,7 +488,7 @@ export default function LaunchPage() {
           <section className="space-y-4">
             <h2 className="text-[18px] font-semibold tracking-[-0.03em]">Launch</h2>
             <p className="text-[15px] leading-relaxed text-[var(--muted)]">
-              Your coin gets a contract address ending in PoS. Creator fees split to the vault, your wallet, and the platform. Holders vote pay or burn. Pay pays you in SOL. Burn buys $POS.
+              Your coin gets a contract address ending in PoS. Creator fees land in the vault we control. We send you 15% as runway. We hold 75% until holders vote. Pay pays you in SOL. Burn buys $POS.
               {body.devBuyBps ? ` You buy ${body.devBuyBps / 100}% at launch.` : ""}
             </p>
             <label className="flex items-start gap-3 text-[15px] leading-relaxed">
@@ -497,9 +497,9 @@ export default function LaunchPage() {
                 className="mt-1"
                 checked={agreed}
                 onChange={(event) => setAgreed(event.target.checked)}
-                aria-label="I cannot change the fee split. I cannot withdraw the vault."
+                aria-label="Creator fees go to the vault we control. I cannot withdraw it."
               />
-              <span>I cannot change the fee split. I cannot withdraw the vault.</span>
+              <span>Creator fees go to the vault we control. I cannot withdraw it.</span>
             </label>
             <button type="submit" disabled={ctaBusy} className={`${btnPrimary} w-full py-3.5 text-[16px]`}>
               {cta}
