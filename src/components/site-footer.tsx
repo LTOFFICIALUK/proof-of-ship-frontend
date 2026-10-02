@@ -34,6 +34,15 @@ export const SiteFooter = () => {
             <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/privacy">
               Privacy
             </Link>
+            <a
+              className={`transition hover:text-[var(--ink)] ${focusRing}`}
+              href="https://x.com/useproofofship"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Proof of Ship on X"
+            >
+              @useproofofship
+            </a>
           </nav>
         </div>
       </Misted>
