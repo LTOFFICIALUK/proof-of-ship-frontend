@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { HomeRows, LiveStrip } from "@/components/home-live";
 import { btnGhost, btnPrimary, display, num, panel } from "@/components/surface";
+import { TextMist } from "@/components/text-mist";
 
 const steps = [
   {
@@ -27,10 +28,7 @@ export default function HomePage() {
   return (
     <div className="mx-auto max-w-[980px]">
       <section className="relative mx-auto max-w-[860px] px-1 pb-10 pt-6 text-center md:px-10 md:pb-20 md:pt-16">
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 -inset-y-6 -z-10 bg-[#f5f5f7]/45 backdrop-blur-2xl [mask-image:radial-gradient(ellipse_at_center,black_42%,transparent_78%)] md:-inset-x-6 md:-inset-y-8"
-        />
+        <TextMist className="-inset-x-3 -inset-y-6 bg-[#f3f3f1]/90 md:-inset-x-8 md:-inset-y-10" />
         <p className="text-[17px] font-medium text-[var(--muted)]">Ship or burn</p>
         <h1 className={`mt-3 ${display}`}>The dev cannot take the fees and leave.</h1>
         <p className="mx-auto mt-5 max-w-[540px] text-[19px] leading-[1.45] text-[var(--muted)]">

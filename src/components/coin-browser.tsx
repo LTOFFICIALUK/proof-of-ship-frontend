@@ -6,6 +6,7 @@ import { api, type CoinCard as CoinCardData, type CoinList } from "@/lib/api";
 import { CoinCard } from "@/components/coin-card";
 import { FilterTabs } from "@/components/filter-tabs";
 import { btnGhost, panel } from "@/components/surface";
+import { Misted } from "@/components/text-mist";
 
 type Filter = "voting" | "due" | "shipped" | "burned" | "all";
 
@@ -80,7 +81,11 @@ export const CoinBrowser = ({ scope }: { scope: "live" | "demo" }) => {
         <FilterTabs tabs={TABS} value={filter} label="Filter coins" panelId="coin-results" onChange={handleSelect} />
       </div>
       <div id="coin-results" role="tabpanel" aria-labelledby={`coin-results-tab-${filter}`} aria-busy={loading}>
-        {error ? <p className="mt-6 text-[var(--burn)]">{error}</p> : null}
+        {error ? (
+          <Misted>
+            <p className="mt-6 text-[var(--burn)]">{error}</p>
+          </Misted>
+        ) : null}
         <ul className="mt-5 grid gap-4 sm:grid-cols-2">
           {coins.map((coin) => (
             <li key={coin.mint}>
@@ -102,7 +107,11 @@ export const CoinBrowser = ({ scope }: { scope: "live" | "demo" }) => {
             ) : null}
           </p>
         ) : null}
-        {loading && coins.length === 0 ? <p className="mt-6 text-[var(--muted)]">Loading</p> : null}
+        {loading && coins.length === 0 ? (
+          <Misted>
+            <p className="mt-6 text-[var(--muted)]">Loading</p>
+          </Misted>
+        ) : null}
         {hasMore ? (
           <div className="mt-6 flex justify-center">
             <button type="button" className={btnGhost} disabled={loading} onClick={() => setPage((value) => value + 1)}>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { focusRing } from "@/components/surface";
+import { Misted } from "@/components/text-mist";
 
 export const SiteFooter = () => {
   return (
@@ -8,25 +9,29 @@ export const SiteFooter = () => {
       <div className="mx-auto flex max-w-[980px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Logo size={22} />
-          <p>Ship or burn. Creator fees stay locked until holders vote.</p>
+          <Misted cover>
+            <p>Ship or burn. Creator fees stay locked until holders vote.</p>
+          </Misted>
         </div>
-        <nav className="flex flex-wrap gap-x-4 gap-y-2">
-          <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/coins">
-            Coins
-          </Link>
-          <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/how">
-            How it works
-          </Link>
-          <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/feed">
-            Feed
-          </Link>
-          <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/launch">
-            Launch
-          </Link>
-          <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/recommit">
-            Recommit
-          </Link>
-        </nav>
+        <Misted cover>
+          <nav className="flex flex-wrap gap-x-4 gap-y-2">
+            <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/coins">
+              Coins
+            </Link>
+            <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/how">
+              How it works
+            </Link>
+            <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/feed">
+              Feed
+            </Link>
+            <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/launch">
+              Launch
+            </Link>
+            <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/recommit">
+              Recommit
+            </Link>
+          </nav>
+        </Misted>
       </div>
     </footer>
   );

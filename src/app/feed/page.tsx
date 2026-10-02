@@ -6,6 +6,7 @@ import { api, type FeedEvent } from "@/lib/api";
 import { describeEvent, feedLabel, formatStamp } from "@/lib/format";
 import { FilterTabs } from "@/components/filter-tabs";
 import { num, pageTitle, panel, textLink } from "@/components/surface";
+import { Misted } from "@/components/text-mist";
 
 type Filter = "all" | "shipped" | "burned" | "coins" | "promises";
 
@@ -63,15 +64,21 @@ export default function FeedPage() {
 
   return (
     <div className="mx-auto max-w-[720px] pt-4">
-      <h1 className={pageTitle}>Ship feed</h1>
-      <p className="mt-3 text-[17px] leading-relaxed text-[var(--muted)]">
-        Every launch, promise, vote and burn, newest first.
-      </p>
+      <Misted cover>
+        <h1 className={pageTitle}>Ship feed</h1>
+        <p className="mt-3 text-[17px] leading-relaxed text-[var(--muted)]">
+          Every launch, promise, vote and burn, newest first.
+        </p>
+      </Misted>
       <div className="mt-8">
         <FilterTabs tabs={TABS} value={filter} label="Filter events" panelId="feed-results" onChange={setFilter} />
       </div>
       <div id="feed-results" role="tabpanel" aria-labelledby={`feed-results-tab-${filter}`} aria-busy={loading}>
-        {error ? <p className="mt-6 text-[var(--burn)]">{error}</p> : null}
+        {error ? (
+          <Misted>
+            <p className="mt-6 text-[var(--burn)]">{error}</p>
+          </Misted>
+        ) : null}
         <ul className="mt-5 space-y-3">
           {events.map((event) => {
             const stamp = formatStamp(event.atMs, nowMs);
@@ -114,7 +121,11 @@ export default function FeedPage() {
         {!loading && !error && events.length === 0 ? (
           <p className={`${panel} mt-5 p-8 text-[17px] text-[var(--muted)]`}>No events yet.</p>
         ) : null}
-        {loading && events.length === 0 ? <p className="mt-6 text-[var(--muted)]">Loading</p> : null}
+        {loading && events.length === 0 ? (
+          <Misted>
+            <p className="mt-6 text-[var(--muted)]">Loading</p>
+          </Misted>
+        ) : null}
       </div>
     </div>
   );

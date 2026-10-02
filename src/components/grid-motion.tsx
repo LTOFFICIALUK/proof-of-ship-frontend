@@ -1,6 +1,21 @@
 const ROWS = 4;
 const COLS = 8;
 
+const words = [
+  "Ship",
+  "Pay",
+  "Burn",
+  "Vault",
+  "Vote",
+  "Lock",
+  "Promise",
+  "Holders",
+  "Fees",
+  "SOL",
+  "Crowd",
+  "Builder",
+];
+
 const washes = [
   "bg-white",
   "bg-[#f7f7f8]",
@@ -23,16 +38,14 @@ export const GridMotion = () => {
           {Array.from({ length: ROWS }, (_, rowIndex) => (
             <div key={rowIndex} className="mb-4 flex justify-center gap-4">
               {Array.from({ length: COLS }, (_, colIndex) => {
+                const word = words[(rowIndex * COLS + colIndex) % words.length];
                 const wash = washes[(rowIndex + colIndex) % washes.length];
                 return (
                   <div
                     key={colIndex}
                     className={`flex h-[118px] w-[210px] shrink-0 items-end rounded-[18px] p-4 shadow-[0_10px_30px_rgba(0,0,0,0.06)] ring-1 ring-black/[0.05] ${wash}`}
                   >
-                    <span className="grid h-8 w-8 grid-cols-2 gap-1 rounded-[7px] bg-[#111112] p-1.5">
-                      <span className="col-start-1 row-start-2 bg-[#4A4A4D]" />
-                      <span className="col-start-2 row-start-2 bg-white" />
-                    </span>
+                    <span className="text-[15px] font-medium tracking-[-0.01em] text-black/35">{word}</span>
                   </div>
                 );
               })}

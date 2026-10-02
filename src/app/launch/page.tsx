@@ -7,6 +7,7 @@ import { useWallet } from "@/lib/wallet";
 import { ConnectWallet } from "@/components/connect-wallet";
 import { Logo } from "@/components/logo";
 import { btnGhost, btnPrimary, field, labelClass, pageTitle, panel } from "@/components/surface";
+import { Misted } from "@/components/text-mist";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -147,10 +148,12 @@ export default function LaunchPage() {
 
   return (
     <div className="mx-auto max-w-[560px] pt-4">
-      <h1 className={pageTitle}>Launch</h1>
-      <p className="mt-3 text-[17px] leading-relaxed text-[var(--muted)]">
-        Season 0. Sign in, write one promise, then review the fee split. on pump.fun
-      </p>
+      <Misted cover>
+        <h1 className={pageTitle}>Launch</h1>
+        <p className="mt-3 text-[17px] leading-relaxed text-[var(--muted)]">
+          Season 0. Sign in, write one promise, then review the fee split. on pump.fun
+        </p>
+      </Misted>
       <ol className="mt-6 flex flex-wrap gap-2 text-[13px]" aria-label="Launch steps">
         {STEPS.map((label, index) => (
           <li

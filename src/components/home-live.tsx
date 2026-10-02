@@ -6,6 +6,7 @@ import { api, type CoinCard as CoinCardData, type CoinList, type SiteStats, type
 import { formatCount, formatSol } from "@/lib/format";
 import { CoinCard } from "@/components/coin-card";
 import { focusRing, num, panel, textLink } from "@/components/surface";
+import { Misted } from "@/components/text-mist";
 import { VerifiedTick } from "@/components/verified-tick";
 
 type Rows = {
@@ -82,14 +83,16 @@ export const HomeRows = () => {
     <div className="mx-auto mt-16 max-w-[980px] space-y-12">
       {ROWS.map((row) => (
         <section key={row.id} aria-labelledby={`row-${row.id}`}>
-          <div className="flex items-baseline justify-between gap-4">
-            <h2 id={`row-${row.id}`} className="text-[24px] font-semibold tracking-[-0.03em]">
-              {row.title}
-            </h2>
-            <Link href="/coins" className={`${textLink} text-[14px]`}>
-              All coins
-            </Link>
-          </div>
+          <Misted cover>
+            <div className="flex items-baseline justify-between gap-4">
+              <h2 id={`row-${row.id}`} className="text-[24px] font-semibold tracking-[-0.03em]">
+                {row.title}
+              </h2>
+              <Link href="/coins" className={`${textLink} text-[14px]`}>
+                All coins
+              </Link>
+            </div>
+          </Misted>
           {rows && rows[row.id].length ? (
             <ul className="mt-4 grid gap-4 sm:grid-cols-2">
               {rows[row.id].map((coin) => (
@@ -106,9 +109,11 @@ export const HomeRows = () => {
         </section>
       ))}
       <section aria-labelledby="row-builders">
-        <h2 id="row-builders" className="text-[24px] font-semibold tracking-[-0.03em]">
-          Top builders
-        </h2>
+        <Misted cover>
+          <h2 id="row-builders" className="text-[24px] font-semibold tracking-[-0.03em]">
+            Top builders
+          </h2>
+        </Misted>
         {builders.length ? (
           <ol className={`${panel} mt-4 divide-y divide-black/[0.06] overflow-hidden`}>
             {builders.map((builder, index) => (

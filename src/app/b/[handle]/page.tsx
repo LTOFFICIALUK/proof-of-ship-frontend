@@ -7,6 +7,7 @@ import { api, type BuilderView } from "@/lib/api";
 import { formatSol, formatStamp, promiseLabel } from "@/lib/format";
 import { num, pageTitle, panel, textLink } from "@/components/surface";
 import { RecordChips, StatusBlock } from "@/components/status-block";
+import { Misted } from "@/components/text-mist";
 import { VerifiedTick } from "@/components/verified-tick";
 
 export default function BuilderPage() {
@@ -28,10 +29,18 @@ export default function BuilderPage() {
   }, [params.handle]);
 
   if (error) {
-    return <p className="mx-auto max-w-3xl text-[var(--burn)]">{error}</p>;
+    return (
+      <Misted className="mx-auto max-w-3xl">
+        <p className="text-[var(--burn)]">{error}</p>
+      </Misted>
+    );
   }
   if (!builder) {
-    return <p className="mx-auto max-w-3xl text-[var(--muted)]">Loading</p>;
+    return (
+      <Misted className="mx-auto max-w-3xl">
+        <p className="text-[var(--muted)]">Loading</p>
+      </Misted>
+    );
   }
 
   const stats = [
@@ -47,6 +56,7 @@ export default function BuilderPage() {
 
   return (
     <div className="mx-auto max-w-[720px] pt-4">
+      <Misted cover>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className={`${pageTitle} inline-flex items-center gap-2`}>
@@ -58,6 +68,7 @@ export default function BuilderPage() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={`/b/${builder.handle}/badge.svg`} alt={`${builder.handle} badge`} className="h-7" />
       </div>
+      </Misted>
       <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {stats.map((stat) => (
           <div key={stat.label} className={`${panel} p-4`}>
@@ -66,7 +77,9 @@ export default function BuilderPage() {
           </div>
         ))}
       </section>
-      <h2 className="mt-10 text-[22px] font-semibold tracking-[-0.03em]">Coins</h2>
+      <Misted cover className="mt-10">
+        <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Coins</h2>
+      </Misted>
       <ul className="mt-4 space-y-3">
         {builder.projects.map((project) => (
           <li key={project.mint}>
@@ -87,7 +100,9 @@ export default function BuilderPage() {
           </li>
         ))}
       </ul>
-      <h2 className="mt-10 text-[22px] font-semibold tracking-[-0.03em]">Promise record</h2>
+      <Misted cover className="mt-10">
+        <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Promise record</h2>
+      </Misted>
       <ol className="mt-4 space-y-3">
         {builder.timeline.map((item) => (
           <li key={`${item.mint}-${item.idx}`} className={`${panel} p-4 sm:p-5`}>

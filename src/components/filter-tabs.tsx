@@ -2,6 +2,7 @@
 
 import { useRef, type KeyboardEvent } from "react";
 import { focusRing } from "@/components/surface";
+import { Misted } from "@/components/text-mist";
 
 type Tab<T extends string> = { id: T; label: string };
 
@@ -32,6 +33,7 @@ export const FilterTabs = <T extends string>({
   };
 
   return (
+    <Misted cover>
     <div
       role="tablist"
       aria-label={label}
@@ -61,5 +63,6 @@ export const FilterTabs = <T extends string>({
         </button>
       ))}
     </div>
+    </Misted>
   );
 };

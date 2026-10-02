@@ -1,3 +1,4 @@
+import { Misted } from "@/components/text-mist";
 import { pageTitle } from "@/components/surface";
 
 const steps = [
@@ -29,7 +30,7 @@ const steps = [
 
 export default function HowPage() {
   return (
-    <div className="mx-auto max-w-[720px] pt-4">
+    <Misted cover className="mx-auto max-w-[720px] pt-4">
       <h1 className={pageTitle}>How it works</h1>
       <ol className="mt-8 divide-y divide-black/[0.06] border-y border-black/[0.06]">
         {steps.map((step, index) => (
@@ -41,6 +42,6 @@ export default function HowPage() {
           </li>
         ))}
       </ol>
-    </div>
+    </Misted>
   );
 }

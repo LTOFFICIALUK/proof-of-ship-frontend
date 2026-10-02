@@ -9,6 +9,7 @@ import { formatCount, formatDue, formatNet, formatSol, formatTokens, formatUsd, 
 import { shortWallet, useWallet } from "@/lib/wallet";
 import { btnBurn, btnGhost, btnPay, field, labelClass, panel, textLink } from "@/components/surface";
 import { ConnectWallet } from "@/components/connect-wallet";
+import { Misted } from "@/components/text-mist";
 
 const canVote = (status: string) => status === "vote_open";
 
@@ -259,10 +260,18 @@ export default function CoinPage() {
   };
 
   if (error && !project) {
-    return <p className="mx-auto max-w-3xl text-[var(--burn)]">{error}</p>;
+    return (
+      <Misted className="mx-auto max-w-3xl">
+        <p className="text-[var(--burn)]">{error}</p>
+      </Misted>
+    );
   }
   if (!project) {
-    return <p className="mx-auto max-w-3xl text-[var(--muted)]">Loading</p>;
+    return (
+      <Misted className="mx-auto max-w-3xl">
+        <p className="text-[var(--muted)]">Loading</p>
+      </Misted>
+    );
   }
 
   const market = project.market;
@@ -548,7 +557,11 @@ export default function CoinPage() {
             ))}
           </ul>
         </section>
-        {error ? <p className="text-[var(--burn)]">{error}</p> : null}
+        {error ? (
+          <Misted>
+            <p className="text-[var(--burn)]">{error}</p>
+          </Misted>
+        ) : null}
       </div>
       <aside className="min-h-0 lg:h-full">
         <HolderChat mint={project.mint} />
