@@ -191,11 +191,11 @@ export default function LaunchPage() {
     const params = new URLSearchParams(window.location.search);
     const x = params.get("x");
     if (x === "linked") {
-      toast.ok("X is linked.");
+      toast.ok("X is verified.");
       void refresh();
     }
     if (x === "failed") {
-      toast.error("Could not link X. Try again.");
+      toast.error("Could not verify X. Try again.");
     }
     if (x) {
       const url = new URL(window.location.href);
@@ -240,7 +240,7 @@ export default function LaunchPage() {
       return;
     }
     if (!wallet || !xHandle) {
-      toast.error("Sign in with your wallet and link X first.");
+      toast.error("Sign in with your wallet and verify X first.");
       return;
     }
     setBusy(true);
@@ -262,7 +262,7 @@ export default function LaunchPage() {
     }
   };
 
-  const cta = !wallet ? "Connect wallet" : !xHandle ? "Link X" : busy ? "Launching" : "Sign and launch";
+  const cta = !wallet ? "Connect wallet" : !xHandle ? "Verify X" : busy ? "Launching" : "Sign and launch";
   const ctaBusy = busy || walletBusy || confirming;
 
   return (
@@ -328,7 +328,7 @@ export default function LaunchPage() {
                     className={`${wallet ? btnPrimary : btnGhost} px-4 py-1.5 text-[13px]`}
                     disabled={walletBusy}
                   >
-                    Link X
+                    Verify X
                   </button>
                 )}
               </div>

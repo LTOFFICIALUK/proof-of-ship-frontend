@@ -12,7 +12,7 @@ export default function PrivacyPage() {
       <LegalBlock title="What we collect">
         <p>If you only browse, we load public coin and feed data. We do not need a wallet for that.</p>
         <p>If you connect a wallet we store a session cookie and your public Solana address.</p>
-        <p>If you link X we store your X user id and handle. We ask X for read access so we can see who you are.</p>
+        <p>If you verify X we store your X user id and handle. We ask X for read access so we can see who you are.</p>
         <p>
           If you launch, vote, chat, or post proof we store what you submit: names, tickers, images, promise text,
           proof links, votes, and chat messages.

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <LegalPage title="Terms" updated="2 Oct 2026">
+    <LegalPage title="Terms" updated="3 Oct 2026">
       <LegalBlock title="The product">
         <p>
           Proof of Ship lets a builder launch a pump.fun coin with most creator fees locked in a vault. Holders of that
@@ -28,7 +28,7 @@ export default function TermsPage() {
       <LegalBlock title="Your wallet and your X">
         <p>
           You hold your own keys. We do not hold them. Signing a message proves you control a wallet. Linking X proves
-          you control that handle. One X account can be linked to one wallet.
+          you control that handle. One X account can be verified for one wallet.
         </p>
         <p>You are responsible for what you sign, what you post, and what happens in that wallet.</p>
       </LegalBlock>
