@@ -189,6 +189,29 @@ const signWithProvider = async (current: SolanaProvider, encoded: Uint8Array) =>
 
 const WalletContext = createContext<WalletContextValue | null>(null);
 
+let cachedNonce: { at: number; pending: Promise<{ nonce: string }> } | null = null;
+
+const warmNonce = () => {
+  if (typeof window === "undefined") {
+    return;
+  }
+  if (cachedNonce && Date.now() - cachedNonce.at < 60_000) {
+    return;
+  }
+  const pending = api<{ nonce: string }>("/v1/auth/nonce").catch((err: unknown) => {
+    cachedNonce = null;
+    throw err;
+  });
+  cachedNonce = { at: Date.now(), pending };
+};
+
+const pullNonce = () => {
+  const fresh = cachedNonce && Date.now() - cachedNonce.at < 60_000 ? cachedNonce.pending : null;
+  cachedNonce = null;
+  warmNonce();
+  return fresh ?? api<{ nonce: string }>("/v1/auth/nonce");
+};
+
 export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [wallet, setWallet] = useState("");
   const [xHandle, setXHandle] = useState("");
@@ -202,40 +225,51 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    warmNonce();
     void refresh().catch(() => undefined);
   }, []);
 
   const connect = async () => {
+    const ready = provider();
+    if (ready) {
+      return finishConnect(ready);
+    }
     setError("");
-    const current = (await waitForProvider()) ?? provider();
-    if (!current) {
+    const found = await waitForProvider(250);
+    if (!found) {
       const message = "No wallet found. Install Phantom, then try again.";
       setError(message);
       toast.error(message);
       window.open(PHANTOM_DOWNLOAD, "_blank", "noopener,noreferrer");
       return false;
     }
+    return finishConnect(found);
+  };
+
+  const finishConnect = async (current: SolanaProvider) => {
+    const known = publicKeyOf(current);
+    const session = current.connect();
+    const noncePromise = pullNonce();
+    setError("");
     setBusy(true);
     try {
-      let next = publicKeyOf(current);
-      if (!next) {
-        const result = await current.connect();
-        next = result.publicKey.toString();
+      const next = known || (await session).publicKey.toString();
+      if (known) {
+        void session.catch(() => undefined);
       }
-      const live = provider() ?? current;
-      const nonce = await api<{ nonce: string }>("/v1/auth/nonce");
+      const nonce = await noncePromise;
       const issued = new Date().toISOString();
       const message = loginMessage(next, nonce.nonce, issued);
-      const bytes = await signWithProvider(live, new TextEncoder().encode(message));
+      const bytes = await signWithProvider(provider() ?? current, new TextEncoder().encode(message));
       if (bytes.length !== 64) {
         throw new Error("Wallet returned a signature we could not read.");
       }
-      const session = await api<{ wallet: string; xHandle: string | null }>("/v1/auth/verify", {
+      const signedIn = await api<{ wallet: string; xHandle: string | null }>("/v1/auth/verify", {
         method: "POST",
         body: JSON.stringify({ message, signature: toBase64(bytes) }),
       });
-      setWallet(session.wallet);
-      setXHandle(session.xHandle ?? "");
+      setWallet(signedIn.wallet);
+      setXHandle(signedIn.xHandle ?? "");
       setError("");
       return true;
     } catch (err) {
@@ -245,16 +279,21 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       return false;
     } finally {
       setBusy(false);
+      warmNonce();
     }
   };
 
   const signBytes = async (text: string) => {
-    const current = (await waitForProvider()) ?? provider();
+    const current = provider() ?? (await waitForProvider(250));
     if (!current) {
       throw new Error("No wallet found. Install Phantom, then try again.");
     }
-    if (!publicKeyOf(current)) {
-      await current.connect();
+    const known = publicKeyOf(current);
+    const session = current.connect();
+    if (!known) {
+      await session;
+    } else {
+      void session.catch(() => undefined);
     }
     const live = provider() ?? current;
     const bytes = await signWithProvider(live, new TextEncoder().encode(text));
