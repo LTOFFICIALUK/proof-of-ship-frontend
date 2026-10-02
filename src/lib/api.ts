@@ -7,6 +7,8 @@ export type PromiseView = {
   upPct?: number;
   downPct?: number;
   netPct?: number | null;
+  turnoutPct?: number;
+  proofUrl?: string;
   yourSide?: "up" | "down" | null;
   resultNet?: number | null;
 };

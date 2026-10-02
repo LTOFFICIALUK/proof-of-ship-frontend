@@ -7,7 +7,7 @@ import { HolderChat } from "@/components/holder-chat";
 import { api, type ProjectView, type PromiseView } from "@/lib/api";
 import { formatCount, formatDue, formatNet, formatSol, formatUsd, promiseLabel } from "@/lib/format";
 import { shortWallet, useWallet } from "@/lib/wallet";
-import { btnBurn, btnGhost, btnPay, panel, textLink } from "@/components/surface";
+import { btnBurn, btnGhost, btnPay, field, panel, textLink } from "@/components/surface";
 import { ConnectWallet } from "@/components/connect-wallet";
 
 const netTone = (value: number | null | undefined) => {
@@ -17,7 +17,20 @@ const netTone = (value: number | null | undefined) => {
   return value > 0 ? "text-[var(--pay)]" : "text-[var(--burn)]";
 };
 
-const canVote = (status: string) => status === "pending" || status === "vote_open" || status === "no_quorum";
+const canVote = (status: string) => status === "vote_open";
+
+const statusMark = (status: string) => {
+  if (status === "paid") {
+    return "bg-[var(--pay)]";
+  }
+  if (status === "burned" || status === "missed") {
+    return "bg-[var(--burn)]";
+  }
+  if (status === "rolled") {
+    return "border border-[var(--ink)] bg-transparent";
+  }
+  return "bg-[#c9c9c5]";
+};
 
 const statusLabel = (status: string) => {
   if (status === "active") {
@@ -71,6 +84,8 @@ export default function CoinPage() {
   const [error, setError] = useState("");
   const [busyIdx, setBusyIdx] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
+  const [proofUrl, setProofUrl] = useState("");
+  const [proofNote, setProofNote] = useState("");
   const [imageReady, setImageReady] = useState("");
 
   const load = useCallback(async () => {
@@ -124,6 +139,24 @@ export default function CoinPage() {
       setProject(next);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Vote failed");
+    } finally {
+      setBusyIdx(null);
+    }
+  };
+
+  const handleShip = async (idx: number) => {
+    setBusyIdx(idx);
+    setError("");
+    try {
+      const next = await api<ProjectView>(`/v1/projects/${project?.mint}/promises/${idx}/proof`, {
+        method: "POST",
+        body: JSON.stringify({ url: proofUrl.trim(), note: proofNote.trim() }),
+      });
+      setProject(next);
+      setProofUrl("");
+      setProofNote("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not mark this as shipped");
     } finally {
       setBusyIdx(null);
     }
@@ -241,7 +274,7 @@ export default function CoinPage() {
             <div>
               <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Promises</h2>
               <p className="mt-1 max-w-[36rem] text-[15px] leading-relaxed text-[var(--muted)]">
-                Any holder can vote. Your weight is the share of supply you hold. Selling removes that vote. A positive share pays the builder.
+                Holders vote after proof is posted. The split stays hidden until the vote ends. A win pays or burns 60 percent of the vault.
               </p>
             </div>
             {!wallet ? <ConnectWallet /> : null}
@@ -252,19 +285,54 @@ export default function CoinPage() {
                 <div className="flex items-start justify-between gap-3 sm:gap-6">
                   <div className="min-w-0">
                     <div className="flex flex-wrap gap-3 text-[13px]">
+                      <span className={`mt-0.5 inline-block h-2.5 w-2.5 ${statusMark(item.status)}`} aria-hidden="true" />
                       <span className="font-medium">{promiseLabel(item.status)}</span>
                       <span className="font-mono text-[var(--muted)]">{formatDue(item.deadlineMs, project.nowMs)}</span>
                     </div>
                     <p className="mt-2 text-[17px] leading-relaxed">{item.text}</p>
+                    {item.proofUrl ? (
+                      <a className={`${textLink} mt-2 inline-block text-[14px]`} href={item.proofUrl} target="_blank" rel="noreferrer">
+                        Proof
+                      </a>
+                    ) : null}
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className={`text-[22px] font-semibold tracking-[-0.03em] sm:text-[28px] ${netTone(item.netPct)}`}>
-                      {formatNet(item.netPct)}
+                    <p className={`font-mono text-[22px] font-semibold tracking-[-0.03em] sm:text-[28px] ${netTone(item.netPct)}`}>
+                      {item.status === "vote_open" ? `${(item.turnoutPct ?? 0).toFixed(2)}%` : formatNet(item.netPct)}
                     </p>
-                    <p className="text-[12px] text-[var(--muted)]">of supply</p>
+                    <p className="text-[12px] text-[var(--muted)]">{item.status === "vote_open" ? "turnout" : "of supply"}</p>
                   </div>
                 </div>
-                {canVote(item.status) && wallet ? (
+                {item.status === "pending" && wallet === project.builderWallet ? (
+                  <form
+                    className="mt-4 space-y-3"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      void handleShip(item.idx);
+                    }}
+                  >
+                    <input
+                      className={field}
+                      value={proofUrl}
+                      onChange={(event) => setProofUrl(event.target.value)}
+                      placeholder="Proof link"
+                      aria-label="Proof link"
+                      required
+                    />
+                    <textarea
+                      className={field}
+                      value={proofNote}
+                      onChange={(event) => setProofNote(event.target.value)}
+                      placeholder="What shipped"
+                      aria-label="What shipped"
+                      rows={2}
+                    />
+                    <button type="submit" className={btnPay} disabled={busyIdx === item.idx}>
+                      Mark as shipped
+                    </button>
+                  </form>
+                ) : null}
+                {canVote(item.status) && wallet && wallet !== project.builderWallet ? (
                   <div className="mt-4 flex flex-wrap gap-2">
                     <button
                       type="button"

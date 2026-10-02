@@ -108,7 +108,13 @@ export const promiseLabel = (status: string) => {
     return "Burned";
   }
   if (status === "pending") {
-    return "Pending";
+    return "Open";
+  }
+  if (status === "rolled") {
+    return "Rolled over";
+  }
+  if (status === "missed") {
+    return "Missed";
   }
   return status;
 };
@@ -122,6 +128,12 @@ export const feedLabel = (kind: string) => {
   }
   if (kind === "vote_burn") {
     return "Holders voted burn";
+  }
+  if (kind === "vote_roll") {
+    return "Vote rolled over";
+  }
+  if (kind === "miss") {
+    return "Missed. Slice burned";
   }
   if (kind === "inflow") {
     return "Fees landed";
