@@ -107,7 +107,7 @@ const ProofForm = ({
 
 export default function CoinPage() {
   const params = useParams<{ mint: string }>();
-  const { wallet, signBytes } = useWallet();
+  const { wallet, signBytes, ensureSession } = useWallet();
   const [project, setProject] = useState<ProjectView | null>(null);
   const [error, setError] = useState("");
   const [busyIdx, setBusyIdx] = useState<number | null>(null);
@@ -163,6 +163,10 @@ export default function CoinPage() {
     setBusyIdx(item.idx);
     setError("");
     try {
+      const signedIn = await ensureSession();
+      if (!signedIn) {
+        return;
+      }
       const prompt = await api<{ nonce: string; message: string }>(
         `/v1/coins/${project.mint}/promises/${item.idx}/vote-message?side=${side}`,
       );
@@ -188,6 +192,10 @@ export default function CoinPage() {
     setBusyIdx(idx);
     setError("");
     try {
+      const signedIn = await ensureSession();
+      if (!signedIn) {
+        return;
+      }
       const next = await api<ProjectView>(`/v1/coins/${project?.mint}/promises/${idx}/proof`, {
         method: "POST",
         body: JSON.stringify({ url: url.trim(), note: note.trim() }),
@@ -207,6 +215,10 @@ export default function CoinPage() {
     setBusyIdx(-1);
     setError("");
     try {
+      const signedIn = await ensureSession();
+      if (!signedIn) {
+        return;
+      }
       const next = await api<ProjectView>(`/v1/coins/${project.mint}/promises`, {
         method: "POST",
         body: JSON.stringify({

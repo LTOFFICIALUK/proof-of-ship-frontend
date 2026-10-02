@@ -56,7 +56,7 @@ const MessageText = ({ text, mine }: { text: string; mine: boolean }) => {
 };
 
 export const HolderChat = ({ mint }: { mint: string }) => {
-  const { wallet, busy: connecting, error: walletError, connect } = useWallet();
+  const { wallet, busy: connecting, error: walletError, connect, ensureSession } = useWallet();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [holds, setHolds] = useState<boolean | null>(false);
   const [text, setText] = useState("");
@@ -108,6 +108,10 @@ export const HolderChat = ({ mint }: { mint: string }) => {
     setError("");
     stickRef.current = true;
     try {
+      const signedIn = await ensureSession();
+      if (!signedIn) {
+        return;
+      }
       await api(`/v1/projects/${mint}/messages`, {
         method: "POST",
         body: JSON.stringify({ text: text.trim() }),
@@ -186,9 +190,14 @@ export const HolderChat = ({ mint }: { mint: string }) => {
                       type="button"
                       className="mt-1 px-1 text-[11px] text-[var(--muted)] underline"
                       onClick={() => {
-                        void api(`/v1/projects/${mint}/messages/${message.id}/report`, {
-                          method: "POST",
-                          body: "{}",
+                        void ensureSession().then((signedIn) => {
+                          if (!signedIn) {
+                            return null;
+                          }
+                          return api(`/v1/projects/${mint}/messages/${message.id}/report`, {
+                            method: "POST",
+                            body: "{}",
+                          });
                         }).catch((err: unknown) => {
                           setError(err instanceof Error ? err.message : "Could not report that message");
                         });

@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -31,6 +32,7 @@ type WalletContextValue = {
   busy: boolean;
   error: string;
   connect: () => Promise<boolean>;
+  ensureSession: () => Promise<boolean>;
   disconnect: () => Promise<void>;
   refresh: () => Promise<void>;
   signBytes: (text: string) => Promise<string>;
@@ -116,14 +118,13 @@ const provider = (): SolanaProvider | null => {
     return null;
   }
   const win = window as PhantomWindow;
-  const phantom = win.phantom?.solana;
-  if (phantom && phantom.isPhantom !== false) {
-    return phantom;
+  if (win.phantom?.solana) {
+    return win.phantom.solana;
   }
   if (win.solana?.isPhantom) {
     return win.solana;
   }
-  return win.solana ?? null;
+  return null;
 };
 
 const waitForProvider = (ms = 1200) =>
@@ -189,27 +190,11 @@ const signWithProvider = async (current: SolanaProvider, encoded: Uint8Array) =>
 
 const WalletContext = createContext<WalletContextValue | null>(null);
 
-let cachedNonce: { at: number; pending: Promise<{ nonce: string }> } | null = null;
-
-const warmNonce = () => {
-  if (typeof window === "undefined") {
-    return;
-  }
-  if (cachedNonce && Date.now() - cachedNonce.at < 60_000) {
-    return;
-  }
-  const pending = api<{ nonce: string }>("/v1/auth/nonce").catch((err: unknown) => {
-    cachedNonce = null;
-    throw err;
-  });
-  cachedNonce = { at: Date.now(), pending };
-};
-
-const pullNonce = () => {
-  const fresh = cachedNonce && Date.now() - cachedNonce.at < 60_000 ? cachedNonce.pending : null;
-  cachedNonce = null;
-  warmNonce();
-  return fresh ?? api<{ nonce: string }>("/v1/auth/nonce");
+const missingWallet = () => {
+  const message = "No wallet found. Install Phantom, then try again.";
+  toast.error(message);
+  window.open(PHANTOM_DOWNLOAD, "_blank", "noopener,noreferrer");
+  return message;
 };
 
 export const WalletProvider = ({ children }: { children: ReactNode }) => {
@@ -217,47 +202,77 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [xHandle, setXHandle] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [authed, setAuthed] = useState(false);
+  const phantomAddress = useRef("");
+
+  const remember = (address: string) => {
+    phantomAddress.current = address;
+    setWallet(address);
+  };
 
   const refresh = async () => {
     const me = await api<{ wallet: string | null; xHandle: string | null }>("/v1/me");
-    setWallet(me.wallet ?? "");
+    if (me.wallet) {
+      remember(me.wallet);
+      setAuthed(true);
+    } else {
+      setAuthed(false);
+      setWallet(phantomAddress.current);
+    }
     setXHandle(me.xHandle ?? "");
   };
 
   useEffect(() => {
-    warmNonce();
     void refresh().catch(() => undefined);
   }, []);
 
   const connect = async () => {
     const ready = provider();
-    if (ready) {
-      return finishConnect(ready);
+    const pending = ready ? ready.connect() : null;
+    if (!pending) {
+      const found = await waitForProvider(250);
+      if (!found) {
+        setError(missingWallet());
+        return false;
+      }
+      return settle(found.connect());
     }
-    setError("");
-    const found = await waitForProvider(250);
-    if (!found) {
-      const message = "No wallet found. Install Phantom, then try again.";
-      setError(message);
-      toast.error(message);
-      window.open(PHANTOM_DOWNLOAD, "_blank", "noopener,noreferrer");
-      return false;
-    }
-    return finishConnect(found);
+    return settle(pending);
   };
 
-  const finishConnect = async (current: SolanaProvider) => {
-    const known = publicKeyOf(current);
-    const session = current.connect();
-    const noncePromise = pullNonce();
+  const settle = async (pending: ReturnType<SolanaProvider["connect"]>) => {
     setError("");
     setBusy(true);
     try {
-      const next = known || (await session).publicKey.toString();
-      if (known) {
-        void session.catch(() => undefined);
-      }
-      const nonce = await noncePromise;
+      const result = await pending;
+      remember(result.publicKey.toString());
+      return true;
+    } catch (err) {
+      const message = walletMessage(err, "Could not connect the wallet.");
+      setError(message);
+      toast.error(message);
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const ensureSession = async () => {
+    if (authed && wallet) {
+      return true;
+    }
+    const current = provider() ?? (await waitForProvider(250));
+    if (!current) {
+      setError(missingWallet());
+      return false;
+    }
+    const pending = current.connect();
+    setBusy(true);
+    try {
+      const result = await pending;
+      const next = result.publicKey.toString();
+      remember(next);
+      const nonce = await api<{ nonce: string }>("/v1/auth/nonce");
       const issued = new Date().toISOString();
       const message = loginMessage(next, nonce.nonce, issued);
       const bytes = await signWithProvider(provider() ?? current, new TextEncoder().encode(message));
@@ -268,8 +283,9 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
         method: "POST",
         body: JSON.stringify({ message, signature: toBase64(bytes) }),
       });
-      setWallet(signedIn.wallet);
+      remember(signedIn.wallet);
       setXHandle(signedIn.xHandle ?? "");
+      setAuthed(true);
       setError("");
       return true;
     } catch (err) {
@@ -279,7 +295,6 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       return false;
     } finally {
       setBusy(false);
-      warmNonce();
     }
   };
 
@@ -310,12 +325,14 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     if (current?.disconnect) {
       await current.disconnect().catch(() => undefined);
     }
+    phantomAddress.current = "";
+    setAuthed(false);
     setWallet("");
     setXHandle("");
   };
 
   return (
-    <WalletContext.Provider value={{ wallet, xHandle, busy, error, connect, disconnect, refresh, signBytes }}>
+    <WalletContext.Provider value={{ wallet, xHandle, busy, error, connect, ensureSession, disconnect, refresh, signBytes }}>
       {children}
     </WalletContext.Provider>
   );

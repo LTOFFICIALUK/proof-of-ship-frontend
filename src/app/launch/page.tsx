@@ -145,7 +145,7 @@ const LaunchPreview = ({
 
 export default function LaunchPage() {
   const router = useRouter();
-  const { wallet, xHandle, busy: walletBusy, connect, refresh } = useWallet();
+  const { wallet, xHandle, busy: walletBusy, connect, ensureSession, refresh } = useWallet();
   const [name, setName] = useState("");
   const [symbol, setSymbol] = useState("");
   const [description, setDescription] = useState("");
@@ -207,6 +207,10 @@ export default function LaunchPage() {
       toast.error("Connect a wallet first.");
       return;
     }
+    const signedIn = await ensureSession();
+    if (!signedIn) {
+      return;
+    }
     try {
       const data = await api<{ url: string }>("/v1/x/connect");
       window.location.assign(data.url);
@@ -243,6 +247,10 @@ export default function LaunchPage() {
     }
     setBusy(true);
     try {
+      const signedIn = await ensureSession();
+      if (!signedIn) {
+        return;
+      }
       await refresh();
       await api("/v1/launch/build", { method: "POST", body: JSON.stringify(body) });
       setConfirming(true);
