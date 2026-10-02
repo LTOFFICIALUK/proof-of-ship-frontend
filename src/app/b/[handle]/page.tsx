@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api, type BuilderView } from "@/lib/api";
-import { formatSol, formatStamp, promiseLabel } from "@/lib/format";
+import { formatSol, formatStamp, formatTokens, promiseLabel } from "@/lib/format";
 import { num, pageTitle, panel, textLink } from "@/components/surface";
 import { RecordChips, StatusBlock } from "@/components/status-block";
 import { Misted } from "@/components/text-mist";
@@ -49,7 +49,8 @@ export default function BuilderPage() {
     { label: "Burned", value: String(builder.stats.burned) },
     { label: "Rolled over", value: String(builder.stats.rolled) },
     { label: "On time", value: builder.stats.onTimePct === null ? "Pending" : `${builder.stats.onTimePct}%` },
-    { label: "SOL earned", value: `${formatSol(builder.stats.earnedSol)} SOL` },
+    { label: "SOL spent on $POS", value: `${formatSol(builder.stats.earnedSol)} SOL` },
+    { label: "$POS bought", value: formatTokens(builder.stats.posBought) },
     { label: "SOL burned", value: `${formatSol(builder.stats.burnedSol)} SOL` },
     { label: "Coins", value: `${builder.stats.launches} launched, ${builder.stats.abandoned} abandoned` },
   ];

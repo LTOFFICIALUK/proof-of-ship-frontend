@@ -379,11 +379,30 @@ export default function CoinPage() {
               label="Vault"
               value={project.vault.balanceSol === 0 ? "Fees land here as the coin trades." : `${formatSol(project.vault.balanceSol)} SOL`}
             />
-            <Stat label="Paid to builder" value={`${formatSol(project.vault.releasedSol)} SOL`} tone="text-[var(--pay)]" />
+            <Stat
+              label="$POS for the builder"
+              value={
+                project.vault.posBought !== "0"
+                  ? formatTokens(project.vault.posBought)
+                  : project.vault.posBucketSol > 0
+                    ? `${formatSol(project.vault.posBucketSol)} SOL queued`
+                    : "0"
+              }
+              tone="text-[var(--pay)]"
+            />
             <Stat label="Burned" value={`${formatSol(project.vault.burnedSol)} SOL`} tone="text-[var(--burn)]" />
             <Stat label="Runway paid" value={`${formatSol(project.vault.runwaySol)} SOL`} />
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-2 border-t border-black/[0.06] px-5 py-3 text-[13px] text-[var(--muted)]">
+            <span>
+              Dev bag locked: {formatTokens(project.devLock)}. Unlocked: {formatTokens(project.devUnlocked)}.
+            </span>
+            <span>
+              $POS:{" "}
+              <a className={textLink} href={`https://solscan.io/token/${project.vault.posMint}`} target="_blank" rel="noreferrer">
+                {shortWallet(project.vault.posMint)}
+              </a>
+            </span>
             <span>
               Vault address:{" "}
               {project.chain.vault ? (
@@ -480,7 +499,7 @@ export default function CoinPage() {
             <div>
               <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Promises</h2>
               <p className="mt-1 max-w-[36rem] text-[15px] leading-relaxed text-[var(--muted)]">
-                Holders vote after proof is posted. The split stays hidden until the vote ends. A win pays or burns 60 percent of the vault.
+                Holders vote after proof is posted. The split stays hidden until the vote ends. Pay buys $POS with 60 percent of the vault and unlocks 20 percent of the remaining dev bag. Burn spends that same slice on the coin.
               </p>
             </div>
             {!wallet ? <ConnectWallet /> : null}

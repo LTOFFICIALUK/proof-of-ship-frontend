@@ -182,7 +182,7 @@ export const RecommitVisual = () => {
             <div className="rounded-[18px] bg-[#eef8f1] px-4 py-4">
               <p className="text-[13px] font-medium text-[var(--pay)]">Pay wins</p>
               <p className="mt-1 text-[15px] leading-snug text-[var(--ink)]">
-                60% of the vault goes to the builder. The rest waits for the next promise.
+                60% of the vault buys $POS for the builder. The rest waits for the next promise.
               </p>
             </div>
             <div className="rounded-[18px] bg-[#fdf1f0] px-4 py-4">

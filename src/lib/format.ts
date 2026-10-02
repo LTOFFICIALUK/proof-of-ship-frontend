@@ -186,6 +186,9 @@ export const feedLabel = (kind: string) => {
   if (kind === "burn") {
     return "Buyback burn";
   }
+  if (kind === "pos") {
+    return "Bought $POS";
+  }
   return kind;
 };
 
@@ -209,7 +212,12 @@ export const describeEvent = (event: {
     return `Marked${promise} as shipped. Holders are voting.`;
   }
   if (event.kind === "vote_pay") {
-    return sol ? `Holders voted pay. ${sol} paid to the builder.` : "Holders voted pay.";
+    return sol
+      ? `Holders voted pay. ${sol} is set to buy $POS. 20 percent of the remaining dev bag unlocks.`
+      : "Holders voted pay. The vault slice is set to buy $POS.";
+  }
+  if (event.kind === "pos") {
+    return sol ? `${sol} bought $POS for the builder.` : "Bought $POS for the builder.";
   }
   if (event.kind === "vote_burn") {
     return sol ? `Holders voted burn. ${sol} set to buy and burn.` : "Holders voted burn.";

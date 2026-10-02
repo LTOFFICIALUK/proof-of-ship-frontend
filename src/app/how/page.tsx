@@ -20,7 +20,7 @@ const steps = [
   },
   {
     title: "Pay or burn.",
-    body: "If pay wins, 60% of the vault goes to the builder. If burn wins, 60% buys the coin and burns it. The other 40% stays for the next promise. A tie, or a vote where under 2% of eligible supply turns out, rolls the 60% over to the next promise.",
+    body: "If pay wins, 60% of the vault buys $POS for the builder, and 20% of the remaining dev bag unlocks. If burn wins, 60% buys the coin and burns it. The other 40% stays for the next promise. A tie, or a vote where under 2% of eligible supply turns out, rolls the 60% over to the next promise.",
   },
   {
     title: "Keep shipping.",

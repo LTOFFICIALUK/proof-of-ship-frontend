@@ -61,12 +61,17 @@ export type ProjectView = {
     burnedSol: number;
     burnBucketSol: number;
     balanceSol: number;
+    posBucketSol: number;
+    posBought: string;
+    posMint: string;
     runwaySol: number;
     accounted: string;
     released: string;
     burned: string;
     balance: string;
   };
+  devLock: string;
+  devUnlocked: string;
   nextDueAtMs: number | null;
   market?: {
     image: string | null;
@@ -152,6 +157,7 @@ export type BuilderRecord = {
   resolved: number;
   onTimePct: number | null;
   earnedSol: number;
+  posBought: string;
   burnedSol: number;
   launches: number;
   abandoned: number;

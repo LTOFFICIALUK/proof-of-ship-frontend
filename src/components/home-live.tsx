@@ -44,7 +44,7 @@ export const LiveStrip = () => {
       <div className="grid grid-cols-2 sm:grid-cols-5 [&>*]:border-black/[0.06] [&>*:nth-child(even)]:border-l sm:[&>*+*]:border-l [&>*:nth-child(n+3)]:border-t sm:[&>*:nth-child(n+3)]:border-t-0">
         <StripItem label="Coins launched" value={value((data) => formatCount(data.launched))} />
         <StripItem label="SOL locked in vaults" value={value((data) => formatSol(data.lockedSol))} />
-        <StripItem label="SOL paid to builders" value={value((data) => formatSol(data.paidSol))} />
+        <StripItem label="SOL buying $POS" value={value((data) => formatSol(data.paidSol))} />
         <StripItem label="SOL burned" value={value((data) => formatSol(data.burnedSol))} />
         <StripItem
           label="Promises shipped and missed"
