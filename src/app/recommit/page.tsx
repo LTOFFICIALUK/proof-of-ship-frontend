@@ -25,7 +25,7 @@ const steps = [
   },
   {
     title: "Holders vote.",
-    body: "Pay pays the builder in SOL. Burn buys $POS. No computer grades the work. The crowd with coins decides. A missed next promise spends leftover vault fees on $POS.",
+    body: "Pay pays the builder in SOL. Burn buys $POS. No computer grades the work. The crowd with coins decides. A missed next promise burns leftover fees into the project coin.",
   },
 ];
 

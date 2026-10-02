@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, type CoinCard as CoinCardData, type CoinList } from "@/lib/api";
 import { CoinCard } from "@/components/coin-card";
@@ -96,15 +95,7 @@ export const CoinBrowser = ({ scope }: { scope: "live" | "demo" }) => {
         {!loading && !error && coins.length === 0 ? (
           <p className={`${panel} mt-5 p-8 text-[17px] text-[var(--muted)]`}>
             {active.empty}
-            {scope === "live" && filter === "all" ? (
-              <>
-                {" "}
-                <Link href="/demo" className="text-[var(--ink)] underline">
-                  Open the demo coins
-                </Link>
-                .
-              </>
-            ) : null}
+            {scope === "live" && filter === "all" ? " Launch a coin to see it here." : null}
           </p>
         ) : null}
         {loading && coins.length === 0 ? (

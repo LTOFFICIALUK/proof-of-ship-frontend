@@ -15,8 +15,9 @@ export default function TermsPage() {
           coin vote pay or burn. The product does not grade the work. The crowd with coins decides.
         </p>
         <p>
-          Season 0 launches may stay off pump.fun until the vault program is live. A demo launch still follows these
-          rules on this site.
+          Every launch uses a contract address ending in PoS, taken from the server mint bank. Creator fees split to the
+          vault wallet, the builder wallet, and the platform wallet. The ledger tracks each coin, and the vault wallet
+          sends the SOL.
         </p>
       </LegalBlock>
       <LegalBlock title="Who can use it">
@@ -38,11 +39,9 @@ export default function TermsPage() {
           that split. You cannot withdraw the vault.
         </p>
         <p>
-          A pay vote pays 60% of the vault to the builder in SOL and unlocks 20% of the remaining bag. The bag sits in a
-          lock, not in their wallet. A burn vote
-          spends that same slice to buy $POS, mint H49xNgg1hMV6LqXK6if2g8CYnrvp7CxQ5SJTnDRwPoS. A miss or an abandon
-          spends that same slice to buy the project coin and burn it. A lapse spends leftover vault SOL on $POS. The rest
-          stays for the next promise.
+          A pay vote pays 60% of the vault to the builder in SOL and unlocks 20% of the remaining dev bag. A burn vote
+          spends that same slice to buy $POS, mint H49xNgg1hMV6LqXK6if2g8CYnrvp7CxQ5SJTnDRwPoS. A miss, a lapse, or an
+          abandon spends that same slice to buy the project coin and burn it. The rest stays for the next promise.
         </p>
       </LegalBlock>
       <LegalBlock title="Promises and votes">
@@ -51,8 +50,8 @@ export default function TermsPage() {
           vote. No proof by the deadline is a miss. About 2% of eligible supply must vote for the vote to count.
         </p>
         <p>
-          After a close, the builder has 7 days to post the next promise. If they do not, leftover vault fees and new
-          vault fees buy $POS. A builder can walk away at any time, and the vault burns into the project coin.
+          After a close, the builder has 7 days to post the next promise. If they do not, leftover fees and new fees
+          burn. A builder can walk away at any time, and the vault burns.
         </p>
       </LegalBlock>
       <LegalBlock title="What we are not">
@@ -63,8 +62,8 @@ export default function TermsPage() {
       </LegalBlock>
       <LegalBlock title="Changes">
         <p>
-          We can change the site, these terms, and Season 0 rules. If a rule on chain and a rule on this page disagree,
-          the chain wins once the vault program is live.
+          We can change the site and these terms. The vault ledger and the vault wallet are the record of where SOL
+          went.
         </p>
       </LegalBlock>
     </LegalPage>

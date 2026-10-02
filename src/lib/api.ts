@@ -52,6 +52,8 @@ export type ProjectView = {
   };
   chain: {
     vault: string;
+    platform?: string;
+    crank?: string;
     feeConfig: string;
     revokeSig: string;
   };

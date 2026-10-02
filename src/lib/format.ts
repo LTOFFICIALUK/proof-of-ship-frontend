@@ -169,7 +169,7 @@ export const feedLabel = (kind: string) => {
     return "Fees landed";
   }
   if (kind === "lapse") {
-    return "Lapsed. Fees buy $POS";
+    return "Lapsed. Fees burn";
   }
   if (kind === "abandon") {
     return "Abandoned";
@@ -213,7 +213,7 @@ export const describeEvent = (event: {
   }
   if (event.kind === "vote_pay") {
     return sol
-      ? `Holders voted pay. ${sol} is paid to the builder. 20 percent of the remaining bag unlocks. The bag sits in a lock.`
+      ? `Holders voted pay. ${sol} is paid to the builder. 20 percent of the remaining dev bag unlocks.`
       : "Holders voted pay. The vault slice is paid to the builder in SOL.";
   }
   if (event.kind === "pos") {
@@ -232,9 +232,7 @@ export const describeEvent = (event: {
     return sol ? `${sol} bought the coin and burned it.` : "Bought the coin and burned it.";
   }
   if (event.kind === "lapse") {
-    return sol
-      ? `No new promise in 7 days. ${sol} set to buy $POS.`
-      : "No new promise in 7 days. Vault fees buy $POS.";
+    return "No new promise in 7 days. Fees are burning.";
   }
   if (event.kind === "abandon") {
     return "The builder abandoned the coin. The vault burns.";

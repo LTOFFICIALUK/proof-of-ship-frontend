@@ -273,7 +273,7 @@ export default function LaunchPage() {
             </div>
             <p className="mt-5 text-[22px] font-semibold tracking-[-0.03em]">Confirming on chain</p>
             <p className="mt-2 text-[15px] text-[var(--muted)]">
-              This demo launch stays off pump.fun until the vault program is live.
+              Taking a contract address ending in PoS from the mint bank and locking the fee split.
             </p>
           </div>
         </div>
@@ -282,7 +282,7 @@ export default function LaunchPage() {
       <Misted cover>
         <h1 className={pageTitle}>Launch</h1>
         <p className="mt-3 max-w-[560px] text-[17px] leading-relaxed text-[var(--muted)]">
-          Season 0. Name the coin, drop an image, write one promise, then launch on pump.fun.
+          Name the coin, drop an image, write one promise, then launch. Every contract address ends in PoS.
         </p>
       </Misted>
 
@@ -488,7 +488,7 @@ export default function LaunchPage() {
           <section className="space-y-4">
             <h2 className="text-[18px] font-semibold tracking-[-0.03em]">Launch</h2>
             <p className="text-[15px] leading-relaxed text-[var(--muted)]">
-              Your coin goes live on pump.fun. Most creator fees lock in the vault. Holders vote pay or burn. Pay pays you in SOL. Burn buys $POS.
+              Your coin gets a contract address ending in PoS. Creator fees split to the vault, your wallet, and the platform. Holders vote pay or burn. Pay pays you in SOL. Burn buys $POS.
               {body.devBuyBps ? ` You buy ${body.devBuyBps / 100}% at launch.` : ""}
             </p>
             <label className="flex items-start gap-3 text-[15px] leading-relaxed">

@@ -15,7 +15,7 @@ const steps = [
   },
   {
     title: "Fees lock.",
-    body: "Creator fees split on chain at launch: 75% to the coin's vault, 15% to you as runway, 10% to the platform. The split can't be changed by you or by us. You can't withdraw the vault.",
+    body: "Creator fees split at launch: 75% to the vault wallet, 15% to you as runway, 10% to the platform wallet. The split can't be changed by you or by us. You can't withdraw the vault. Every contract address ends in PoS.",
   },
   {
     title: "Show your proof.",
@@ -27,11 +27,11 @@ const steps = [
   },
   {
     title: "Pay or burn.",
-    body: "If pay wins, 60% of the vault is paid to the builder in SOL, and 20% of the remaining bag unlocks. The bag sits in a lock, not in their wallet. If burn wins, 60% buys $POS. The other 40% stays for the next promise. A tie, or a vote where under 2% of eligible supply turns out, rolls the 60% over to the next promise.",
+    body: "If pay wins, 60% of the vault is paid to the builder in SOL, and 20% of the remaining dev bag unlocks. If burn wins, 60% buys $POS. The other 40% stays for the next promise. A tie, or a vote where under 2% of eligible supply turns out, rolls the 60% over to the next promise.",
   },
   {
     title: "Keep shipping.",
-    body: "The builder has 7 days to post the next promise. If they don't, leftover vault SOL and new vault fees buy $POS. A builder can walk away at any time, and the whole vault burns into the project coin.",
+    body: "The builder has 7 days to post the next promise. If they don't, the vault and new fees burn. A builder can walk away at any time, and the whole vault burns.",
   },
 ];
 
