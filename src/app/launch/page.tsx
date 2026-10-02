@@ -485,28 +485,23 @@ export default function LaunchPage() {
 
           <section className="space-y-4">
             <h2 className="text-[18px] font-semibold tracking-[-0.03em]">Launch</h2>
-            <ol className="space-y-2 text-[14px] leading-relaxed text-[var(--muted)]">
-              <li>Create the coin on pump.fun. Creator is your wallet.</li>
-              <li>Lock 75 vault, 15 runway, 10 platform, then revoke admin.</li>
-              <li>{body.devBuyBps ? `Buy ${body.devBuyBps / 100}% of supply.` : "Skip the extra buy."}</li>
-              <li>Register the first promise on the vault.</li>
-            </ol>
+            <p className="text-[15px] leading-relaxed text-[var(--muted)]">
+              Your coin goes live on pump.fun. Most creator fees lock in the vault. Holders vote pay or burn.
+              {body.devBuyBps ? ` You buy ${body.devBuyBps / 100}% at launch.` : ""}
+            </p>
             <label className="flex items-start gap-3 text-[15px] leading-relaxed">
               <input
                 type="checkbox"
                 className="mt-1"
                 checked={agreed}
                 onChange={(event) => setAgreed(event.target.checked)}
-                aria-label="I understand I cannot change the fee split and cannot withdraw the vault."
+                aria-label="I cannot change the fee split. I cannot withdraw the vault."
               />
-              <span>I understand I cannot change the fee split and cannot withdraw the vault.</span>
+              <span>I cannot change the fee split. I cannot withdraw the vault.</span>
             </label>
             <button type="submit" disabled={ctaBusy} className={`${btnPrimary} w-full py-3.5 text-[16px]`}>
               {cta}
             </button>
-            <p className="text-center text-[13px] text-[var(--muted)]">
-              75% of creator fees lock in the vault. You cannot withdraw them.
-            </p>
           </section>
         </form>
 
