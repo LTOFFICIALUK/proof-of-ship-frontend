@@ -16,6 +16,7 @@ type SolanaProvider = {
   connect: (opts?: { onlyIfTrusted?: boolean }) => Promise<{ publicKey: { toString: () => string } }>;
   disconnect?: () => Promise<void>;
   signMessage?: (message: Uint8Array, display?: "utf8" | "hex") => Promise<{ signature: Uint8Array } | Uint8Array>;
+  request?: (args: { method: string; params?: Record<string, unknown> }) => Promise<unknown>;
   publicKey?: { toString: () => string } | null;
 };
 
@@ -37,8 +38,8 @@ type WalletContextValue = {
 
 const PHANTOM_DOWNLOAD = "https://phantom.app/download";
 
-const signInMessage = (wallet: string, nonce: string, issued: string) =>
-  `proofofship.fun wants you to sign in with your Solana account:\n${wallet}\n\nNonce: ${nonce}\nIssued: ${issued}`;
+const loginMessage = (wallet: string, nonce: string, issued: string) =>
+  `Proof of Ship\n${wallet}\n\nNonce: ${nonce}\nIssued: ${issued}`;
 
 const asBytes = (value: unknown): Uint8Array => {
   if (value instanceof Uint8Array) {
@@ -71,26 +72,43 @@ const toBase64 = (bytes: Uint8Array) => {
   return btoa(raw);
 };
 
-const isRejected = (err: unknown) => {
-  if (!err || typeof err !== "object") {
-    return false;
-  }
-  const code = "code" in err ? Number((err as { code?: number }).code) : 0;
-  const message = "message" in err ? String((err as { message?: unknown }).message) : "";
-  return code === 4001 || /user rejected|declined|cancelled|canceled|denied/i.test(message);
-};
-
-const walletMessage = (err: unknown, fallback: string) => {
-  if (isRejected(err)) {
-    return "Wallet request was declined.";
-  }
+const errText = (err: unknown) => {
   if (err instanceof Error && err.message) {
     return err.message;
   }
   if (err && typeof err === "object" && "message" in err && (err as { message?: unknown }).message) {
     return String((err as { message: unknown }).message);
   }
-  return fallback;
+  return "";
+};
+
+const errCode = (err: unknown) => {
+  if (err && typeof err === "object" && "code" in err) {
+    return Number((err as { code?: number }).code);
+  }
+  return 0;
+};
+
+const isRejected = (err: unknown) => {
+  const message = errText(err);
+  const code = errCode(err);
+  return code === 4001 || /user rejected|declined|cancelled|canceled|denied/i.test(message);
+};
+
+const isInvalidFormat = (err: unknown) => {
+  const message = errText(err);
+  const code = errCode(err);
+  return code === -32000 || /invalid formatting|invalid input|cannot be shown/i.test(message);
+};
+
+const walletMessage = (err: unknown, fallback: string) => {
+  if (isRejected(err)) {
+    return "Wallet request was declined.";
+  }
+  if (isInvalidFormat(err)) {
+    return "Phantom could not read the sign in message. Refresh and try again.";
+  }
+  return errText(err) || fallback;
 };
 
 const provider = (): SolanaProvider | null => {
@@ -148,17 +166,25 @@ const waitForProvider = (ms = 1200) =>
 const publicKeyOf = (current: SolanaProvider) => current.publicKey?.toString() ?? "";
 
 const signWithProvider = async (current: SolanaProvider, encoded: Uint8Array) => {
-  if (!current.signMessage) {
-    throw new Error("This wallet cannot sign a message. Open Phantom and try again.");
-  }
-  try {
-    return asBytes(await current.signMessage(encoded, "utf8"));
-  } catch (err) {
-    if (isRejected(err)) {
-      throw err;
+  if (current.signMessage) {
+    try {
+      return asBytes(await current.signMessage(encoded, "utf8"));
+    } catch (err) {
+      if (isRejected(err)) {
+        throw err;
+      }
+      return asBytes(await current.signMessage(encoded));
     }
-    return asBytes(await current.signMessage(encoded));
   }
+  if (current.request) {
+    return asBytes(
+      await current.request({
+        method: "signMessage",
+        params: { message: encoded, display: "utf8" },
+      }),
+    );
+  }
+  throw new Error("This wallet cannot sign a message. Open Phantom and try again.");
 };
 
 const WalletContext = createContext<WalletContextValue | null>(null);
@@ -199,7 +225,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       const live = provider() ?? current;
       const nonce = await api<{ nonce: string }>("/v1/auth/nonce");
       const issued = new Date().toISOString();
-      const message = signInMessage(next, nonce.nonce, issued);
+      const message = loginMessage(next, nonce.nonce, issued);
       const bytes = await signWithProvider(live, new TextEncoder().encode(message));
       if (bytes.length !== 64) {
         throw new Error("Wallet returned a signature we could not read.");
@@ -227,10 +253,8 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     if (!current) {
       throw new Error("No wallet found. Install Phantom, then try again.");
     }
-    let next = publicKeyOf(current);
-    if (!next) {
-      const result = await current.connect();
-      next = result.publicKey.toString();
+    if (!publicKeyOf(current)) {
+      await current.connect();
     }
     const live = provider() ?? current;
     const bytes = await signWithProvider(live, new TextEncoder().encode(text));
