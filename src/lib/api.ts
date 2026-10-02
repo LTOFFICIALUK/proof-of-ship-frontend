@@ -204,6 +204,7 @@ export const api = async <T>(path: string, init?: RequestInit): Promise<T> => {
   const url = path.startsWith("/v1") ? `/api${path}` : path;
   const response = await fetch(url, {
     ...init,
+    credentials: "include",
     headers: {
       "content-type": "application/json",
       ...(init?.headers ?? {}),

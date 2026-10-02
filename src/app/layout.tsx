@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { GridMotion } from "@/components/grid-motion";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { ToastHost } from "@/components/toast";
 import { WalletProvider } from "@/lib/wallet";
 import "./globals.css";
 
@@ -62,6 +63,7 @@ export default function RootLayout({
             <SiteHeader />
             <main className="relative z-10 min-w-0 flex-1 px-4 pb-10 pt-5 md:px-8 md:pb-14 md:pt-8">{children}</main>
             <SiteFooter />
+            <ToastHost />
           </div>
         </WalletProvider>
       </body>
