@@ -5,15 +5,13 @@ import { Misted } from "@/components/text-mist";
 
 export const SiteFooter = () => {
   return (
-    <footer className="relative z-10 mt-auto min-w-0 border-t border-black/[0.06] px-5 py-8 text-[12px] text-[var(--muted)] md:px-8">
-      <div className="mx-auto flex max-w-[980px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <Logo size={22} />
-          <Misted cover>
+    <footer className="relative z-10 mt-auto min-w-0 shrink-0 border-t border-black/[0.06] px-5 py-8 text-[12px] text-[var(--muted)] md:px-8">
+      <Misted className="mx-auto max-w-[980px]">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <Logo size={22} />
             <p>Ship or burn. Creator fees stay locked until holders vote.</p>
-          </Misted>
-        </div>
-        <Misted cover>
+          </div>
           <nav className="flex flex-wrap gap-x-4 gap-y-2">
             <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/coins">
               Coins
@@ -31,8 +29,8 @@ export const SiteFooter = () => {
               Recommit
             </Link>
           </nav>
-        </Misted>
-      </div>
+        </div>
+      </Misted>
     </footer>
   );
 };

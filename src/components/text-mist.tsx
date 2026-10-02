@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
+const heroMist =
+  "pointer-events-none absolute -z-10 bg-[#f5f5f7]/45 backdrop-blur-2xl [mask-image:radial-gradient(ellipse_at_center,black_42%,transparent_78%)]";
+
 export const TextMist = ({ className = "" }: { className?: string }) => (
-  <div
-    aria-hidden="true"
-    className={`pointer-events-none absolute -z-10 bg-[#f3f3f1]/88 backdrop-blur-2xl [mask-image:radial-gradient(ellipse_at_center,black_64%,transparent_90%)] ${className}`}
-  />
+  <div aria-hidden="true" className={`${heroMist} ${className}`} />
 );
 
 export const Misted = ({
@@ -17,14 +17,13 @@ export const Misted = ({
   cover?: boolean;
 }) => (
   <div className={`relative ${className}`}>
-    {cover ? (
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-x-3 -inset-y-4 -z-10 rounded-[28px] bg-[#f3f3f1]/90 backdrop-blur-2xl sm:-inset-x-8 sm:-inset-y-6"
-      />
-    ) : (
-      <TextMist className="-inset-x-3 -inset-y-3 sm:-inset-x-7 sm:-inset-y-5" />
-    )}
+    <TextMist
+      className={
+        cover
+          ? "-inset-x-2 -inset-y-6 sm:-inset-x-10 sm:-inset-y-8 [mask-image:radial-gradient(ellipse_80%_80%_at_center,black_46%,transparent_80%)]"
+          : "-inset-x-2 -inset-y-5 sm:-inset-x-10 sm:-inset-y-7"
+      }
+    />
     {children}
   </div>
 );

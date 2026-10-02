@@ -54,13 +54,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col font-sans antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} flex min-h-dvh flex-col font-sans antialiased`}
       >
         <WalletProvider>
-          <GridMotion />
-          <SiteHeader />
-          <main className="relative z-10 min-w-0 flex-1 px-4 pb-10 pt-5 md:px-8 md:pb-14 md:pt-8">{children}</main>
-          <SiteFooter />
+          <div className="flex min-h-dvh flex-col">
+            <GridMotion />
+            <SiteHeader />
+            <main className="relative z-10 min-w-0 flex-1 px-4 pb-10 pt-5 md:px-8 md:pb-14 md:pt-8">{children}</main>
+            <SiteFooter />
+          </div>
         </WalletProvider>
       </body>
     </html>
