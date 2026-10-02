@@ -27,7 +27,7 @@ const steps = [
   },
   {
     title: "Pay or burn.",
-    body: "If pay wins, 60% of the vault is paid to the builder in SOL, and 20% of the remaining dev bag unlocks. If burn wins, 60% buys $POS. The other 40% stays for the next promise. A tie, or a vote where under 2% of eligible supply turns out, rolls the 60% over to the next promise.",
+    body: "If pay wins, 60% of the vault is paid to the builder in SOL, and 20% of the remaining bag unlocks. The bag sits in a lock, not in their wallet. If burn wins, 60% buys $POS. The other 40% stays for the next promise. A tie, or a vote where under 2% of eligible supply turns out, rolls the 60% over to the next promise.",
   },
   {
     title: "Keep shipping.",

@@ -38,7 +38,8 @@ export default function TermsPage() {
           that split. You cannot withdraw the vault.
         </p>
         <p>
-          A pay vote pays 60% of the vault to the builder in SOL and unlocks 20% of the remaining locked bag. A burn vote
+          A pay vote pays 60% of the vault to the builder in SOL and unlocks 20% of the remaining bag. The bag sits in a
+          lock, not in their wallet. A burn vote
           spends that same slice to buy $POS, mint H49xNgg1hMV6LqXK6if2g8CYnrvp7CxQ5SJTnDRwPoS. A miss or an abandon
           spends that same slice to buy the project coin and burn it. A lapse spends leftover vault SOL on $POS. The rest
           stays for the next promise.

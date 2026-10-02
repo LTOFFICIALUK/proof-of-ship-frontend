@@ -16,7 +16,7 @@ Proof of Ship lets a builder launch a normal pump.fun coin while most creator fe
 
 ## Positioning
 
-Creator fees are locked in a vault the builder cannot withdraw. Holders vote after proof is posted. More pay than burn pays 60 percent of the vault to the builder in SOL, and unlocks 20 percent of the remaining locked bag. More burn than pay spends that same slice to buy $POS. A miss or an abandon buys the project coin and burns it. A lapse spends leftover vault SOL and new vault fees on $POS. A tie rolls the slice. No computer grades the work.
+Creator fees are locked in a vault the builder cannot withdraw. Holders vote after proof is posted. More pay than burn pays 60 percent of the vault to the builder in SOL, and unlocks 20 percent of the remaining bag. The bag sits in a lock, not in their wallet. More burn than pay spends that same slice to buy $POS. A miss or an abandon buys the project coin and burns it. A lapse spends leftover vault SOL and new vault fees on $POS. A tie rolls the slice. No computer grades the work.
 
 ## Operating Context
 
@@ -37,7 +37,7 @@ The working concept is `PROOF_OF_SHIP_CONCEPT.md` in the parent workspace. The l
 ## Product Principles
 
 1. Holders with coins decide. The product does not grade the work.
-2. Fees stay locked until a vote, or they burn when the builder stops promising.
+2. Fees stay locked until a vote. If the builder stops promising, leftover vault fees buy $POS.
 3. Say the rule in plain language. Do not dress the mechanism up.
 4. Show the vault, SOL paid to the builder, $POS queued or bought, and burned SOL as separate facts.
 5. Do not invent proof the product does not have.

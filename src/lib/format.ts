@@ -213,7 +213,7 @@ export const describeEvent = (event: {
   }
   if (event.kind === "vote_pay") {
     return sol
-      ? `Holders voted pay. ${sol} is paid to the builder. 20 percent of the remaining dev bag unlocks.`
+      ? `Holders voted pay. ${sol} is paid to the builder. 20 percent of the remaining bag unlocks. The bag sits in a lock.`
       : "Holders voted pay. The vault slice is paid to the builder in SOL.";
   }
   if (event.kind === "pos") {

@@ -389,7 +389,7 @@ export default function CoinPage() {
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-2 border-t border-black/[0.06] px-5 py-3 text-[13px] text-[var(--muted)]">
             <span>
-              Dev bag locked: {formatTokens(project.devLock)}. Unlocked: {formatTokens(project.devUnlocked)}.
+              Bag sits in a lock. Locked: {formatTokens(project.devLock)}. Unlocked: {formatTokens(project.devUnlocked)}.
             </span>
             <span>
               $POS:{" "}
@@ -498,7 +498,7 @@ export default function CoinPage() {
             <div>
               <h2 className="text-[22px] font-semibold tracking-[-0.03em]">Promises</h2>
               <p className="mt-1 max-w-[36rem] text-[15px] leading-relaxed text-[var(--muted)]">
-                Holders vote after proof is posted. The split stays hidden until the vote ends. Pay pays the builder 60 percent of the vault in SOL and unlocks 20 percent of the remaining dev bag. Burn spends that same slice on $POS.
+                Holders vote after proof is posted. The split stays hidden until the vote ends. Pay pays the builder 60 percent of the vault in SOL and unlocks 20 percent of the remaining bag. The bag sits in a lock, not in their wallet. Burn spends that same slice on $POS.
               </p>
             </div>
             {!wallet ? <ConnectWallet /> : null}
