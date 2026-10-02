@@ -4,7 +4,7 @@ import { pageTitle } from "@/components/surface";
 const steps = [
   {
     title: "Launch.",
-    body: "Sign in with your wallet and your X account. Launch a pump.fun coin with one promise: what you'll ship and when, 3 to 14 days out.",
+    body: "Sign in with your wallet and your X account. Launch a pump.fun coin with one promise: what you'll ship and when, from 30 minutes to 30 days out.",
   },
   {
     title: "Fees lock.",

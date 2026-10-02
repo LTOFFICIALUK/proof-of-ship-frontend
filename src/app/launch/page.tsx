@@ -13,6 +13,7 @@ import { Misted } from "@/components/text-mist";
 import { toast } from "@/components/toast";
 import { VerifiedTick } from "@/components/verified-tick";
 
+const MINUTE = 60 * 1000;
 const DAY = 24 * 60 * 60 * 1000;
 
 const PROOF = [
@@ -41,7 +42,12 @@ type LaunchBody = {
   };
 };
 
-const dateValue = (ms: number) => new Date(ms).toISOString().slice(0, 10);
+const pad = (value: number) => String(value).padStart(2, "0");
+
+const localInput = (ms: number) => {
+  const date = new Date(ms);
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
 
 const countClass = "mt-1 text-right text-[12px] text-[var(--muted)]";
 
@@ -150,13 +156,13 @@ export default function LaunchPage() {
   const [title, setTitle] = useState("");
   const [doneLooksLike, setDoneLooksLike] = useState("");
   const [proofType, setProofType] = useState<ProofId>("link");
-  const [deadline, setDeadline] = useState(dateValue(Date.now() + 7 * DAY));
+  const [deadline, setDeadline] = useState(() => localInput(Date.now() + 7 * DAY));
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [confirming, setConfirming] = useState(false);
 
-  const minDate = dateValue(Date.now() + 3 * DAY);
-  const maxDate = dateValue(Date.now() + 14 * DAY);
+  const minDeadline = localInput(Date.now() + 30 * MINUTE);
+  const maxDeadline = localInput(Date.now() + 30 * DAY);
 
   const body: LaunchBody = useMemo(
     () => ({
@@ -171,7 +177,7 @@ export default function LaunchPage() {
         title: title.trim(),
         doneLooksLike: doneLooksLike.trim(),
         proofType,
-        deadlineMs: new Date(`${deadline}T23:59:00.000Z`).getTime(),
+        deadlineMs: new Date(deadline).getTime(),
       },
     }),
     [deadline, description, devBuy, doneLooksLike, github, image, name, proofType, symbol, title, website],
@@ -224,8 +230,9 @@ export default function LaunchPage() {
       toast.error("Links must start with https://");
       return;
     }
-    if (!Number.isFinite(body.promise.deadlineMs)) {
-      toast.error("Pick a deadline 3 to 14 days out.");
+    const windowMs = body.promise.deadlineMs - Date.now();
+    if (!Number.isFinite(body.promise.deadlineMs) || windowMs < 30 * MINUTE || windowMs > 30 * DAY) {
+      toast.error("Pick a deadline from 30 minutes to 30 days out.");
       return;
     }
     if (!agreed) {
@@ -453,12 +460,13 @@ export default function LaunchPage() {
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className={labelClass}>
-                Deadline, 3 to 14 days
+                Deadline, 30 minutes to 30 days
                 <input
                   className={field}
-                  type="date"
-                  min={minDate}
-                  max={maxDate}
+                  type="datetime-local"
+                  min={minDeadline}
+                  max={maxDeadline}
+                  step={60}
                   value={deadline}
                   onChange={(event) => setDeadline(event.target.value)}
                   aria-label="Deadline"

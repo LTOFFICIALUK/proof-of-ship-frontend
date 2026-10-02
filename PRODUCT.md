@@ -20,7 +20,7 @@ Creator fees are locked in a vault the builder cannot withdraw. Holders vote aft
 
 ## Operating Context
 
-The builder connects a wallet and an X handle, writes one promise with a deadline, and can add another after the open one closes. Posting proof before the deadline opens a 48 hour vote. No proof by the deadline burns 60 percent of the vault. About 2 percent of supply must vote for the vote to count. The first miss extends the vote 24 hours. After a close, the builder has 7 days to post the next promise. If they do not, leftover fees and new fees burn. SOL already queued to buy $POS is not pulled back into that burn.
+The builder connects a wallet and an X handle, writes one promise with a deadline from 30 minutes to 30 days out, and can add another after the open one closes. Posting proof before the deadline opens a 48 hour vote. No proof by the deadline burns 60 percent of the vault. About 2 percent of supply must vote for the vote to count. The first miss extends the vote 24 hours. After a close, the builder has 7 days to post the next promise. If they do not, leftover fees and new fees burn. SOL already queued to buy $POS is not pulled back into that burn.
 
 ## Capabilities and Constraints
 

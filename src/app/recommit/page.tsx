@@ -21,7 +21,7 @@ const steps = [
   },
   {
     title: "Post a promise.",
-    body: "Write what you will ship and when, 3 to 14 days out. From that point the coin follows the same vote loop as a new Proof of Ship launch.",
+    body: "Write what you will ship and when, from 30 minutes to 30 days out. From that point the coin follows the same vote loop as a new Proof of Ship launch.",
   },
   {
     title: "Holders vote.",

@@ -6,7 +6,7 @@ import { TextMist } from "@/components/text-mist";
 const steps = [
   {
     title: "Promise",
-    body: "Post one promise with a deadline 3 to 14 days out, and say what done looks like.",
+    body: "Post one promise with a deadline from 30 minutes to 30 days out, and say what done looks like.",
   },
   {
     title: "Proof",

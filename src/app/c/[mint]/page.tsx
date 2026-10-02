@@ -116,7 +116,7 @@ export default function CoinPage() {
   const [reason, setReason] = useState("");
   const [nextTitle, setNextTitle] = useState("");
   const [nextDone, setNextDone] = useState("");
-  const [nextDays, setNextDays] = useState("7");
+  const [nextHours, setNextHours] = useState("24");
   const [abandonStep, setAbandonStep] = useState(false);
 
   const load = useCallback(async () => {
@@ -213,7 +213,7 @@ export default function CoinPage() {
           title: nextTitle.trim(),
           doneLooksLike: nextDone.trim(),
           proofType: "link",
-          deadlineMs: Date.now() + Number(nextDays) * 24 * 60 * 60 * 1000,
+          deadlineMs: Date.now() + Number(nextHours) * 60 * 60 * 1000,
         }),
       });
       setProject(next);
@@ -460,8 +460,8 @@ export default function CoinPage() {
                   <textarea className={field} value={nextDone} onChange={(event) => setNextDone(event.target.value)} rows={2} aria-label="What done looks like" />
                 </label>
                 <label className={labelClass}>
-                  Days until the deadline
-                  <input className={`${field} max-w-[8rem]`} type="number" min={3} max={14} value={nextDays} onChange={(event) => setNextDays(event.target.value)} aria-label="Days until the deadline" />
+                  Hours until the deadline
+                  <input className={`${field} max-w-[8rem]`} type="number" min={0.5} max={720} step={0.5} value={nextHours} onChange={(event) => setNextHours(event.target.value)} aria-label="Hours until the deadline" />
                 </label>
                 <button type="submit" className={btnPay} disabled={busyIdx === -1}>
                   Post next promise

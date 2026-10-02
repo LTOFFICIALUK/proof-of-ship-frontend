@@ -46,7 +46,7 @@ export default function TermsPage() {
       </LegalBlock>
       <LegalBlock title="Promises and votes">
         <p>
-          A builder posts a promise with a deadline 3 to 14 days out. Proof before the deadline opens a 48 hour holder
+          A builder posts a promise with a deadline from 30 minutes to 30 days out. Proof before the deadline opens a 48 hour holder
           vote. No proof by the deadline is a miss. About 2% of eligible supply must vote for the vote to count.
         </p>
         <p>
