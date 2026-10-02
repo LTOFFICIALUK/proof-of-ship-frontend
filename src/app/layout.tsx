@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { GridMotion } from "@/components/grid-motion";
 import { SiteFooter } from "@/components/site-footer";
@@ -23,6 +23,27 @@ export const metadata: Metadata = {
   },
   description:
     "Launch a pump.fun coin. Lock creator fees. Holders vote pay or burn.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
+  openGraph: {
+    title: "Proof of Ship",
+    description: "Launch a pump.fun coin. Lock creator fees. Holders vote pay or burn.",
+    images: [{ url: "/og.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/og.png"],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#111112",
 };
 
 export default function RootLayout({
