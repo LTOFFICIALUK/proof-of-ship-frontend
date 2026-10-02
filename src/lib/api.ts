@@ -8,6 +8,7 @@ export type PromiseView = {
   downPct?: number;
   netPct?: number | null;
   yourSide?: "up" | "down" | null;
+  resultNet?: number | null;
 };
 
 export type ProjectView = {

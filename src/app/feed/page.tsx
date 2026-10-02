@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, type FeedEvent } from "@/lib/api";
-import { feedLabel, formatWhen } from "@/lib/format";
+import { feedLabel, formatStamp } from "@/lib/format";
 import { pageTitle, panel } from "@/components/surface";
 
 export default function FeedPage() {
@@ -40,7 +40,9 @@ export default function FeedPage() {
                     {event.mint.slice(0, 8)}…{event.mint.slice(-4)}
                   </p>
                 </div>
-                <p className="shrink-0 text-[13px] text-[var(--muted)]">{formatWhen(event.atMs)}</p>
+                <p className="shrink-0 font-mono text-[13px] text-[var(--muted)]" title={formatStamp(event.atMs).title}>
+                  {formatStamp(event.atMs).label}
+                </p>
               </div>
             </Link>
           </li>

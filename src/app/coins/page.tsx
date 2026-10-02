@@ -13,7 +13,7 @@ type CoinCard = {
   name: string;
   symbol: string;
   status: string;
-  builderWallet: string;
+  xHandle: string;
   promise: string;
   balanceSol: number;
   releasedSol: number;
@@ -67,7 +67,7 @@ export default function CoinsPage() {
         {coins.map((coin) => (
           <li key={coin.mint}>
             <Link
-              href={`/coins/${coin.slug}`}
+              href={`/c/${coin.mint}`}
               className={`${panel} flex h-full flex-col p-4 transition hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] sm:p-5`}
             >
               <div className="flex items-start gap-3">
@@ -87,8 +87,9 @@ export default function CoinsPage() {
                   <p className="mt-1 truncate text-[14px] text-[var(--muted)]">
                     ${coin.symbol}
                     <span className="px-1.5">·</span>
-                    <span className="font-mono">{shortWallet(coin.builderWallet)}</span>
+                    <span className="font-mono">{shortWallet(coin.mint)}</span>
                   </p>
+                  <p className="mt-1 truncate text-[13px] text-[var(--muted)]">@{coin.xHandle}</p>
                 </div>
               </div>
               {coin.promise ? (
@@ -104,7 +105,13 @@ export default function CoinsPage() {
         ))}
       </ul>
       {!error && coins.length === 0 ? (
-        <p className={`${panel} mt-8 p-8 text-[17px] text-[var(--muted)]`}>No coins yet.</p>
+        <p className={`${panel} mt-8 p-8 text-[17px] text-[var(--muted)]`}>
+          No live coins yet.{" "}
+          <Link href="/demo" className="text-[var(--ink)] underline">
+            Open the demo coins
+          </Link>
+          .
+        </p>
       ) : null}
     </div>
   );

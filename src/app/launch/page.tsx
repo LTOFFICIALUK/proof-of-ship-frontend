@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api, type ProjectView } from "@/lib/api";
-import { PumpMark } from "@/components/pump-mark";
+import { useWallet } from "@/lib/wallet";
+import { ConnectWallet } from "@/components/connect-wallet";
 import { btnPrimary, field, labelClass, pageTitle, panel } from "@/components/surface";
 
 const DAY = 24 * 60 * 60 * 1000;
 
 export default function LaunchPage() {
   const router = useRouter();
-  const [wallet, setWallet] = useState("");
-  const [xHandle, setXHandle] = useState("");
+  const { wallet, xHandle, refresh } = useWallet();
   const [name, setName] = useState("");
   const [symbol, setSymbol] = useState("");
   const [promise, setPromise] = useState("");
@@ -19,22 +19,31 @@ export default function LaunchPage() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
+  const handleLinkX = async () => {
+    setError("");
+    try {
+      const data = await api<{ url: string }>("/v1/x/connect");
+      window.location.assign(data.url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not open X");
+    }
+  };
+
   const handleSubmit = async () => {
     setError("");
     setBusy(true);
     try {
+      await refresh();
       const deadlineMs = Date.now() + Number(days) * DAY;
       const project = await api<ProjectView>("/v1/projects", {
         method: "POST",
         body: JSON.stringify({
-          wallet: wallet.trim(),
-          xHandle: xHandle.trim(),
           name: name.trim(),
           symbol: symbol.trim(),
           promises: [{ text: promise.trim(), deadlineMs }],
         }),
       });
-      router.push(`/coins/${project.slug}`);
+      router.push(`/c/${project.mint}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Launch failed");
     } finally {
@@ -46,12 +55,12 @@ export default function LaunchPage() {
     <div className="mx-auto max-w-[560px] pt-4">
       <h1 className={pageTitle}>Launch</h1>
       <p className="mt-3 text-[17px] leading-relaxed text-[var(--muted)]">
-        One promise is enough. You can add more after. Deadline must be within
-        14 days.
+        One promise is enough. You can add more after. Deadline must be within 14 days.
       </p>
-      <div className="mt-4">
-        <PumpMark label="Launches on pump.fun" />
-      </div>
+      <p className="mt-3 text-[15px] text-[var(--muted)]">on pump.fun</p>
+      <p className="mt-2 text-[15px] text-[var(--muted)]">
+        This launch is a demo until the on chain launch is ready. It will not create a pump.fun coin yet.
+      </p>
       <form
         className={`${panel} mt-8 space-y-5 p-4 sm:p-6 md:p-8`}
         onSubmit={(event) => {
@@ -59,46 +68,34 @@ export default function LaunchPage() {
           void handleSubmit();
         }}
       >
-        <label className={labelClass}>
-          Wallet
-          <input
-            className={field}
-            value={wallet}
-            onChange={(event) => setWallet(event.target.value)}
-            required
-            aria-label="Wallet"
-          />
-        </label>
-        <label className={labelClass}>
-          X handle
-          <input
-            className={field}
-            value={xHandle}
-            onChange={(event) => setXHandle(event.target.value)}
-            required
-            aria-label="X handle"
-          />
-        </label>
+        <div>
+          <p className={labelClass}>Wallet</p>
+          {wallet ? (
+            <p className="mt-2 font-mono text-[15px]">{wallet}</p>
+          ) : (
+            <div className="mt-2">
+              <ConnectWallet />
+            </div>
+          )}
+        </div>
+        <div>
+          <p className={labelClass}>X</p>
+          {xHandle ? (
+            <p className="mt-2 text-[15px]">@{xHandle}</p>
+          ) : (
+            <button type="button" onClick={() => void handleLinkX()} className={`${btnPrimary} mt-2 px-4 py-2 text-[14px]`} disabled={!wallet}>
+              Link X
+            </button>
+          )}
+        </div>
         <div className="grid gap-4 sm:grid-cols-[1fr_8rem]">
           <label className={labelClass}>
             Coin name
-            <input
-              className={field}
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              required
-              aria-label="Coin name"
-            />
+            <input className={field} value={name} onChange={(event) => setName(event.target.value)} required aria-label="Coin name" />
           </label>
           <label className={labelClass}>
             Ticker
-            <input
-              className={field}
-              value={symbol}
-              onChange={(event) => setSymbol(event.target.value)}
-              required
-              aria-label="Ticker"
-            />
+            <input className={field} value={symbol} onChange={(event) => setSymbol(event.target.value)} required aria-label="Ticker" />
           </label>
         </div>
         <label className={labelClass}>
@@ -113,19 +110,19 @@ export default function LaunchPage() {
           />
         </label>
         <label className={labelClass}>
-          Days until vote
+          Days until the deadline
           <input
             className={`${field} max-w-[8rem]`}
             type="number"
-            min={1}
+            min={3}
             max={14}
             value={days}
             onChange={(event) => setDays(event.target.value)}
-            aria-label="Days until vote"
+            aria-label="Days until the deadline"
           />
         </label>
         {error ? <p className="text-sm text-[var(--burn)]">{error}</p> : null}
-        <button type="submit" disabled={busy} className={`${btnPrimary} mt-2 px-6 py-3 text-[17px]`}>
+        <button type="submit" disabled={busy || !wallet || !xHandle} className={`${btnPrimary} mt-2 px-6 py-3 text-[17px]`}>
           {busy ? "Launching" : "Launch"}
         </button>
       </form>

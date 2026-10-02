@@ -25,6 +25,10 @@ const proxy = async (request: Request, path: string[]) => {
   if (contentType) {
     headers.set("content-type", contentType);
   }
+  const cookie = request.headers.get("cookie");
+  if (cookie) {
+    headers.set("cookie", cookie);
+  }
 
   const response = await fetch(target, {
     method: request.method,
@@ -34,15 +38,24 @@ const proxy = async (request: Request, path: string[]) => {
         ? undefined
         : await request.text(),
     cache: "no-store",
+    redirect: "manual",
   });
 
   const text = await response.text();
-  return new NextResponse(text, {
+  const outgoing = new NextResponse(text, {
     status: response.status,
     headers: {
       "content-type": response.headers.get("content-type") ?? "application/json",
     },
   });
+  const location = response.headers.get("location");
+  if (location) {
+    outgoing.headers.set("location", location);
+  }
+  for (const value of response.headers.getSetCookie()) {
+    outgoing.headers.append("set-cookie", value);
+  }
+  return outgoing;
 };
 
 export const GET = async (

@@ -18,6 +18,43 @@ type ChatPayload = {
   holds: boolean | null;
 };
 
+const allowedHost = (host: string) => {
+  const name = host.replace(/^www\./, "");
+  return name === "x.com" || name === "twitter.com" || name === "github.com";
+};
+
+const MessageText = ({ text, mine }: { text: string; mine: boolean }) => {
+  const parts = text.split(/(https?:\/\/[^\s]+)/g);
+  return (
+    <p
+      className={
+        mine
+          ? "rounded-[20px] rounded-br-md bg-[var(--ink)] px-4 py-2.5 text-left text-[15px] leading-relaxed text-white"
+          : "rounded-[20px] rounded-bl-md bg-[#f5f5f7] px-4 py-2.5 text-[15px] leading-relaxed"
+      }
+    >
+      {parts.map((part, index) => {
+        if (!/^https?:\/\//.test(part)) {
+          return <span key={index}>{part}</span>;
+        }
+        try {
+          const url = new URL(part);
+          if (allowedHost(url.hostname)) {
+            return (
+              <a key={index} href={url.toString()} className="underline" target="_blank" rel="noreferrer">
+                {url.toString()}
+              </a>
+            );
+          }
+        } catch {
+          return <span key={index}>{part}</span>;
+        }
+        return <span key={index}>{part.replace(/^https?:\/\//, "")}</span>;
+      })}
+    </p>
+  );
+};
+
 export const HolderChat = ({ mint }: { mint: string }) => {
   const { wallet, busy: connecting, error: walletError, connect } = useWallet();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -32,8 +69,7 @@ export const HolderChat = ({ mint }: { mint: string }) => {
     let stop = false;
     const load = async () => {
       try {
-        const query = wallet ? `?wallet=${encodeURIComponent(wallet)}` : "";
-        const data = await api<ChatPayload>(`/v1/projects/${mint}/messages${query}`);
+        const data = await api<ChatPayload>(`/v1/projects/${mint}/messages`);
         if (!stop) {
           setMessages(data.messages);
           setHolds(wallet ? data.holds : false);
@@ -74,12 +110,10 @@ export const HolderChat = ({ mint }: { mint: string }) => {
     try {
       await api(`/v1/projects/${mint}/messages`, {
         method: "POST",
-        body: JSON.stringify({ wallet, text: text.trim() }),
+        body: JSON.stringify({ text: text.trim() }),
       });
       setText("");
-      const data = await api<ChatPayload>(
-        `/v1/projects/${mint}/messages?wallet=${encodeURIComponent(wallet)}`,
-      );
+      const data = await api<ChatPayload>(`/v1/projects/${mint}/messages`);
       setMessages(data.messages);
       setHolds(data.holds);
     } catch (err) {
@@ -146,15 +180,23 @@ export const HolderChat = ({ mint }: { mint: string }) => {
                     <span className="px-1">·</span>
                     {formatWhen(message.atMs)}
                   </p>
-                  <p
-                    className={
-                      mine
-                        ? "rounded-[20px] rounded-br-md bg-[var(--ink)] px-4 py-2.5 text-left text-[15px] leading-relaxed text-white"
-                        : "rounded-[20px] rounded-bl-md bg-[#f5f5f7] px-4 py-2.5 text-[15px] leading-relaxed"
-                    }
-                  >
-                    {message.text}
-                  </p>
+                  <MessageText text={message.text} mine={mine} />
+                  {wallet ? (
+                    <button
+                      type="button"
+                      className="mt-1 px-1 text-[11px] text-[var(--muted)] underline"
+                      onClick={() => {
+                        void api(`/v1/projects/${mint}/messages/${message.id}/report`, {
+                          method: "POST",
+                          body: "{}",
+                        }).catch((err: unknown) => {
+                          setError(err instanceof Error ? err.message : "Could not report that message");
+                        });
+                      }}
+                    >
+                      Report
+                    </button>
+                  ) : null}
                 </div>
               </div>
             );

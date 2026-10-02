@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { PumpMark } from "@/components/pump-mark";
 import { btnGhost, btnPrimary, display, panel } from "@/components/surface";
 
 const steps = [
@@ -13,7 +12,7 @@ const steps = [
   },
   {
     title: "Vote",
-    body: "Holders lock coins to vote. More pay than burn: the vault pays the dev. More burn: that SOL buys and burns the coin.",
+    body: "Holders vote with the coins they hold. More pay than burn: the vault pays the builder. More burn: that SOL buys and burns the coin.",
   },
 ];
 
@@ -37,9 +36,7 @@ export default function HomePage() {
           Launch a pump.fun coin. Most creator fees lock in a vault. Holders vote
           pay or burn. No computer grades the work. The crowd with coins decides.
         </p>
-        <div className="mt-6 flex justify-center">
-          <PumpMark label="Launched on pump.fun" />
-        </div>
+        <p className="mt-6 text-[15px] text-[var(--muted)]">on pump.fun</p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link href="/launch" className={`${btnPrimary} px-6 py-3 text-[17px]`}>
             Launch a coin

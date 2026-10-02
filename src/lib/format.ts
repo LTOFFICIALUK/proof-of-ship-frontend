@@ -51,13 +51,48 @@ export const formatSol = (value: number) => {
   return value.toLocaleString(undefined, { maximumFractionDigits: 4 });
 };
 
-export const formatWhen = (ms: number) =>
-  new Date(ms).toLocaleString(undefined, {
+export const formatStamp = (ms: number, now = Date.now()) => {
+  const date = new Date(ms);
+  const title = date.toLocaleString(undefined, {
+    year: "numeric",
     month: "short",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
   });
+  const delta = now - ms;
+  const abs = Math.abs(delta);
+  if (delta < 0 || abs >= 7 * 24 * 60 * 60 * 1000) {
+    return { label: title, title };
+  }
+  if (abs < 60_000) {
+    return { label: "Just now", title };
+  }
+  const minutes = Math.round(abs / 60_000);
+  if (minutes < 60) {
+    return { label: `${minutes} min ago`, title };
+  }
+  const hours = Math.round(abs / 3_600_000);
+  if (hours < 48) {
+    return { label: `${hours} hours ago`, title };
+  }
+  return { label: `${Math.round(hours / 24)} days ago`, title };
+};
+
+export const formatWhen = (ms: number, now = Date.now()) => formatStamp(ms, now).label;
+
+export const formatDue = (ms: number, now = Date.now()) => {
+  const delta = ms - now;
+  if (delta <= 0) {
+    return formatStamp(ms, now).label;
+  }
+  const hours = Math.floor(delta / 3_600_000);
+  const minutes = Math.floor((delta % 3_600_000) / 60_000);
+  if (hours < 48) {
+    return `${hours}h ${minutes}m left`;
+  }
+  return `${Math.floor(hours / 24)} days left`;
+};
 
 export const promiseLabel = (status: string) => {
   if (status === "vote_open") {
