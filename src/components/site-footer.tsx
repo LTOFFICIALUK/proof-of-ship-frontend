@@ -28,6 +28,12 @@ export const SiteFooter = () => {
             <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/recommit">
               Recommit
             </Link>
+            <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/terms">
+              Terms
+            </Link>
+            <Link className={`transition hover:text-[var(--ink)] ${focusRing}`} href="/privacy">
+              Privacy
+            </Link>
           </nav>
         </div>
       </Misted>
