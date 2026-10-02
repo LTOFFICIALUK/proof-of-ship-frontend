@@ -7,7 +7,7 @@ import { Misted } from "@/components/text-mist";
 export const metadata: Metadata = {
   title: "Recommit",
   description:
-    "Existing pump.fun coins get one allowed fee change. Recommit turns that change into a vault so holders can vote pay or burn.",
+    "Existing pump.fun coins get one allowed fee change. Recommit turns that change into a vault. Pay pays the builder in SOL. Burn buys $POS.",
 };
 
 const steps = [
@@ -25,7 +25,7 @@ const steps = [
   },
   {
     title: "Holders vote.",
-    body: "Pay or burn. No computer grades the work. The crowd with coins decides. A missed next promise burns leftover fees.",
+    body: "Pay pays the builder in SOL. Burn buys $POS. No computer grades the work. The crowd with coins decides. A missed next promise burns leftover fees into the project coin.",
   },
 ];
 
@@ -40,7 +40,7 @@ const rules = [
   },
   {
     title: "Same vote rules",
-    body: "After recommit, the vault, promises, quorum, pay, and burn work the same as a coin launched here.",
+    body: "After recommit, pay still pays the builder in SOL, and burn still buys $POS. The vault, promises, and quorum work the same as a coin launched here.",
   },
 ];
 
@@ -68,7 +68,7 @@ export default function RecommitPage() {
         <p className="text-[15px] font-medium text-[var(--muted)]">Ships after Season 0</p>
         <h1 className={`mt-3 ${pageTitle}`}>Turn the one fee change into a vault.</h1>
         <p className="mt-4 text-[18px] leading-relaxed text-[var(--muted)]">
-          Existing pump.fun coins can change creator fee sharing once. Recommit spends that change on the Proof of Ship split. New fees lock. Holders vote pay or burn.
+          Existing pump.fun coins can change creator fee sharing once. Recommit spends that change on the Proof of Ship split. New fees lock. Holders vote pay or burn. Pay pays the builder in SOL. Burn buys $POS.
         </p>
         <div className="mt-7 flex flex-wrap gap-3">
           <Link href="/launch" className={`${btnPrimary} px-6 py-3 text-[16px]`}>

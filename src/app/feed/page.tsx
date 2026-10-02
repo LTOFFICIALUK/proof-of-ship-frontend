@@ -67,7 +67,7 @@ export default function FeedPage() {
       <Misted cover>
         <h1 className={pageTitle}>Ship feed</h1>
         <p className="mt-3 text-[17px] leading-relaxed text-[var(--muted)]">
-          Every launch, promise, vote and burn, newest first.
+          Every launch, promise, pay, and burn, newest first. Pay pays the builder in SOL. Burn buys $POS.
         </p>
       </Misted>
       <div className="mt-8">

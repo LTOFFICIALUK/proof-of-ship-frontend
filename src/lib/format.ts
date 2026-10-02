@@ -157,7 +157,7 @@ export const feedLabel = (kind: string) => {
     return "Holders voted pay";
   }
   if (kind === "vote_burn") {
-    return "Holders voted burn";
+    return "Holders voted not to pay";
   }
   if (kind === "vote_roll") {
     return "Vote rolled over";

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s · Proof of Ship",
   },
   description:
-    "Launch a pump.fun coin. Lock creator fees. Holders vote pay or burn.",
+    "Launch a pump.fun coin. Lock creator fees. Pay pays the builder in SOL. Burn buys $POS.",
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
   openGraph: {
     title: "Proof of Ship",
-    description: "Launch a pump.fun coin. Lock creator fees. Holders vote pay or burn.",
+    description: "Launch a pump.fun coin. Lock creator fees. Pay pays the builder in SOL. Burn buys $POS.",
     images: [{ url: "/og.png", width: 1200, height: 630 }],
   },
   twitter: {

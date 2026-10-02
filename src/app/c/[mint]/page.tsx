@@ -556,6 +556,7 @@ export default function CoinPage() {
                         disabled={busyIdx === item.idx}
                         onClick={() => void handleVote(item, "pay")}
                         className={item.yourSide === "pay" ? btnPay : btnGhost}
+                        aria-label="Pay the builder in SOL"
                       >
                         Pay the builder
                       </button>
@@ -565,10 +566,14 @@ export default function CoinPage() {
                         disabled={busyIdx === item.idx}
                         onClick={() => void handleVote(item, "burn")}
                         className={item.yourSide === "burn" ? btnBurn : btnGhost}
+                        aria-label="Do not pay. Buy $POS"
                       >
-                        Burn it
+                        Do not pay
                       </button>
                     </div>
+                    <p className="text-[13px] text-[var(--muted)]">
+                      Pay sends SOL to the builder. Do not pay buys $POS.
+                    </p>
                   </div>
                 ) : null}
               </li>

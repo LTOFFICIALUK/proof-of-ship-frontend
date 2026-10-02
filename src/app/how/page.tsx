@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import { Misted } from "@/components/text-mist";
 import { pageTitle } from "@/components/surface";
+
+export const metadata: Metadata = {
+  title: "How it works",
+  description:
+    "Pay pays the builder in SOL. Burn buys $POS. A miss burns the project coin.",
+};
 
 const steps = [
   {
