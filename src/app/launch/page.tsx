@@ -71,7 +71,7 @@ export default function LaunchPage() {
         <div>
           <p className={labelClass}>Wallet</p>
           {wallet ? (
-            <p className="mt-2 font-mono text-[15px]">{wallet}</p>
+            <p className="mt-2 break-all font-mono text-[15px]">{wallet}</p>
           ) : (
             <div className="mt-2">
               <ConnectWallet />
