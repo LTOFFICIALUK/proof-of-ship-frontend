@@ -169,7 +169,7 @@ export const feedLabel = (kind: string) => {
     return "Fees landed";
   }
   if (kind === "lapse") {
-    return "Lapsed. Fees burn";
+    return "Lapsed. Fees buy $POS";
   }
   if (kind === "abandon") {
     return "Abandoned";
@@ -232,7 +232,9 @@ export const describeEvent = (event: {
     return sol ? `${sol} bought the coin and burned it.` : "Bought the coin and burned it.";
   }
   if (event.kind === "lapse") {
-    return "No new promise in 7 days. Fees are burning.";
+    return sol
+      ? `No new promise in 7 days. ${sol} set to buy $POS.`
+      : "No new promise in 7 days. Vault fees buy $POS.";
   }
   if (event.kind === "abandon") {
     return "The builder abandoned the coin. The vault burns.";

@@ -38,9 +38,10 @@ export default function TermsPage() {
           that split. You cannot withdraw the vault.
         </p>
         <p>
-          A pay vote pays 60% of the vault to the builder in SOL and unlocks 20% of the remaining dev bag. A burn vote
-          spends that same slice to buy $POS, mint H49xNgg1hMV6LqXK6if2g8CYnrvp7CxQ5SJTnDRwPoS. A miss, a lapse, or an
-          abandon spends that same slice to buy the project coin and burn it. The rest stays for the next promise.
+          A pay vote pays 60% of the vault to the builder in SOL and unlocks 20% of the remaining locked bag. A burn vote
+          spends that same slice to buy $POS, mint H49xNgg1hMV6LqXK6if2g8CYnrvp7CxQ5SJTnDRwPoS. A miss or an abandon
+          spends that same slice to buy the project coin and burn it. A lapse spends leftover vault SOL on $POS. The rest
+          stays for the next promise.
         </p>
       </LegalBlock>
       <LegalBlock title="Promises and votes">
@@ -49,8 +50,8 @@ export default function TermsPage() {
           vote. No proof by the deadline is a miss. About 2% of eligible supply must vote for the vote to count.
         </p>
         <p>
-          After a close, the builder has 7 days to post the next promise. If they do not, leftover fees and new fees
-          burn. A builder can walk away at any time, and the vault burns.
+          After a close, the builder has 7 days to post the next promise. If they do not, leftover vault fees and new
+          vault fees buy $POS. A builder can walk away at any time, and the vault burns into the project coin.
         </p>
       </LegalBlock>
       <LegalBlock title="What we are not">

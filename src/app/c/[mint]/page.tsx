@@ -289,7 +289,7 @@ export default function CoinPage() {
       <div className="min-w-0 space-y-5">
         {project.status === "lapsed" ? (
           <p className={`${panel} px-5 py-4 text-[15px] text-[var(--burn)]`}>
-            No new promise in 7 days. Fees are burning until the builder posts one.
+            No new promise in 7 days. Vault fees buy $POS until the builder posts one.
           </p>
         ) : null}
         <section className={`${panel} overflow-hidden`}>

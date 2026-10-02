@@ -31,7 +31,7 @@ const steps = [
   },
   {
     title: "Keep shipping.",
-    body: "The builder has 7 days to post the next promise. If they don't, the vault and new fees burn. A builder can walk away at any time, and the whole vault burns.",
+    body: "The builder has 7 days to post the next promise. If they don't, leftover vault SOL and new vault fees buy $POS. A builder can walk away at any time, and the whole vault burns into the project coin.",
   },
 ];
 
