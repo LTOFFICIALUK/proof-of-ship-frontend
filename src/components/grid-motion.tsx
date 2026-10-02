@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
 const ROWS = 4;
 const COLS = 8;
 
@@ -28,6 +32,48 @@ const washes = [
 ];
 
 export const GridMotion = () => {
+  const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const mouseX = useRef(0.5);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (media.matches) {
+      return;
+    }
+
+    const offsets = Array.from({ length: ROWS }, () => 0);
+
+    const handleMouseMove = (event: MouseEvent) => {
+      mouseX.current = event.clientX / Math.max(window.innerWidth, 1);
+    };
+
+    let frame = 0;
+    const tick = (time: number) => {
+      if (document.visibilityState === "visible") {
+        rowRefs.current.forEach((row, index) => {
+          if (!row) {
+            return;
+          }
+          const direction = index % 2 === 0 ? 1 : -1;
+          const drift = Math.sin(time / 6500 + index * 0.6) * 22;
+          const target = ((mouseX.current - 0.5) * 260 + drift) * direction;
+          const ease = 0.035 + (index % 4) * 0.018;
+          offsets[index] += (target - offsets[index]) * ease;
+          row.style.transform = `translate3d(${offsets[index]}px, 0, 0)`;
+        });
+      }
+      frame = window.requestAnimationFrame(tick);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    frame = window.requestAnimationFrame(tick);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 select-none overflow-hidden">
       <div className="absolute inset-0 [perspective:900px]">
@@ -36,7 +82,13 @@ export const GridMotion = () => {
           style={{ transform: "translate(-50%, -20%) rotateX(18deg) rotateZ(-8deg)" }}
         >
           {Array.from({ length: ROWS }, (_, rowIndex) => (
-            <div key={rowIndex} className="mb-4 flex justify-center gap-4">
+            <div
+              key={rowIndex}
+              ref={(element) => {
+                rowRefs.current[rowIndex] = element;
+              }}
+              className="mb-4 flex justify-center gap-4 will-change-transform"
+            >
               {Array.from({ length: COLS }, (_, colIndex) => {
                 const word = words[(rowIndex * COLS + colIndex) % words.length];
                 const wash = washes[(rowIndex + colIndex) % washes.length];
