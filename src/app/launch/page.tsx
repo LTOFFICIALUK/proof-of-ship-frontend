@@ -134,7 +134,7 @@ const LaunchPreview = ({
             <p className={`mt-0.5 text-[15px] font-semibold ${num}`}>0 SOL</p>
           </div>
           <p className="text-right text-[12px] text-[var(--muted)]">
-            {body.devBuyBps ? `Dev buy ${body.devBuyBps / 100}%` : "No extra buy"}
+            {body.devBuyBps ? `Dev buy ${body.devBuyBps / 100}%. Stays locked` : "No extra buy"}
             <span className="block">on pump.fun</span>
           </p>
         </div>
@@ -318,7 +318,8 @@ export default function LaunchPage() {
             </div>
             <p className="mt-5 text-[22px] font-semibold tracking-[-0.03em]">Confirming on chain</p>
             <p className="mt-2 text-[15px] text-[var(--muted)]">
-              Phantom asks once. You pay the launch cost to the platform wallet. That wallet creates the coin, buys your share, locks the fees, and sends the tokens to you.
+              Phantom asks once. You pay the launch cost to the platform wallet. That wallet creates the coin and locks creator fees to the vault.
+              {body.devBuyBps ? " Your dev buy stays locked. It is not sent to your wallet." : ""}
             </p>
           </div>
         </div>
@@ -526,6 +527,9 @@ export default function LaunchPage() {
                   />
                   <span className={`w-12 shrink-0 text-right text-[15px] font-medium ${num}`}>{devBuy}%</span>
                 </div>
+                <p className="mt-2 text-[13px] leading-relaxed text-[var(--muted)]">
+                  A dev buy stays locked. It is not sent to your wallet. A Pay unlocks 20 percent of what is still locked. A Burn burns 20 percent of what is still locked. A lapse or an abandon burns the rest.
+                </p>
               </label>
             </div>
           </section>
@@ -534,10 +538,11 @@ export default function LaunchPage() {
             <h2 className="text-[18px] font-semibold tracking-[-0.03em]">Launch</h2>
             <p className="text-[15px] leading-relaxed text-[var(--muted)]">
               Your coin gets a contract address ending in PoS. Creator fees land in the vault we control. We send you 15% as runway. We hold 75% until holders vote. Pay pays you in SOL. Burn buys $POS.
-              {body.devBuyBps ? ` You buy ${body.devBuyBps / 100}% at launch.` : ""}
+              {body.devBuyBps ? ` You buy ${body.devBuyBps / 100}% at launch. That supply stays locked and is not sent to your wallet.` : ""}
             </p>
             <p className="text-[15px] leading-relaxed text-[var(--ink)]">
-              Phantom asks once. You pay the launch cost to the platform wallet. That wallet creates the coin, buys your share, locks creator fees to the vault, and sends the tokens to you.
+              Phantom asks once. You pay the launch cost to the platform wallet. That wallet creates the coin and locks creator fees to the vault.
+              {body.devBuyBps ? " Your dev buy stays locked. It is not sent to your wallet." : ""}
             </p>
             <label className="flex items-start gap-3 text-[15px] leading-relaxed">
               <input
