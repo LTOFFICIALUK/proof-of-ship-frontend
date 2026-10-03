@@ -138,7 +138,7 @@ export const promiseLabel = (status: string) => {
     return "Burned";
   }
   if (status === "pending") {
-    return "Open";
+    return "Waiting for the developer";
   }
   if (status === "rolled") {
     return "Rolled over";

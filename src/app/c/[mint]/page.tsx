@@ -529,7 +529,9 @@ export default function CoinPage() {
                   <div className="min-w-0">
                     <div className="flex flex-wrap gap-3 text-[13px]">
                       <span className={`mt-0.5 inline-block h-2.5 w-2.5 ${statusMark(item.status)}`} aria-hidden="true" />
-                      <span className="font-medium">{promiseLabel(item.status)}</span>
+                      <span className="font-medium">
+                        {item.status === "pending" ? "Waiting for the developer to mark this done" : promiseLabel(item.status)}
+                      </span>
                       <span className="font-mono text-[var(--muted)]">{formatDue(item.deadlineMs, project.nowMs)}</span>
                     </div>
                     <p className="mt-2 text-[17px] leading-relaxed">{item.text}</p>
@@ -547,12 +549,14 @@ export default function CoinPage() {
                       </p>
                     ) : null}
                   </div>
-                  <div className="shrink-0 text-right">
-                    <p className={`font-mono text-[22px] font-semibold tracking-[-0.03em] sm:text-[28px] ${item.netPct && item.netPct > 0 ? "text-[var(--pay)]" : item.netPct && item.netPct < 0 ? "text-[var(--burn)]" : "text-[var(--ink)]"}`}>
-                      {item.status === "vote_open" ? `${(item.turnoutPct ?? 0).toFixed(2)}%` : formatNet(item.netPct)}
-                    </p>
-                    <p className="text-[12px] text-[var(--muted)]">{item.status === "vote_open" ? "turnout" : "of supply"}</p>
-                  </div>
+                  {item.status === "pending" ? null : (
+                    <div className="shrink-0 text-right">
+                      <p className={`font-mono text-[22px] font-semibold tracking-[-0.03em] sm:text-[28px] ${item.netPct && item.netPct > 0 ? "text-[var(--pay)]" : item.netPct && item.netPct < 0 ? "text-[var(--burn)]" : "text-[var(--ink)]"}`}>
+                        {item.status === "vote_open" ? `${(item.turnoutPct ?? 0).toFixed(2)}%` : formatNet(item.netPct)}
+                      </p>
+                      <p className="text-[12px] text-[var(--muted)]">{item.status === "vote_open" ? "turnout" : "of supply"}</p>
+                    </div>
+                  )}
                 </div>
                 {item.status === "pending" && isBuilder ? <ProofForm idx={item.idx} busy={busyIdx === item.idx} onShip={handleShip} /> : null}
                 {canVote(item.status) && wallet && !isBuilder && !viewer?.excluded ? (
