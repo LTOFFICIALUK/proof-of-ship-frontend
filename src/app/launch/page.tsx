@@ -327,7 +327,7 @@ export default function LaunchPage() {
             </div>
             <p className="mt-5 text-[22px] font-semibold tracking-[-0.03em]">Confirming on chain</p>
             <p className="mt-2 text-[15px] text-[var(--muted)]">
-              Confirm in Phantom. That creates the coin and locks creator fees to the vault.
+              The first confirmation creates the coin and buys your share in the same transaction. The second only locks creator fees to the vault.
             </p>
           </div>
         </div>
