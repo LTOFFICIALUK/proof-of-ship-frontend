@@ -270,19 +270,10 @@ export default function LaunchPage() {
         router.push(`/c/${mint}`);
       };
       const transactions: string[] = [];
-      for (let index = 0; index < prepared.transactions.length; index += 1) {
-        const [signedTx] = await signTransactions([prepared.transactions[index]!]);
+      for (const preparedTx of prepared.transactions) {
+        const [signedTx] = await signTransactions([preparedTx]);
         if (!signedTx) {
           throw new Error("Phantom did not return the transaction.");
-        }
-        if (index < prepared.transactions.length - 1) {
-          const relayed = await api<{ mint?: string; listed?: boolean }>("/v1/launch/relay", {
-            method: "POST",
-            body: JSON.stringify({ transaction: signedTx }),
-          });
-          if (relayed.listed && relayed.mint) {
-            openCoin(relayed.mint);
-          }
         }
         transactions.push(signedTx);
       }
@@ -327,7 +318,7 @@ export default function LaunchPage() {
             </div>
             <p className="mt-5 text-[22px] font-semibold tracking-[-0.03em]">Confirming on chain</p>
             <p className="mt-2 text-[15px] text-[var(--muted)]">
-              The first confirmation creates the coin and buys your share in the same transaction. The second only locks creator fees to the vault.
+              Phantom asks twice, and nothing is sent until you sign both. The first confirmation creates the coin and buys your share. The second locks creator fees to the vault. The platform pays that account rent.
             </p>
           </div>
         </div>
