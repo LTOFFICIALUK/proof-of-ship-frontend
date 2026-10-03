@@ -282,41 +282,13 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const settle = async (pending: ReturnType<SolanaProvider["connect"]>) => {
     setError("");
     setBusy(true);
-    const signingAgain = signedOut.current || mustSignAgain();
     try {
       const result = await pending;
-      const next = result.publicKey.toString();
-      if (!signingAgain) {
-        remember(next);
-        return true;
-      }
-      const current = provider();
-      if (!current) {
-        throw new Error("No wallet found. Install Phantom, then try again.");
-      }
-      const nonce = await api<{ nonce: string }>("/v1/auth/nonce");
-      const issued = new Date().toISOString();
-      const message = loginMessage(next, nonce.nonce, issued);
-      const bytes = await signWithProvider(current, new TextEncoder().encode(message));
-      if (bytes.length !== 64) {
-        throw new Error("Wallet returned a signature we could not read.");
-      }
-      const signedIn = await api<{ wallet: string; xHandle: string | null }>("/v1/auth/verify", {
-        method: "POST",
-        body: JSON.stringify({ message, signature: toBase64(bytes) }),
-      });
-      remember(signedIn.wallet);
-      setXHandle(signedIn.xHandle ?? "");
-      setAuthed(true);
       signedOut.current = false;
       clearSignOut();
+      remember(result.publicKey.toString());
       return true;
     } catch (err) {
-      if (signingAgain) {
-        phantomAddress.current = "";
-        setWallet("");
-        setAuthed(false);
-      }
       const message = walletMessage(err, "Could not connect the wallet.");
       setError(message);
       toast.error(message);
