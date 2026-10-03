@@ -438,6 +438,12 @@ export default function CoinPage() {
               Dev bag locked: {formatTokens(project.devLock)}. Unlocked: {formatTokens(project.devUnlocked)}.
             </span>
             <span>
+              Trading fees {formatSol(project.vault.tradingFeesSol ?? 0)} SOL.
+              {project.status === "abandoned" && (project.vault.tradingFeesUnspentSol ?? 0) > 0
+                ? ` ${formatSol(project.vault.tradingFeesUnspentSol ?? 0)} SOL from this coin is waiting to buy and burn $POS.`
+                : ""}
+            </span>
+            <span>
               $POS:{" "}
               <a className={textLink} href={`https://solscan.io/token/${project.vault.posMint}`} target="_blank" rel="noreferrer">
                 {shortWallet(project.vault.posMint)}

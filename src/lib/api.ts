@@ -71,6 +71,8 @@ export type ProjectView = {
     released: string;
     burned: string;
     balance: string;
+    tradingFeesSol?: number;
+    tradingFeesUnspentSol?: number;
   };
   devLock: string;
   devUnlocked: string;
