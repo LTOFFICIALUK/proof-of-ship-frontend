@@ -41,7 +41,7 @@ export default function FeedPage() {
       setLoading(true);
       setError("");
       try {
-        const data = await api<{ events: FeedEvent[] }>(`/v1/feed?filter=${filter}`);
+        const data = await api<{ events: FeedEvent[] }>(`/v1/feed?filter=${filter}&scope=live`);
         if (!stop) {
           setEvents(data.events);
           setNowMs(Date.now());

@@ -37,10 +37,7 @@ export const CoinBrowser = ({ scope }: { scope: "live" | "demo" }) => {
       setLoading(true);
       setError("");
       try {
-        const query = new URLSearchParams({ filter, page: String(page) });
-        if (scope === "demo") {
-          query.set("scope", "demo");
-        }
+        const query = new URLSearchParams({ filter, page: String(page), scope });
         const data = await api<CoinList>(`/v1/coins?${query.toString()}`);
         if (stop) {
           return;

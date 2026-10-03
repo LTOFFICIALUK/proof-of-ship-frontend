@@ -32,7 +32,7 @@ export const LiveStrip = () => {
   const [stats, setStats] = useState<SiteStats | null>(null);
 
   useEffect(() => {
-    void api<SiteStats>("/v1/stats")
+    void api<SiteStats>("/v1/stats?scope=live")
       .then(setStats)
       .catch(() => setStats(null));
   }, []);
@@ -63,10 +63,10 @@ export const HomeRows = () => {
   useEffect(() => {
     const load = async () => {
       const [voting, shipped, burned, top] = await Promise.all([
-        api<CoinList>("/v1/coins?filter=voting"),
-        api<CoinList>("/v1/coins?filter=shipped"),
-        api<CoinList>("/v1/coins?filter=burned"),
-        api<{ builders: TopBuilder[] }>("/v1/builders"),
+        api<CoinList>("/v1/coins?filter=voting&scope=live"),
+        api<CoinList>("/v1/coins?filter=shipped&scope=live"),
+        api<CoinList>("/v1/coins?filter=burned&scope=live"),
+        api<{ builders: TopBuilder[] }>("/v1/builders?scope=live"),
       ]);
       setRows({
         voting: voting.coins.slice(0, 4),
