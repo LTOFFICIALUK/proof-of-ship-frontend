@@ -414,13 +414,12 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       return btoa(raw);
     };
     const transactions = encoded.map((item) => Transaction.from(fromBase64(item)));
-    if (current.signAllTransactions) {
-      const signed = await current.signAllTransactions(transactions);
-      return signed.map((item) => toBase64Bytes(item.serialize()));
+    if (!current.signTransaction) {
+      throw new Error("This wallet cannot sign a transaction. Open Phantom and try again.");
     }
     const signed: string[] = [];
     for (const transaction of transactions) {
-      const next = await current.signTransaction!(transaction);
+      const next = await current.signTransaction(transaction);
       signed.push(toBase64Bytes(next.serialize()));
     }
     return signed;

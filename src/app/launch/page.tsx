@@ -261,7 +261,20 @@ export default function LaunchPage() {
         body: JSON.stringify(body),
       });
       setConfirming(true);
-      const transactions = prepared.transactions.length ? await signTransactions(prepared.transactions) : undefined;
+      const transactions: string[] = [];
+      for (let index = 0; index < prepared.transactions.length; index += 1) {
+        const [signedTx] = await signTransactions([prepared.transactions[index]!]);
+        if (!signedTx) {
+          throw new Error("Phantom did not return the transaction.");
+        }
+        if (index < prepared.transactions.length - 1) {
+          await api("/v1/launch/relay", {
+            method: "POST",
+            body: JSON.stringify({ transaction: signedTx }),
+          });
+        }
+        transactions.push(signedTx);
+      }
       const submitted = await api<{ mint: string; buyTransaction?: string | null }>("/v1/launch/submit", {
         method: "POST",
         body: JSON.stringify({ ...body, transactions }),
