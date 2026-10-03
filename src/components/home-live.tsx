@@ -23,12 +23,44 @@ const ROWS: { id: keyof Rows; title: string; empty: string }[] = [
   { id: "burned", title: "Recently burned", empty: "Nothing has burned yet." },
 ];
 
-const StripItem = ({ label, value }: { label: string; value: string }) => (
-  <div className="min-w-0 px-4 py-4 sm:px-5">
-    <p className={`truncate text-[20px] font-semibold tracking-[-0.03em] sm:text-[24px] ${num}`}>{value}</p>
-    <p className="mt-1 text-[12px] text-[var(--muted)]">{label}</p>
-  </div>
+const LinkArrow = () => (
+  <svg viewBox="0 0 16 16" aria-hidden="true" className="mt-1.5 h-3.5 w-3.5 shrink-0 text-[var(--muted)] transition group-hover:text-[var(--ink)]">
+    <path
+      d="M4.5 11.5 L11.5 4.5 M6.5 4.5 H11.5 V9.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
 );
+
+const StripItem = ({ label, value, href }: { label: string; value: string; href?: string }) => {
+  const body = (
+    <>
+      <span className="flex items-start justify-between gap-2">
+        <span className={`truncate text-[20px] font-semibold tracking-[-0.03em] sm:text-[24px] ${num}`}>{value}</span>
+        {href ? <LinkArrow /> : null}
+      </span>
+      <span className="mt-1 block text-[12px] text-[var(--muted)]">{label}</span>
+    </>
+  );
+  if (!href) {
+    return <div className="min-w-0 px-4 py-4 sm:px-5">{body}</div>;
+  }
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={`${label}, ${value}. Opens in a new tab`}
+      className={`group min-w-0 px-4 py-4 transition hover:bg-black/[0.03] sm:px-5 ${focusRing}`}
+    >
+      {body}
+    </a>
+  );
+};
 
 export const LiveStrip = () => {
   const [stats, setStats] = useState<SiteStats | null>(null);
@@ -47,7 +79,7 @@ export const LiveStrip = () => {
         <StripItem label="Coins launched" value={value((data) => formatCount(data.launched))} />
         <StripItem label="SOL locked in vaults" value={value((data) => formatSol(data.lockedSol))} />
         <StripItem label="SOL paid to builders" value={value((data) => formatSol(data.paidSol))} />
-        <StripItem label="SOL burned" value={value((data) => formatSol(data.burnedSol))} />
+        <StripItem label="SOL burned" value={value((data) => formatSol(data.burnedSol))} href="/burns" />
         <StripItem
           label="Promises shipped and missed"
           value={value((data) => `${formatCount(data.shipped)} / ${formatCount(data.missed)}`)}

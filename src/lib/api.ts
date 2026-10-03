@@ -225,6 +225,21 @@ export type ProfileView = {
 
 export type TopBuilder = BuilderRecord & { handle: string; verified: boolean };
 
+export type BurnRow = {
+  id: string;
+  mint: string;
+  name: string;
+  symbol: string;
+  amountSol: number;
+  tokenMint: string;
+  tokenSymbol: string;
+  tokens: string | null;
+  buySig: string | null;
+  burnSig: string | null;
+  reason: string;
+  atMs: number;
+};
+
 export type SiteStats = {
   launched: number;
   lockedSol: number;
