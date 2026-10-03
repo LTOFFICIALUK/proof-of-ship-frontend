@@ -185,6 +185,42 @@ export type BuilderView = {
   }[];
 };
 
+export type ProfileAttention = {
+  kind: "verify" | "coin";
+  mint: string;
+  name: string;
+  symbol: string;
+  text: string;
+  dueMs: number | null;
+};
+
+export type ProfileVote = {
+  mint: string;
+  name: string;
+  symbol: string;
+  promiseIdx: number;
+  text: string;
+  side: "pay" | "burn";
+  reason: string;
+};
+
+export type ProfileView = {
+  wallet: string;
+  handle: string;
+  verified: boolean;
+  nowMs: number;
+  stats: BuilderRecord & {
+    runwaySol: number;
+    vaultSol: number;
+    devLock: string;
+    devUnlocked: string;
+  };
+  attention: ProfileAttention[];
+  projects: (CoinCard & { paidSol: number; runwaySol: number; nextDueAtMs: number | null })[];
+  timeline: BuilderView["timeline"];
+  votes: ProfileVote[];
+};
+
 export type TopBuilder = BuilderRecord & { handle: string; verified: boolean };
 
 export type SiteStats = {

@@ -1,16 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { shortWallet, useWallet } from "@/lib/wallet";
 import { btnGhost, btnPrimary } from "@/components/surface";
 
 export const ConnectWallet = () => {
-  const { wallet, busy, connect, disconnect } = useWallet();
+  const { wallet, busy, connect } = useWallet();
 
   if (wallet) {
     return (
-      <button type="button" onClick={() => void disconnect()} className={`${btnGhost} px-3 py-1.5 text-[13px]`} aria-label="Disconnect wallet">
+      <Link href="/me" className={`${btnGhost} px-3 py-1.5 text-[13px]`} aria-label="Your profile">
         {shortWallet(wallet)}
-      </button>
+      </Link>
     );
   }
 
