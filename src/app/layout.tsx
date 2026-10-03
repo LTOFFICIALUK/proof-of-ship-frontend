@@ -62,7 +62,7 @@ export default function RootLayout({
           <div className="flex min-h-dvh flex-col">
             <GridMotion />
             <SiteHeader />
-            <main className="relative z-10 min-w-0 flex-1 px-4 pb-10 pt-5 md:px-8 md:pb-14 md:pt-8">{children}</main>
+            <main className="relative z-20 min-w-0 flex-1 px-4 pb-10 pt-5 md:px-8 md:pb-14 md:pt-8">{children}</main>
             <SiteFooter />
             <ToastHost />
           </div>

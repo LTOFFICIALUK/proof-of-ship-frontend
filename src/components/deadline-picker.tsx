@@ -155,7 +155,7 @@ export const DeadlinePicker = ({ valueMs, minMs, maxMs, onChange }: DeadlinePick
         <div
           role="dialog"
           aria-label="Choose a deadline"
-          className="absolute left-0 z-30 mt-2 w-[min(100%,320px)] rounded-[22px] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_rgba(0,0,0,0.06)] ring-1 ring-black/[0.06]"
+          className="absolute left-0 z-50 mt-2 w-[min(100%,320px)] rounded-[22px] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_12px_32px_rgba(0,0,0,0.06)] ring-1 ring-black/[0.06]"
         >
           <div className="flex items-center justify-between gap-2">
             <button
