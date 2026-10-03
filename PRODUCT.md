@@ -16,7 +16,7 @@ Proof of Ship lets a builder launch a normal pump.fun coin while most creator fe
 
 ## Positioning
 
-Creator fees are locked in a vault the builder cannot withdraw. Holders vote after proof is posted. More pay than burn pays 60 percent of the vault to the builder in SOL, and unlocks 20 percent of the remaining dev bag. More burn than pay spends that same slice to buy and burn $POS. A miss, a lapse, or an abandon also buys and burns $POS. A tie rolls the slice. No computer grades the work. None of these paths buy the project coin.
+Creator fees are locked in a vault the builder cannot withdraw. Holders vote after proof is posted. More pay than burn pays 60 percent of the vault to the builder in SOL, and unlocks 20 percent of the remaining dev bag. More burn than pay spends that same slice to buy and burn $POS. A miss, a lapse, or an abandon also buys and burns $POS. An abandon keeps the remaining dev bag locked for 30 days. If the builder does not come back, those tokens are sold and the SOL buys and burns $POS. A lapse burns the remaining dev bag. A tie rolls the slice. No computer grades the work. None of these paths buy the project coin.
 
 ## Operating Context
 

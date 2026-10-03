@@ -76,6 +76,7 @@ export type ProjectView = {
   };
   devLock: string;
   devUnlocked: string;
+  devLockSellAtMs?: number | null;
   nextDueAtMs: number | null;
   market?: {
     image: string | null;

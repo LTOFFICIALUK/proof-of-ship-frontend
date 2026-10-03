@@ -31,7 +31,7 @@ const steps = [
   },
   {
     title: "Keep shipping.",
-    body: "The builder has 7 days to post the next promise. If they don't, the vault and new fees buy and burn $POS. A builder can walk away at any time, and the whole vault buys and burns $POS.",
+    body: "The builder has 7 days to post the next promise. If they don't, the vault and new fees buy and burn $POS, and a lapse burns the remaining dev bag. A builder can walk away. The vault buys and burns $POS. The locked dev bag stays locked for 30 days. If the builder does not come back, those tokens are sold and the SOL buys and burns $POS.",
   },
 ];
 

@@ -546,7 +546,7 @@ export default function LaunchPage() {
                   <span className={`w-12 shrink-0 text-right text-[15px] font-medium ${num}`}>{devBuy}%</span>
                 </div>
                 <p className="mt-2 text-[13px] leading-relaxed text-[var(--muted)]">
-                  A dev buy stays locked. It is not sent to your wallet. A Pay unlocks 20 percent of what is still locked. A Burn burns 20 percent of what is still locked. A lapse or an abandon burns the rest.
+                  A dev buy stays locked. It is not sent to your wallet. A Pay unlocks 20 percent of what is still locked. A Burn burns 20 percent of what is still locked. A lapse burns the rest. An abandon keeps what is still locked for 30 days. If you do not come back, those tokens are sold and the SOL buys and burns $POS.
                 </p>
               </label>
             </div>

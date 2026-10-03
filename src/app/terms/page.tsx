@@ -41,8 +41,10 @@ export default function TermsPage() {
         <p>
           A pay vote pays 60% of the vault to the builder in SOL and unlocks 20% of the remaining dev bag. A burn vote
           spends that same slice to buy $POS and burn it. The mint is H49xNgg1hMV6LqXK6if2g8CYnrvp7CxQ5SJTnDRwPoS. A miss
-          spends that same slice to buy $POS and burn it. The rest stays for the next promise. A lapse or an abandon
-          buys and burns $POS with the remaining vault.
+          spends that same slice to buy $POS and burn it. The rest stays for the next promise. A lapse buys and burns
+          $POS with the remaining vault and burns the remaining dev bag. An abandon buys and burns $POS with the
+          remaining vault. The locked dev bag stays locked for 30 days. If the builder does not come back, those
+          tokens are sold and the SOL buys and burns $POS.
         </p>
       </LegalBlock>
       <LegalBlock title="Promises and votes">
@@ -52,7 +54,9 @@ export default function TermsPage() {
         </p>
         <p>
           After a close, the builder has 7 days to post the next promise. If they do not, leftover fees and new fees
-          buy and burn $POS. A builder can walk away at any time, and the whole vault buys and burns $POS.
+          buy and burn $POS. A builder can walk away at any time, and the whole vault buys and burns $POS. Coming back
+          means posting the next promise within 30 days. If they do not, the locked dev bag is sold and the SOL buys
+          and burns $POS.
         </p>
       </LegalBlock>
       <LegalBlock title="What we are not">

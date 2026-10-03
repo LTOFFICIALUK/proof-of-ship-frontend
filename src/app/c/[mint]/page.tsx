@@ -313,7 +313,8 @@ export default function CoinPage() {
   const xUrl = market?.x || (project.xHandle ? `https://x.com/${project.xHandle}` : null);
   const openVote = project.promises.find((item) => item.status === "vote_open");
   const waitingProof = project.promises.find((item) => item.status === "pending");
-  const canPostNext = isBuilder && !waitingProof && !openVote && project.status !== "abandoned";
+  const returnOpen = project.status === "abandoned" && !!project.devLockSellAtMs && Date.now() < project.devLockSellAtMs;
+  const canPostNext = isBuilder && !waitingProof && !openVote && (project.status !== "abandoned" || returnOpen);
 
   const voteCopy = voteNotice === "burn" ? "You voted not to pay." : "You voted to pay the builder.";
 
@@ -338,6 +339,13 @@ export default function CoinPage() {
             No new promise in 7 days. Fees buy and burn $POS until the builder posts one.
           </p>
         ) : null}
+        {project.status === "abandoned" && project.devLockSellAtMs ? (
+          <p className={`${panel} px-5 py-4 text-[15px] text-[var(--burn)]`}>
+            {Date.now() < project.devLockSellAtMs
+              ? `${formatTokens(project.devLock)} $${project.symbol} stays locked for ${formatDue(project.devLockSellAtMs)}. If the builder does not come back, those tokens are sold and the SOL buys and burns $POS.`
+              : `The return window has closed. ${formatTokens(project.devLock)} $${project.symbol} is waiting to be sold. The SOL buys and burns $POS.`}
+          </p>
+        ) : null}
         <section className={`${panel} overflow-hidden`}>
           <div className="flex items-start gap-4 p-4 sm:gap-5 sm:p-6 md:p-7">
             <div
@@ -360,7 +368,11 @@ export default function CoinPage() {
                   <span
                     className="rounded-full bg-[#f5f5f7] px-3 py-1 text-[13px] font-medium"
                     aria-label={`Dev supply locked: ${formatTokens(project.devLock)} $${project.symbol}`}
-                    title="Dev supply still locked. A Pay unlocks 20 percent of what remains. A Burn burns 20 percent of what remains."
+                    title={
+                      project.devLockSellAtMs
+                        ? "Stays locked for 30 days after an abandon. If the builder does not come back, these tokens are sold and the SOL buys and burns $POS."
+                        : "Dev supply still locked. A Pay unlocks 20 percent of what remains. A Burn burns 20 percent of what remains. A lapse burns the rest."
+                    }
                   >
                     {formatTokens(project.devLock)} ${project.symbol} locked
                   </span>
@@ -529,13 +541,13 @@ export default function CoinPage() {
               </form>
             ) : (
               <p className="text-[15px] text-[var(--muted)]">
-                {project.status === "abandoned" ? "This coin is abandoned." : "Close the open promise before you post another."}
+                {project.status === "abandoned" ? "This coin is abandoned. The return window has closed." : "Close the open promise before you post another."}
               </p>
             )}
             {project.status !== "abandoned" ? (
               abandonStep ? (
                 <div className="space-y-3">
-                  <p className="text-[15px] text-[var(--burn)]">This buys and burns $POS with the whole vault and cannot be undone.</p>
+                  <p className="text-[15px] text-[var(--burn)]">This buys and burns $POS with the whole vault. The locked dev bag stays locked for 30 days. If you do not come back, those tokens are sold and the SOL buys and burns $POS.</p>
                   <div className="flex flex-wrap gap-2">
                     <button type="button" className={btnBurn} disabled={busyIdx === -2} onClick={() => void handleAbandon()}>
                       Confirm abandon
