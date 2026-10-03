@@ -353,9 +353,18 @@ export default function CoinPage() {
                 <h1 className="min-w-0 break-words text-[28px] font-semibold leading-none tracking-[-0.04em] sm:text-[32px] md:text-[40px]">
                   {project.name}
                 </h1>
-                <span className="mt-1 shrink-0 rounded-full bg-[#f5f5f7] px-3 py-1 text-[13px] font-medium">
-                  {statusLabel(project.status)}
-                </span>
+                <div className="mt-1 flex shrink-0 flex-wrap justify-end gap-2">
+                  <span className="rounded-full bg-[#f5f5f7] px-3 py-1 text-[13px] font-medium">
+                    {statusLabel(project.status)}
+                  </span>
+                  <span
+                    className="rounded-full bg-[#f5f5f7] px-3 py-1 text-[13px] font-medium"
+                    aria-label={`Dev supply locked: ${formatTokens(project.devLock)}`}
+                    title="Dev supply still locked. A Pay unlocks 20 percent of what remains. A Burn burns 20 percent of what remains."
+                  >
+                    {formatTokens(project.devLock)} locked
+                  </span>
+                </div>
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[15px]">
                 <span className="inline-flex items-center gap-1 font-medium text-[var(--muted)]">
