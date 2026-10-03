@@ -359,10 +359,10 @@ export default function CoinPage() {
                   </span>
                   <span
                     className="rounded-full bg-[#f5f5f7] px-3 py-1 text-[13px] font-medium"
-                    aria-label={`Dev supply locked: ${formatTokens(project.devLock)}`}
+                    aria-label={`Dev supply locked: ${formatTokens(project.devLock)} $${project.symbol}`}
                     title="Dev supply still locked. A Pay unlocks 20 percent of what remains. A Burn burns 20 percent of what remains."
                   >
-                    {formatTokens(project.devLock)} locked
+                    {formatTokens(project.devLock)} ${project.symbol} locked
                   </span>
                 </div>
               </div>
