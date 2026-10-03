@@ -5,7 +5,7 @@ import { Misted } from "@/components/text-mist";
 
 export const metadata: Metadata = {
   title: "Coins",
-  description: "Pay pays the builder in SOL. Burn buys $POS.",
+  description: "Pay pays the builder in SOL. Burn buys and burns $POS.",
 };
 
 export default function CoinsPage() {

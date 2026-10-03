@@ -7,7 +7,7 @@ import { Misted } from "@/components/text-mist";
 export const metadata: Metadata = {
   title: "Recommit",
   description:
-    "Existing pump.fun coins get one allowed fee change. Recommit turns that change into a vault. Pay pays the builder in SOL. Burn buys $POS.",
+    "Existing pump.fun coins get one allowed fee change. Recommit turns that change into a vault. Pay pays the builder in SOL. Burn buys and burns $POS.",
 };
 
 const steps = [
@@ -25,7 +25,7 @@ const steps = [
   },
   {
     title: "Holders vote.",
-    body: "Pay pays the builder in SOL. Burn buys $POS. No computer grades the work. The crowd with coins decides. A missed next promise burns leftover fees into the project coin.",
+    body: "Pay pays the builder in SOL. Burn buys and burns $POS. No computer grades the work. The crowd with coins decides. A missed next promise buys and burns $POS with the leftover fees.",
   },
 ];
 

@@ -301,7 +301,7 @@ export default function CoinPage() {
       <div className="min-w-0 space-y-5">
         {project.status === "lapsed" ? (
           <p className={`${panel} px-5 py-4 text-[15px] text-[var(--burn)]`}>
-            No new promise in 7 days. Fees are burning until the builder posts one.
+            No new promise in 7 days. Fees buy and burn $POS until the builder posts one.
           </p>
         ) : null}
         <section className={`${panel} overflow-hidden`}>
@@ -486,7 +486,7 @@ export default function CoinPage() {
             {project.status !== "abandoned" ? (
               abandonStep ? (
                 <div className="space-y-3">
-                  <p className="text-[15px] text-[var(--burn)]">This burns the whole vault and cannot be undone.</p>
+                  <p className="text-[15px] text-[var(--burn)]">This buys and burns $POS with the whole vault and cannot be undone.</p>
                   <div className="flex flex-wrap gap-2">
                     <button type="button" className={btnBurn} disabled={busyIdx === -2} onClick={() => void handleAbandon()}>
                       Confirm abandon

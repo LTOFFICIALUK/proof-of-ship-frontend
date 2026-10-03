@@ -163,13 +163,13 @@ export const feedLabel = (kind: string) => {
     return "Vote rolled over";
   }
   if (kind === "miss") {
-    return "Missed. Slice burned";
+    return "Missed. $POS burn";
   }
   if (kind === "inflow") {
     return "Fees landed";
   }
   if (kind === "lapse") {
-    return "Lapsed. Fees burn";
+    return "Lapsed. $POS burn";
   }
   if (kind === "abandon") {
     return "Abandoned";
@@ -220,22 +220,22 @@ export const describeEvent = (event: {
     return sol ? `${sol} bought $POS.` : "Bought $POS.";
   }
   if (event.kind === "vote_burn") {
-    return sol ? `Holders voted not to pay. ${sol} set to buy $POS.` : "Holders voted not to pay.";
+    return sol ? `Holders voted not to pay. ${sol} set to buy and burn $POS.` : "Holders voted not to pay.";
   }
   if (event.kind === "vote_roll") {
-    return event.amountSol ? `Rolled over twice. ${sol} set to burn.` : "The vote rolled over to the next promise.";
+    return event.amountSol ? `Rolled over twice. ${sol} set to buy and burn $POS.` : "The vote rolled over to the next promise.";
   }
   if (event.kind === "miss") {
-    return sol ? `Missed the deadline. ${sol} set to burn.` : "Missed the deadline.";
+    return sol ? `Missed the deadline. ${sol} set to buy and burn $POS.` : "Missed the deadline.";
   }
   if (event.kind === "burn") {
-    return sol ? `${sol} bought the coin and burned it.` : "Bought the coin and burned it.";
+    return sol ? `${sol} bought $POS and burned it.` : "Bought $POS and burned it.";
   }
   if (event.kind === "lapse") {
-    return "No new promise in 7 days. Fees are burning.";
+    return "No new promise in 7 days. Fees buy and burn $POS.";
   }
   if (event.kind === "abandon") {
-    return "The builder abandoned the coin. The vault burns.";
+    return "The builder abandoned the coin. The vault buys and burns $POS.";
   }
   if (event.kind === "no_quorum") {
     return "Turnout was under 2 percent. The vote got 24 more hours.";

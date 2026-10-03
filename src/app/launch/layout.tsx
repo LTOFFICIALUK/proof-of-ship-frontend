@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "Launch",
-  description: "Launch a pump.fun coin. Pay pays you in SOL. Burn buys $POS.",
+  description: "Launch a pump.fun coin. Pay pays you in SOL. Burn buys and burns $POS.",
 };
 
 const LaunchLayout = ({ children }: { children: ReactNode }) => children;

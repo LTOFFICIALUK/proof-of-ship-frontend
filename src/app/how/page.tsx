@@ -5,7 +5,7 @@ import { pageTitle } from "@/components/surface";
 export const metadata: Metadata = {
   title: "How it works",
   description:
-    "Pay pays the builder in SOL. Burn buys $POS. A miss burns the project coin.",
+    "Pay pays the builder in SOL. Burn, a miss, a lapse, and an abandon buy and burn $POS.",
 };
 
 const steps = [
@@ -19,7 +19,7 @@ const steps = [
   },
   {
     title: "Show your proof.",
-    body: "When you've shipped, post proof: a link, a repo, a demo. That opens a 48 hour vote. No proof by the deadline means 60% of the vault buys the coin and burns it.",
+    body: "When you've shipped, post proof: a link, a repo, a demo. That opens a 48 hour vote. No proof by the deadline means 60% of the vault buys $POS and burns it.",
   },
   {
     title: "Holders decide.",
@@ -27,11 +27,11 @@ const steps = [
   },
   {
     title: "Pay or burn.",
-    body: "If pay wins, 60% of the vault is paid to the builder in SOL, and 20% of the remaining dev bag unlocks. If burn wins, 60% buys $POS. The other 40% stays for the next promise. A tie, or a vote where under 2% of eligible supply turns out, rolls the 60% over to the next promise.",
+    body: "If pay wins, 60% of the vault is paid to the builder in SOL, and 20% of the remaining dev bag unlocks. If burn wins, 60% buys $POS and burns it. The other 40% stays for the next promise. A tie, or a vote where under 2% of eligible supply turns out, rolls the 60% over to the next promise.",
   },
   {
     title: "Keep shipping.",
-    body: "The builder has 7 days to post the next promise. If they don't, the vault and new fees burn. A builder can walk away at any time, and the whole vault burns.",
+    body: "The builder has 7 days to post the next promise. If they don't, the vault and new fees buy and burn $POS. A builder can walk away at any time, and the whole vault buys and burns $POS.",
   },
 ];
 
