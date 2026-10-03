@@ -397,7 +397,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     if (!current.signTransaction && !current.signAllTransactions) {
       throw new Error("This wallet cannot sign a transaction. Open Phantom and try again.");
     }
-    const { Transaction } = await import("@solana/web3.js");
+    const { Transaction, VersionedTransaction } = await import("@solana/web3.js");
     const fromBase64 = (value: string) => {
       const raw = atob(value);
       const bytes = new Uint8Array(raw.length);
@@ -413,7 +413,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       }
       return btoa(raw);
     };
-    const transactions = encoded.map((item) => Transaction.from(fromBase64(item)));
+    const transactions = encoded.map((item) => VersionedTransaction.deserialize(fromBase64(item)));
     if (!current.signTransaction) {
       throw new Error("This wallet cannot sign a transaction. Open Phantom and try again.");
     }
