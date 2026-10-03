@@ -3,6 +3,8 @@ import { Logo } from "@/components/logo";
 import { focusRing } from "@/components/surface";
 import { Misted } from "@/components/text-mist";
 
+const POS_MINT = "H49xNgg1hMV6LqXK6if2g8CYnrvp7CxQ5SJTnDRwPoS";
+
 export const SiteFooter = () => {
   return (
     <footer className="relative z-10 mt-auto min-w-0 shrink-0 border-t border-black/[0.06] px-5 py-8 text-[12px] text-[var(--muted)] md:px-8">
@@ -45,6 +47,17 @@ export const SiteFooter = () => {
             </a>
           </nav>
         </div>
+        <p className="mt-4 break-all font-mono text-[12px] leading-relaxed">
+          $POS{" "}
+          <a
+            className={`text-[var(--ink)] transition hover:underline ${focusRing}`}
+            href={`https://solscan.io/token/${POS_MINT}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {POS_MINT}
+          </a>
+        </p>
       </Misted>
     </footer>
   );
