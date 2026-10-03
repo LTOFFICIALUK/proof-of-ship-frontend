@@ -261,6 +261,14 @@ export default function LaunchPage() {
         body: JSON.stringify(body),
       });
       setConfirming(true);
+      let opened = false;
+      const openCoin = (mint: string) => {
+        if (!mint || opened) {
+          return;
+        }
+        opened = true;
+        router.push(`/c/${mint}`);
+      };
       const transactions: string[] = [];
       for (let index = 0; index < prepared.transactions.length; index += 1) {
         const [signedTx] = await signTransactions([prepared.transactions[index]!]);
@@ -268,10 +276,13 @@ export default function LaunchPage() {
           throw new Error("Phantom did not return the transaction.");
         }
         if (index < prepared.transactions.length - 1) {
-          await api("/v1/launch/relay", {
+          const relayed = await api<{ mint?: string; listed?: boolean }>("/v1/launch/relay", {
             method: "POST",
             body: JSON.stringify({ transaction: signedTx }),
           });
+          if (relayed.listed && relayed.mint) {
+            openCoin(relayed.mint);
+          }
         }
         transactions.push(signedTx);
       }
@@ -279,9 +290,14 @@ export default function LaunchPage() {
         method: "POST",
         body: JSON.stringify({ ...body, transactions }),
       });
+      openCoin(submitted.mint);
+      toast.ok("Coin is live.");
       if (submitted.buyTransaction) {
         try {
           const [signedBuy] = await signTransactions([submitted.buyTransaction]);
+          if (!signedBuy) {
+            throw new Error("Phantom did not return the dev buy.");
+          }
           await api(`/v1/launch/${submitted.mint}/buy`, {
             method: "POST",
             body: JSON.stringify({ transaction: signedBuy }),
@@ -290,8 +306,6 @@ export default function LaunchPage() {
           toast.error(error instanceof Error ? error.message : "Coin is live. The dev buy did not land.");
         }
       }
-      toast.ok("Coin is live.");
-      router.push(`/c/${submitted.mint}`);
     } catch (err) {
       setConfirming(false);
       toast.error(err instanceof Error ? err.message : "Launch failed");
