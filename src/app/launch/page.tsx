@@ -318,7 +318,7 @@ export default function LaunchPage() {
             </div>
             <p className="mt-5 text-[22px] font-semibold tracking-[-0.03em]">Confirming on chain</p>
             <p className="mt-2 text-[15px] text-[var(--muted)]">
-              Phantom asks twice, and nothing is sent until you sign both. The first confirmation creates the coin and buys your share. The second locks creator fees to the vault. The platform pays that account rent.
+              Phantom asks once. You pay the launch cost to the platform wallet. That wallet creates the coin, buys your share, locks the fees, and sends the tokens to you.
             </p>
           </div>
         </div>
@@ -537,7 +537,7 @@ export default function LaunchPage() {
               {body.devBuyBps ? ` You buy ${body.devBuyBps / 100}% at launch.` : ""}
             </p>
             <p className="text-[15px] leading-relaxed text-[var(--ink)]">
-              Phantom asks twice. Nothing is sent until you sign both. The first confirmation creates the coin and buys your share. The second locks creator fees to the vault. The platform pays that account rent. If you reject either confirmation, nothing is sent.
+              Phantom asks once. You pay the launch cost to the platform wallet. That wallet creates the coin, buys your share, locks creator fees to the vault, and sends the tokens to you.
             </p>
             <label className="flex items-start gap-3 text-[15px] leading-relaxed">
               <input
