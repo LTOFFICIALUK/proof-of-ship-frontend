@@ -5,13 +5,18 @@ import { shortWallet, useWallet } from "@/lib/wallet";
 import { btnGhost, btnPrimary } from "@/components/surface";
 
 export const ConnectWallet = () => {
-  const { wallet, busy, connect } = useWallet();
+  const { wallet, busy, connect, disconnect } = useWallet();
 
   if (wallet) {
     return (
-      <Link href="/me" className={`${btnGhost} px-3 py-1.5 text-[13px]`} aria-label="Your profile">
-        {shortWallet(wallet)}
-      </Link>
+      <div className="flex items-center gap-2">
+        <Link href="/me" className={`${btnGhost} px-3 py-1.5 text-[13px]`} aria-label="Your profile">
+          {shortWallet(wallet)}
+        </Link>
+        <button type="button" onClick={() => void disconnect()} className={`${btnGhost} px-3 py-1.5 text-[13px]`} aria-label="Sign out">
+          Sign out
+        </button>
+      </div>
     );
   }
 

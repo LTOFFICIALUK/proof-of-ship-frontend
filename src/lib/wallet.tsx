@@ -190,6 +190,32 @@ const signWithProvider = async (current: SolanaProvider, encoded: Uint8Array) =>
 
 const WalletContext = createContext<WalletContextValue | null>(null);
 
+const SIGNED_OUT = "pos.signedOut";
+
+const mustSignAgain = () => {
+  try {
+    return sessionStorage.getItem(SIGNED_OUT) === "1";
+  } catch {
+    return false;
+  }
+};
+
+const rememberSignOut = () => {
+  try {
+    sessionStorage.setItem(SIGNED_OUT, "1");
+  } catch {
+    // Private browsing can block storage. The in memory flag still applies.
+  }
+};
+
+const clearSignOut = () => {
+  try {
+    sessionStorage.removeItem(SIGNED_OUT);
+  } catch {
+    // Ignore storage failures.
+  }
+};
+
 const missingWallet = () => {
   const message = "No wallet found. Install Phantom, then try again.";
   toast.error(message);
@@ -204,6 +230,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState("");
   const [authed, setAuthed] = useState(false);
   const phantomAddress = useRef("");
+  const signedOut = useRef(false);
 
   const remember = (address: string) => {
     phantomAddress.current = address;
@@ -212,6 +239,12 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
 
   const refresh = async () => {
     const me = await api<{ wallet: string | null; xHandle: string | null }>("/v1/me");
+    if (signedOut.current) {
+      setAuthed(false);
+      setWallet("");
+      setXHandle("");
+      return;
+    }
     if (me.wallet) {
       remember(me.wallet);
       setAuthed(true);
@@ -223,19 +256,20 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    signedOut.current = mustSignAgain();
     void refresh().catch(() => undefined);
   }, []);
 
   const connect = async () => {
     const ready = provider();
-    const pending = ready ? ready.connect() : null;
+    const pending = ready ? ready.connect({ onlyIfTrusted: false }) : null;
     if (!pending) {
       const found = await waitForProvider(250);
       if (!found) {
         setError(missingWallet());
         return false;
       }
-      return settle(found.connect());
+      return settle(found.connect({ onlyIfTrusted: false }));
     }
     return settle(pending);
   };
@@ -243,11 +277,41 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const settle = async (pending: ReturnType<SolanaProvider["connect"]>) => {
     setError("");
     setBusy(true);
+    const signingAgain = signedOut.current || mustSignAgain();
     try {
       const result = await pending;
-      remember(result.publicKey.toString());
+      const next = result.publicKey.toString();
+      if (!signingAgain) {
+        remember(next);
+        return true;
+      }
+      const current = provider();
+      if (!current) {
+        throw new Error("No wallet found. Install Phantom, then try again.");
+      }
+      const nonce = await api<{ nonce: string }>("/v1/auth/nonce");
+      const issued = new Date().toISOString();
+      const message = loginMessage(next, nonce.nonce, issued);
+      const bytes = await signWithProvider(current, new TextEncoder().encode(message));
+      if (bytes.length !== 64) {
+        throw new Error("Wallet returned a signature we could not read.");
+      }
+      const signedIn = await api<{ wallet: string; xHandle: string | null }>("/v1/auth/verify", {
+        method: "POST",
+        body: JSON.stringify({ message, signature: toBase64(bytes) }),
+      });
+      remember(signedIn.wallet);
+      setXHandle(signedIn.xHandle ?? "");
+      setAuthed(true);
+      signedOut.current = false;
+      clearSignOut();
       return true;
     } catch (err) {
+      if (signingAgain) {
+        phantomAddress.current = "";
+        setWallet("");
+        setAuthed(false);
+      }
       const message = walletMessage(err, "Could not connect the wallet.");
       setError(message);
       toast.error(message);
@@ -319,16 +383,19 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const disconnect = async () => {
-    setError("");
-    await api("/v1/auth/logout", { method: "POST", body: "{}" }).catch(() => undefined);
-    const current = provider();
-    if (current?.disconnect) {
-      await current.disconnect().catch(() => undefined);
-    }
+    signedOut.current = true;
+    rememberSignOut();
     phantomAddress.current = "";
+    setError("");
     setAuthed(false);
     setWallet("");
     setXHandle("");
+    const current = provider();
+    const dropped = current?.disconnect?.() ?? Promise.resolve();
+    await Promise.all([
+      dropped.catch(() => undefined),
+      api("/v1/auth/logout", { method: "POST", body: "{}" }).catch(() => undefined),
+    ]);
   };
 
   return (

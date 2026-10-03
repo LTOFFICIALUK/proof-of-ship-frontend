@@ -105,8 +105,8 @@ export default function ProfilePage() {
               </p>
             ) : null}
           </div>
-          <button type="button" onClick={() => void disconnect()} className={`${btnGhost} px-4 py-1.5 text-[13px]`}>
-            Disconnect
+          <button type="button" onClick={() => void disconnect()} className={`${btnGhost} px-4 py-1.5 text-[13px]`} aria-label="Sign out">
+            Sign out
           </button>
         </div>
       </Misted>
