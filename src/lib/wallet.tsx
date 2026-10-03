@@ -236,25 +236,68 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [authed, setAuthed] = useState(false);
   const phantomAddress = useRef("");
   const signedOut = useRef(false);
+  const authedRef = useRef(false);
+  const sessionTask = useRef<Promise<boolean> | null>(null);
 
   const remember = (address: string) => {
     phantomAddress.current = address;
     setWallet(address);
   };
 
+  const markAuthed = (value: boolean) => {
+    authedRef.current = value;
+    setAuthed(value);
+  };
+
+  const signIn = async (address: string) => {
+    const current = provider();
+    if (!current) {
+      return false;
+    }
+    const nonce = await api<{ nonce: string }>("/v1/auth/nonce");
+    const issued = new Date().toISOString();
+    const message = loginMessage(address, nonce.nonce, issued);
+    const bytes = await signWithProvider(current, new TextEncoder().encode(message));
+    if (bytes.length !== 64) {
+      throw new Error("Wallet returned a signature we could not read.");
+    }
+    const signedIn = await api<{ wallet: string; xHandle: string | null }>("/v1/auth/verify", {
+      method: "POST",
+      body: JSON.stringify({ message, signature: toBase64(bytes) }),
+    });
+    remember(signedIn.wallet);
+    setXHandle(signedIn.xHandle ?? "");
+    markAuthed(true);
+    return true;
+  };
+
+  const beginSession = (address: string) => {
+    if (authedRef.current && phantomAddress.current === address) {
+      return Promise.resolve(true);
+    }
+    if (!sessionTask.current) {
+      sessionTask.current = signIn(address)
+        .catch(() => false)
+        .finally(() => {
+          sessionTask.current = null;
+        });
+    }
+    return sessionTask.current;
+  };
+
   const refresh = async () => {
     const me = await api<{ wallet: string | null; xHandle: string | null }>("/v1/me");
     if (signedOut.current) {
-      setAuthed(false);
+      markAuthed(false);
       setWallet("");
       setXHandle("");
       return;
     }
     if (me.wallet) {
       remember(me.wallet);
-      setAuthed(true);
+      markAuthed(true);
     } else {
-      setAuthed(false);
+      markAuthed(false);
       setWallet(phantomAddress.current);
     }
     setXHandle(me.xHandle ?? "");
@@ -286,7 +329,9 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       const result = await pending;
       signedOut.current = false;
       clearSignOut();
-      remember(result.publicKey.toString());
+      const address = result.publicKey.toString();
+      remember(address);
+      void beginSession(address);
       return true;
     } catch (err) {
       const message = walletMessage(err, "Could not connect the wallet.");
@@ -299,44 +344,29 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const ensureSession = async () => {
-    if (authed && wallet) {
+    const current = provider();
+    const address = phantomAddress.current || (current ? publicKeyOf(current) : "");
+    if (authedRef.current && address) {
       return true;
     }
-    const current = provider() ?? (await waitForProvider(250));
-    if (!current) {
+    if (sessionTask.current) {
+      const ready = await sessionTask.current;
+      if (ready) {
+        return true;
+      }
+    }
+    const next = address || (current ? publicKeyOf(current) : "");
+    if (!current || !next) {
       setError(missingWallet());
       return false;
     }
-    const pending = current.connect();
-    setBusy(true);
-    try {
-      const result = await pending;
-      const next = result.publicKey.toString();
-      remember(next);
-      const nonce = await api<{ nonce: string }>("/v1/auth/nonce");
-      const issued = new Date().toISOString();
-      const message = loginMessage(next, nonce.nonce, issued);
-      const bytes = await signWithProvider(provider() ?? current, new TextEncoder().encode(message));
-      if (bytes.length !== 64) {
-        throw new Error("Wallet returned a signature we could not read.");
-      }
-      const signedIn = await api<{ wallet: string; xHandle: string | null }>("/v1/auth/verify", {
-        method: "POST",
-        body: JSON.stringify({ message, signature: toBase64(bytes) }),
-      });
-      remember(signedIn.wallet);
-      setXHandle(signedIn.xHandle ?? "");
-      setAuthed(true);
-      setError("");
-      return true;
-    } catch (err) {
-      const message = walletMessage(err, "Could not connect the wallet.");
+    const ready = await beginSession(next);
+    if (!ready) {
+      const message = "Could not save the wallet session.";
       setError(message);
       toast.error(message);
-      return false;
-    } finally {
-      setBusy(false);
     }
+    return ready;
   };
 
   const signBytes = async (text: string) => {
@@ -399,9 +429,10 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const disconnect = async () => {
     signedOut.current = true;
     rememberSignOut();
+    sessionTask.current = null;
     phantomAddress.current = "";
     setError("");
-    setAuthed(false);
+    markAuthed(false);
     setWallet("");
     setXHandle("");
     const current = provider();
