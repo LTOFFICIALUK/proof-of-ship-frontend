@@ -7,8 +7,9 @@ import { HolderChat } from "@/components/holder-chat";
 import { api, type ProjectView, type PromiseView } from "@/lib/api";
 import { formatCount, formatDue, formatNet, formatSol, formatTokens, formatUsd, promiseLabel } from "@/lib/format";
 import { shortWallet, useWallet } from "@/lib/wallet";
-import { btnBurn, btnGhost, btnPay, field, labelClass, panel, textLink } from "@/components/surface";
+import { btnBurn, btnGhost, btnPay, btnPrimary, field, labelClass, panel, textLink } from "@/components/surface";
 import { ConnectWallet } from "@/components/connect-wallet";
+import { toast } from "@/components/toast";
 import { Misted } from "@/components/text-mist";
 
 const canVote = (status: string) => status === "vote_open";
@@ -118,6 +119,7 @@ export default function CoinPage() {
   const [nextDone, setNextDone] = useState("");
   const [nextHours, setNextHours] = useState("24");
   const [abandonStep, setAbandonStep] = useState(false);
+  const [voteNotice, setVoteNotice] = useState<null | "pay" | "burn">(null);
 
   const load = useCallback(async () => {
     setProject(await api<ProjectView>(`/v1/projects/${params.mint}`));
@@ -175,14 +177,17 @@ export default function CoinPage() {
         method: "POST",
         body: JSON.stringify({
           side,
-          reason: side === "burn" ? reason.trim() : undefined,
+          reason: reason.trim() || undefined,
           nonce: prompt.nonce,
           signature,
         }),
       });
       setProject(next);
+      setVoteNotice(side);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Vote failed");
+      const message = err instanceof Error ? err.message : "Vote failed";
+      setError(message);
+      toast.error(message);
     } finally {
       setBusyIdx(null);
     }
@@ -296,8 +301,23 @@ export default function CoinPage() {
   const waitingProof = project.promises.find((item) => item.status === "pending");
   const canPostNext = isBuilder && !waitingProof && !openVote && project.status !== "abandoned";
 
+  const voteCopy = voteNotice === "burn" ? "You voted not to pay." : "You voted to pay the builder.";
+
   return (
     <div className="mx-auto grid max-w-[1180px] items-stretch gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
+      {voteNotice ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-[#f3f3f1]/80 px-4 backdrop-blur-md">
+          <div className={`${panel} w-full max-w-[420px] px-8 py-10 text-center`} role="dialog" aria-modal="true" aria-labelledby="vote-done-title">
+            <p id="vote-done-title" className="text-[22px] font-semibold tracking-[-0.03em]">
+              {voteCopy}
+            </p>
+            <p className="mt-2 text-[15px] leading-relaxed text-[var(--muted)]">Your vote is counted. You can change it until the vote ends.</p>
+            <button type="button" className={`${btnPrimary} mt-6`} onClick={() => setVoteNotice(null)} autoFocus>
+              Done
+            </button>
+          </div>
+        </div>
+      ) : null}
       <div className="min-w-0 space-y-5">
         {project.status === "lapsed" ? (
           <p className={`${panel} px-5 py-4 text-[15px] text-[var(--burn)]`}>
@@ -590,6 +610,11 @@ export default function CoinPage() {
                     <p className="text-[13px] text-[var(--muted)]">
                       Pay sends SOL to the builder. Do not pay buys $POS.
                     </p>
+                    {item.yourSide ? (
+                      <p className="text-[14px] font-medium">
+                        {item.yourSide === "pay" ? "You voted to pay the builder." : "You voted not to pay."}
+                      </p>
+                    ) : null}
                   </div>
                 ) : null}
               </li>
