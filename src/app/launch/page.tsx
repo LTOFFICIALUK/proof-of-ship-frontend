@@ -33,6 +33,7 @@ type LaunchBody = {
   description: string;
   image: string;
   website: string;
+  linkPage: boolean;
   github: string;
   devBuyBps: number;
   promise: {
@@ -152,6 +153,7 @@ export default function LaunchPage() {
   const [image, setImage] = useState("");
   const [imageFailed, setImageFailed] = useState(false);
   const [website, setWebsite] = useState("");
+  const [linkPage, setLinkPage] = useState(true);
   const [github, setGithub] = useState("");
   const [devBuy, setDevBuy] = useState("0");
   const [title, setTitle] = useState("");
@@ -169,6 +171,7 @@ export default function LaunchPage() {
       description: description.trim(),
       image: image.trim(),
       website: website.trim(),
+      linkPage,
       github: github.trim(),
       devBuyBps: Math.round(Number(devBuy) * 100),
       promise: {
@@ -178,7 +181,7 @@ export default function LaunchPage() {
         deadlineMs: new Date(deadline).getTime(),
       },
     }),
-    [deadline, description, devBuy, doneLooksLike, github, image, name, proofType, symbol, title, website],
+    [deadline, description, devBuy, doneLooksLike, github, image, linkPage, name, proofType, symbol, title, website],
   );
 
   useEffect(() => {
@@ -452,6 +455,21 @@ export default function LaunchPage() {
                 />
               </label>
             </div>
+            <label className="flex items-start gap-3 text-[15px] leading-relaxed">
+              <input
+                type="checkbox"
+                className="mt-1"
+                checked={linkPage && !website.trim()}
+                disabled={Boolean(website.trim())}
+                onChange={(event) => setLinkPage(event.target.checked)}
+                aria-label="Add this coin page to the token"
+              />
+              <span>
+                {website.trim()
+                  ? "Your website is the link on the token."
+                  : "Add this coin page to the token. Pump and trackers use it as the website."}
+              </span>
+            </label>
           </section>
 
           <section className="space-y-4">

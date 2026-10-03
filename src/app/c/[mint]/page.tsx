@@ -295,7 +295,21 @@ export default function CoinPage() {
   const image = imageReady || null;
   const viewer = project.viewer;
   const isBuilder = Boolean(viewer?.isBuilder);
-  const website = project.profile.website || market?.website || null;
+  const listedWebsite = project.profile.website || market?.website || null;
+  const website = (() => {
+    if (!listedWebsite) {
+      return null;
+    }
+    try {
+      const path = new URL(listedWebsite).pathname.replace(/\/$/, "");
+      if (path === `/c/${project.mint}`) {
+        return null;
+      }
+    } catch {
+      return listedWebsite;
+    }
+    return listedWebsite;
+  })();
   const xUrl = market?.x || (project.xHandle ? `https://x.com/${project.xHandle}` : null);
   const openVote = project.promises.find((item) => item.status === "vote_open");
   const waitingProof = project.promises.find((item) => item.status === "pending");
