@@ -413,7 +413,14 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       }
       return btoa(raw);
     };
-    const transactions = encoded.map((item) => VersionedTransaction.deserialize(fromBase64(item)));
+    const transactions = encoded.map((item) => {
+      const bytes = fromBase64(item);
+      try {
+        return VersionedTransaction.deserialize(bytes);
+      } catch {
+        return Transaction.from(bytes);
+      }
+    });
     if (!current.signTransaction) {
       throw new Error("This wallet cannot sign a transaction. Open Phantom and try again.");
     }
