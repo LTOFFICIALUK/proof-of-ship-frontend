@@ -536,6 +536,9 @@ export default function LaunchPage() {
               Your coin gets a contract address ending in PoS. Creator fees land in the vault we control. We send you 15% as runway. We hold 75% until holders vote. Pay pays you in SOL. Burn buys $POS.
               {body.devBuyBps ? ` You buy ${body.devBuyBps / 100}% at launch.` : ""}
             </p>
+            <p className="text-[15px] leading-relaxed text-[var(--ink)]">
+              Phantom asks twice. Nothing is sent until you sign both. The first confirmation creates the coin and buys your share. The second locks creator fees to the vault. The platform pays that account rent. If you reject either confirmation, nothing is sent.
+            </p>
             <label className="flex items-start gap-3 text-[15px] leading-relaxed">
               <input
                 type="checkbox"
