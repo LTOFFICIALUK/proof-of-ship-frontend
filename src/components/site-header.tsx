@@ -9,23 +9,9 @@ export const SiteHeader = () => {
   return (
     <header className="sticky top-4 z-30 mx-auto mt-4 w-[min(1080px,calc(100%-1.5rem))] overflow-hidden rounded-[28px] bg-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.06)] ring-1 ring-black/[0.06] backdrop-blur-2xl sm:rounded-full md:w-[min(1080px,calc(100%-2.5rem))]">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2 sm:flex-nowrap sm:px-4">
-        <Link href="/" className={`mr-auto shrink-0 ${focusRing}`} aria-label="Proof of Ship home">
-          <Image
-            src="/brand/icon-primary.svg"
-            alt=""
-            width={28}
-            height={28}
-            priority
-            className="h-7 w-7 sm:hidden"
-          />
-          <Image
-            src="/brand/lockup-horizontal-ink.svg"
-            alt=""
-            width={132}
-            height={28}
-            priority
-            className="hidden h-7 w-auto sm:block"
-          />
+        <Link href="/" className={`mr-auto flex shrink-0 items-center gap-2 ${focusRing}`} aria-label="Proof of Ship home">
+          <Image src="/brand/icon-primary.svg" alt="" width={28} height={28} priority className="h-7 w-7" />
+          <span className="text-[15px] font-semibold tracking-[-0.02em] text-[var(--ink)]">Proof of Ship</span>
         </Link>
         <nav className="order-3 flex w-full min-w-0 items-center justify-between gap-3 text-[14px] text-[var(--ink)] sm:order-none sm:w-auto sm:justify-end sm:gap-5">
           <Link className={`whitespace-nowrap text-[var(--muted)] transition hover:text-[var(--ink)] ${focusRing}`} href="/coins">
