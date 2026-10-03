@@ -17,9 +17,13 @@ type SolanaProvider = {
   connect: (opts?: { onlyIfTrusted?: boolean }) => Promise<{ publicKey: { toString: () => string } }>;
   disconnect?: () => Promise<void>;
   signMessage?: (message: Uint8Array, display?: "utf8" | "hex") => Promise<{ signature: Uint8Array } | Uint8Array>;
+  signTransaction?: (transaction: PhantomTransaction) => Promise<PhantomTransaction>;
+  signAllTransactions?: (transactions: PhantomTransaction[]) => Promise<PhantomTransaction[]>;
   request?: (args: { method: string; params?: Record<string, unknown> }) => Promise<unknown>;
   publicKey?: { toString: () => string } | null;
 };
+
+type PhantomTransaction = { serialize: () => Uint8Array };
 
 type PhantomWindow = Window & {
   solana?: SolanaProvider;
@@ -36,6 +40,7 @@ type WalletContextValue = {
   disconnect: () => Promise<void>;
   refresh: () => Promise<void>;
   signBytes: (text: string) => Promise<string>;
+  signTransactions: (encoded: string[]) => Promise<string[]>;
 };
 
 const PHANTOM_DOWNLOAD = "https://phantom.app/download";
@@ -382,6 +387,43 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     return toBase64(bytes);
   };
 
+  const signTransactions = async (encoded: string[]) => {
+    const current = provider() ?? (await waitForProvider(250));
+    if (!current) {
+      throw new Error("No wallet found. Install Phantom, then try again.");
+    }
+    if (!current.signTransaction && !current.signAllTransactions) {
+      throw new Error("This wallet cannot sign a transaction. Open Phantom and try again.");
+    }
+    const { Transaction } = await import("@solana/web3.js");
+    const fromBase64 = (value: string) => {
+      const raw = atob(value);
+      const bytes = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i += 1) {
+        bytes[i] = raw.charCodeAt(i);
+      }
+      return bytes;
+    };
+    const toBase64Bytes = (bytes: Uint8Array) => {
+      let raw = "";
+      for (let i = 0; i < bytes.length; i += 1) {
+        raw += String.fromCharCode(bytes[i]!);
+      }
+      return btoa(raw);
+    };
+    const transactions = encoded.map((item) => Transaction.from(fromBase64(item)));
+    if (current.signAllTransactions) {
+      const signed = await current.signAllTransactions(transactions);
+      return signed.map((item) => toBase64Bytes(item.serialize()));
+    }
+    const signed: string[] = [];
+    for (const transaction of transactions) {
+      const next = await current.signTransaction!(transaction);
+      signed.push(toBase64Bytes(next.serialize()));
+    }
+    return signed;
+  };
+
   const disconnect = async () => {
     signedOut.current = true;
     rememberSignOut();
@@ -399,7 +441,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <WalletContext.Provider value={{ wallet, xHandle, busy, error, connect, ensureSession, disconnect, refresh, signBytes }}>
+    <WalletContext.Provider value={{ wallet, xHandle, busy, error, connect, ensureSession, disconnect, refresh, signBytes, signTransactions }}>
       {children}
     </WalletContext.Provider>
   );

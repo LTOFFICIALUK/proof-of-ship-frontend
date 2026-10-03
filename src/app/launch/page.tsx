@@ -145,7 +145,7 @@ const LaunchPreview = ({
 
 export default function LaunchPage() {
   const router = useRouter();
-  const { wallet, xHandle, busy: walletBusy, connect, ensureSession, refresh } = useWallet();
+  const { wallet, xHandle, busy: walletBusy, connect, ensureSession, refresh, signTransactions } = useWallet();
   const [name, setName] = useState("");
   const [symbol, setSymbol] = useState("");
   const [description, setDescription] = useState("");
@@ -224,6 +224,10 @@ export default function LaunchPage() {
       toast.error("Add a name and a ticker.");
       return;
     }
+    if (!body.image) {
+      toast.error("Add a coin image.");
+      return;
+    }
     if (!body.promise.title) {
       toast.error("Add what you will ship.");
       return;
@@ -252,12 +256,27 @@ export default function LaunchPage() {
         return;
       }
       await refresh();
-      await api("/v1/launch/build", { method: "POST", body: JSON.stringify(body) });
-      setConfirming(true);
-      const submitted = await api<{ mint: string; project?: ProjectView }>("/v1/launch/submit", {
+      const prepared = await api<{ mode: string; mint: string; transactions: string[] }>("/v1/launch/prepare", {
         method: "POST",
         body: JSON.stringify(body),
       });
+      setConfirming(true);
+      const transactions = prepared.transactions.length ? await signTransactions(prepared.transactions) : undefined;
+      const submitted = await api<{ mint: string; buyTransaction?: string | null }>("/v1/launch/submit", {
+        method: "POST",
+        body: JSON.stringify({ ...body, transactions }),
+      });
+      if (submitted.buyTransaction) {
+        try {
+          const [signedBuy] = await signTransactions([submitted.buyTransaction]);
+          await api(`/v1/launch/${submitted.mint}/buy`, {
+            method: "POST",
+            body: JSON.stringify({ transaction: signedBuy }),
+          });
+        } catch (error) {
+          toast.error(error instanceof Error ? error.message : "Coin is live. The dev buy did not land.");
+        }
+      }
       toast.ok("Coin is live.");
       router.push(`/c/${submitted.mint}`);
     } catch (err) {
@@ -281,7 +300,7 @@ export default function LaunchPage() {
             </div>
             <p className="mt-5 text-[22px] font-semibold tracking-[-0.03em]">Confirming on chain</p>
             <p className="mt-2 text-[15px] text-[var(--muted)]">
-              Taking a contract address ending in PoS from the mint bank and locking the fee split.
+              Confirm in Phantom. That creates the coin and locks creator fees to the vault.
             </p>
           </div>
         </div>
