@@ -10,12 +10,14 @@ import { Misted } from "@/components/text-mist";
 import { VerifiedTick } from "@/components/verified-tick";
 
 type Rows = {
+  launched: CoinCardData[];
   voting: CoinCardData[];
   shipped: CoinCardData[];
   burned: CoinCardData[];
 };
 
 const ROWS: { id: keyof Rows; title: string; empty: string }[] = [
+  { id: "launched", title: "Coins", empty: "No coins yet." },
   { id: "voting", title: "Voting now", empty: "No votes are open right now." },
   { id: "shipped", title: "Recently shipped", empty: "Nothing has shipped yet." },
   { id: "burned", title: "Recently burned", empty: "Nothing has burned yet." },
@@ -62,13 +64,15 @@ export const HomeRows = () => {
 
   useEffect(() => {
     const load = async () => {
-      const [voting, shipped, burned, top] = await Promise.all([
+      const [launched, voting, shipped, burned, top] = await Promise.all([
+        api<CoinList>("/v1/coins?filter=all&scope=live"),
         api<CoinList>("/v1/coins?filter=voting&scope=live"),
         api<CoinList>("/v1/coins?filter=shipped&scope=live"),
         api<CoinList>("/v1/coins?filter=burned&scope=live"),
         api<{ builders: TopBuilder[] }>("/v1/builders?scope=live"),
       ]);
       setRows({
+        launched: launched.coins.slice(0, 4),
         voting: voting.coins.slice(0, 4),
         shipped: shipped.coins.slice(0, 4),
         burned: burned.coins.slice(0, 4),
@@ -76,7 +80,7 @@ export const HomeRows = () => {
       setBuilders(top.builders.slice(0, 5));
       setNowMs(Date.now());
     };
-    void load().catch(() => setRows({ voting: [], shipped: [], burned: [] }));
+    void load().catch(() => setRows({ launched: [], voting: [], shipped: [], burned: [] }));
   }, []);
 
   return (
