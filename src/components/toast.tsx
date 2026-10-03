@@ -67,13 +67,13 @@ export const ToastHost = () => {
     return null;
   }
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-[5.75rem] z-[80] flex flex-col items-center gap-2 px-4 sm:top-28">
+    <div className="pointer-events-none fixed bottom-4 right-4 z-[80] flex flex-col items-end gap-2 sm:bottom-6 sm:right-6">
       {items.map((item) => (
         <button
           key={item.id}
           type="button"
           onClick={() => dismissToast(item.id)}
-          className={`${panel} toast-enter pointer-events-auto min-w-[16rem] max-w-[min(100%,24rem)] px-4 py-3 text-center text-[14px] leading-snug shadow-[0_12px_40px_rgba(0,0,0,0.12)] ${
+          className={`${panel} toast-enter pointer-events-auto min-w-[16rem] max-w-[min(100vw-2rem,24rem)] px-4 py-3 text-left text-[14px] leading-snug shadow-[0_12px_40px_rgba(0,0,0,0.12)] ${
             item.tone === "error" ? "text-[var(--burn)]" : "text-[var(--ink)]"
           }`}
           role={item.tone === "error" ? "alert" : "status"}
